@@ -6,26 +6,14 @@ import jakarta.persistence.*;
 @Entity
 @Getter
 @Setter
-@Table(name = "SupplierManager")
+@Table(name = "SupplierManager") //발주처
 public class SupplierManager {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "supplier_manage_id")
-    private Long supplierManageId;  // 관리번호
+    @Column(name = "supplier_code")
+    private String supplierCode;  // 발주처코드
 
-    @Column(name = "product_code", nullable = false)
-    private Long productCode;  // 자재코드
+    @Column(name = "supplier_name")
+    private String supplierName; //발주처명
 
-    @Column(name = "product_name", nullable = false)
-    private String productName;  // 자재명
-
-    @Column(name = "min_amount", nullable = false)
-    private Integer minAmount;  // 최소수량
-
-    @Column(name = "max_amount", nullable = false)
-    private Integer maxAmount;  // 최대수량
-
-    @Column(name = "unit_price", nullable = false)
-    private Integer unitPrice;  // 단가
 }
 
