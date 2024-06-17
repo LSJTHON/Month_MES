@@ -10,8 +10,8 @@ import lombok.*;
 public class Product {
     @Id
     @Column(name="product_code")
-    private Long productCode;  // 품목코드
-    //품목 코드는 알파벳을 섞을 것인가?1
+    private String productCode;  // 품목코드
+    //품목 코드는 알파벳을 섞을 것인가?
 
     @Column(name = "product_name", nullable = false)
     private String productName;  // 품목명

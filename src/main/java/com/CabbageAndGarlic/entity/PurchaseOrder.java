@@ -20,8 +20,9 @@ public class PurchaseOrder extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private Status purchaseStatus;  // 발주상태
 
-    @Column(name = "supplier", nullable = false)
-    private String supplier;  // 발주처
+    @ManyToOne
+    @JoinColumn(name = "supplier_code", nullable = false)
+    private SupplierManager supplierCode;  // 발주처
 
     @Column(name = "manager")
     private String manager;  // 담당자
