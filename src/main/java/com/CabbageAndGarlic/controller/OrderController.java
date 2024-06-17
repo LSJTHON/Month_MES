@@ -29,13 +29,10 @@ public class OrderController {
         return getAllOrders;
     }
 
+    @PostMapping("/createOrder")
+    public String saveOrder(@RequestBody OrderDto orderDto) {
+        orderService.saveOrder(orderDto);
+        return "등록 성공";
+    }
 
-//    @PostMapping("/api/createOrders")
-//    public ResponseEntity<Order> addOrder(@RequestBody OrderDto request){
-//
-//        Order savedOrder = orderService.save(request);
-//
-//        return ResponseEntity.ok()
-//                .body(savedOrder);
-//    }
 }
