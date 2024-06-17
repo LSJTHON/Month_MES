@@ -8,7 +8,6 @@ import jakarta.persistence.*;
 @Table(name = "purchased_item")
 public class PurchasedItem {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "purchased_item_id")
     private Long purchasedItemId;  // 발주상품번호
 
@@ -23,5 +22,5 @@ public class PurchasedItem {
 
     @ManyToOne
     @JoinColumn(name = "purchase_number", nullable = false)
-    private PurchaseOrder purchaseNumber;  // 발주번호
+    private PurchaseOrder purchaseNumber;  // 발주번호   1
 }
