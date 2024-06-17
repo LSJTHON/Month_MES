@@ -22,7 +22,7 @@ public class Shipping {
 
     @ManyToOne
     @JoinColumn(name = "order_number", nullable = false)
-    private Order order;  // 수주번호
+    private Order orderNumber;  // 수주번호
 
     @Column(name = "product_code", nullable = false)
     private Long productCode;  // 품목코드
