@@ -1,5 +1,6 @@
 package com.CabbageAndGarlic.controller;
 
+import com.CabbageAndGarlic.service.productService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -7,22 +8,22 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
 public class productApiController {
+    private final productService ProductService;
+        @GetMapping("/api/products")
+    public Map<String,Object> getAllProducts() {
 
-    @GetMapping("/api/port")
-    public ResponseEntity<List<portResponse>> findAllPort(){
-        List<portResponse> port = portService.findAll()
-                .stream()
-                .map(portResponse::new)
-                .toList();
+        Map<String,Object> getAllProducts = new HashMap<>();
 
-        //최종적으로 JSON 형태로 body부분에 port가 들어가게 된다.
-        return ResponseEntity.ok()
-                .body(port);
+            getAllProducts.put("data",ProductService.findAll());
+
+        return getAllProducts;
     }
 
 }

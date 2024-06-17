@@ -17,6 +17,7 @@ public class Product {
     @Column(name = "product_name", nullable = false)
     private String productName;  // 품목명
 
+
     @Column(name = "max_amount", nullable = false)
     private Integer maxAmount;  // 최대수량
 
