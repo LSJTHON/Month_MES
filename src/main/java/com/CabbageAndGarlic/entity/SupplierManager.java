@@ -6,7 +6,7 @@ import jakarta.persistence.*;
 @Entity
 @Getter
 @Setter
-@Table(name = "SupplierManager")
+@Table(name = "SupplierManager") //발주처
 public class SupplierManager {
     @Id
     @Column(name = "supplier_code")

@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Setter
-@Table(name = "purchase_order")
+@Table(name = "purchase_order") //발주
 public class PurchaseOrder extends BaseTimeEntity {
     @Id
     @Column(name = "purchase_number")

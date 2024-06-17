@@ -10,7 +10,7 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-@Table(name = "material")
+@Table(name = "material") //자재
 public class Material {
 
     //자재코드
