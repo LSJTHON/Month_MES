@@ -10,7 +10,7 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Product {
     @Id
-    @Column(name = "product_code")
+    @Column(name="product_code")
     private String productCode;  // 품목코드
     //품목 코드는 알파벳을 섞을 것인가?
 
