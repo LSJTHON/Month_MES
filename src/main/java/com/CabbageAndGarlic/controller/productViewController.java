@@ -22,14 +22,6 @@ public class productViewController {
     }
 
 
-
-
-
-
-
-
-
-
 //    private final productService ProductService;
 //
 //    @GetMapping("/product")
