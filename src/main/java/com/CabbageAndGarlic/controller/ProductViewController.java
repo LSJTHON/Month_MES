@@ -7,12 +7,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 @RequiredArgsConstructor
 @Controller
-public class productViewController {
+public class ProductViewController {
 
     @GetMapping(value = "/test")
     public String product(Model model) {
 
-        return "product/productView";
+        return "product/ProductView";
     }
 
 

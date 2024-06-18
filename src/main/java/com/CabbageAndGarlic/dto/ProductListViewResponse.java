@@ -4,7 +4,7 @@ import com.CabbageAndGarlic.entity.Product;
 import lombok.Getter;
 
 @Getter
-public class productListViewResponse {
+public class ProductListViewResponse {
     private final String productCode;
     private final String productName;
     private final int maxAmount;
@@ -13,7 +13,7 @@ public class productListViewResponse {
     private final int sellingPrice;
     private final String bom;
 
-    public productListViewResponse(Product product) {
+    public ProductListViewResponse(Product product) {
         this.productCode = product.getProductCode();
         this.productName = product.getProductName();
         this.maxAmount = product.getMaxAmount();
