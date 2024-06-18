@@ -8,4 +8,10 @@ import lombok.*;
 public class OrderItemDto {
     private String productName;
     private Integer amount;
+
+    // 생성자
+    public OrderItemDto(String productName, Integer amount) {
+        this.productName = productName;
+        this.amount = amount;
+    }
 }

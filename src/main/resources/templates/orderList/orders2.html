@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:layout="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
@@ -42,9 +42,10 @@
         }
     </style>
 </head>
-<div th:fragment="content">
+<div layout:fragment="content" >
     <div class="container1">
         <table id="table" class="table table-striped table-bordered table-hover"></table>
+        <table id="table2" class="table table-striped table-bordered table-hover"></table>
 
         <!-- 모달 -->
         <div class="container mt-5">
@@ -125,7 +126,8 @@
     <script>
         var table = null;
         $(document).ready(function() {
-            table = $('#table').DataTable({
+            var table = $('#table').DataTable({
+                // 기존 설정
                 layout: {
                     topStart: {
                         buttons: [
@@ -144,7 +146,7 @@
                             {
                                 text: '수주 추가',
                                 action: function (e, dt, node, config) {
-                                    $('#addOrderModal').modal('show'); // 모달 창을 띄움
+                                    $('#addOrderModal').modal('show');
                                 }
                             }
                         ]
@@ -178,14 +180,45 @@
                     {title: "상태", data: 'status'},
                     {title: "담당자", data: 'manager'},
                     {title: "전화번호", data: 'phoneNumber'},
-                    /*{title: "수주확정일", data: 'regtime'},*/
                     {title: "납품일", data: 'deliveryDate'},
                 ],
                 language: {
                     search: "검색:"
                 }
             });
+
+            var table2 = $('#table2').DataTable({
+                columns: [
+                    {title: "상품명", data: 'productName'},
+                    {title: "수량", data: 'amount'}
+                ],
+                language: {
+                    search: "검색:",
+                    emptyTable: "선택된 수주의 상품 정보가 없습니다"
+                }
+            });
+
+            $('#table tbody').on('click', 'tr', function () {
+                var data = table.row(this).data();
+                loadOrderItems(data.orderNumber); // 클릭된 수주 번호에 대한 주문 품목 로드
+            });
+
+            function loadOrderItems(orderNumber) {
+                $.ajax({
+                    url: `/api/orderItems/${orderNumber}`,
+                    type: 'GET',
+                    success: function (data) {
+                        table2.clear().rows.add(data).draw(); // 데이터로 테이블2를 채움
+                    },
+                    error: function () {
+                        alert('상품 정보를 불러오는 데 실패했습니다.');
+                    }
+                });
+            }
         });
+
+
+
 
         let productCount = 1;
         const maxProducts = 5;
@@ -278,6 +311,7 @@
                 }
             });
         }
+
     </script>
 </div>
 </html>

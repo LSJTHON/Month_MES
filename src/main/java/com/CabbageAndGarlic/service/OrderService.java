@@ -1,7 +1,6 @@
 package com.CabbageAndGarlic.service;
 
 
-import com.CabbageAndGarlic.constant.Status;
 import com.CabbageAndGarlic.dto.OrderDto;
 import com.CabbageAndGarlic.dto.OrderItemDto;
 import com.CabbageAndGarlic.entity.Order;
@@ -11,9 +10,10 @@ import com.CabbageAndGarlic.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -49,6 +49,12 @@ public class OrderService {
 
             orderItemRepository.save(orderItem);
         }
+    }
+
+    public List<OrderItem> findOrderItemsByOrderNumber(Long orderNumber) {
+        Order order = orderRepository.findById(orderNumber)
+                .orElseThrow(() -> new IllegalStateException("수주 번호를 찾을 수 없습니다.: " + orderNumber));
+        return orderItemRepository.findByOrderNumber(order);
     }
 
 }
