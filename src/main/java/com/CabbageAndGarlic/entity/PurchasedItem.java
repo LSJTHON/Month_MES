@@ -22,5 +22,4 @@ public class PurchasedItem{
 
     @Column(name = "amount", nullable = false)
     private Integer amount;  // 수량
-
 }
