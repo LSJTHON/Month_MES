@@ -8,6 +8,7 @@ public class productListViewResponse {
     private final String productCode;
     private final String productName;
     private final int maxAmount;
+    private final int minAmount;
     private final int unitPrice;
     private final int sellingPrice;
     private final String bom;
@@ -16,6 +17,7 @@ public class productListViewResponse {
         this.productCode = product.getProductCode();
         this.productName = product.getProductName();
         this.maxAmount = product.getMaxAmount();
+        this.minAmount = product.getMinAmount();
         this.unitPrice = product.getUnitPrice();
         this.sellingPrice = product.getSellingPrice();
         this.bom = product.getBom();

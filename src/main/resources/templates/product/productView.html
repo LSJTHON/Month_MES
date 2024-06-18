@@ -3,8 +3,15 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/layout1}">
 
+<style>
+    .btn-primary a {
+        color: red; /* 색상을 원하는 색으로 변경하세요 */
+    }
+    .btn-danger a {
+        color: blue; /* 색상을 원하는 색으로 변경하세요 */
+    }
 
-
+</style>
 <th:block layout:fragment="script">
     <script>
         var table = null;
@@ -25,12 +32,12 @@
                                 extend: 'excel',
                                 text: "엑셀다운로드",
                             },
-                            // {
-                            //     text: '품목 추가',
-                            //     action: function (e, dt, node, config) {
-                            //         $('#addOrderModal').modal('show'); // 모달 창을 띄움
-                            //     }
-                            // }
+                            {
+                                text: '품목 추가',
+                                action: function (e, dt, node, config) {
+                                    $('#addOrderModal').modal('show'); // 모달 창을 띄움
+                                }
+                            }
 
                         ]
                     }
@@ -63,7 +70,7 @@
                 columns: [
                     {title: "품목코드", data: 'productCode'},
                     {title: "품목명", data: 'productName'},
-                    // {title: "최소수량", data: 'maxAmount'},
+                    {title: "최소수량", data: 'minAmount'},
                     {title: "최대수량", data: 'maxAmount'},
                     {title: "BOM", data: 'bom'},
                     {title: "원가", data: 'unitPrice'},
@@ -84,25 +91,14 @@
             <div class="page-inner">
                 <div class="page-header">
                     <h4 class="page-title">관리</h4>
-                    <ul class="breadcrumbs">
-                        <li class="nav-home">
-                            <a href="#">
-                                <i class="icon-home"></i>
-                            </a>
-                        </li>
-                        <li class="separator">
-                            <i class="icon-arrow-right"></i>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#">Pages</a>
-                        </li>
-                        <li class="separator">
-                            <i class="icon-arrow-right"></i>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#">Starter Page</a>
-                        </li>
-                    </ul>
+
+                    <button class="btn-primary">
+                        <a href="/test">자재</a>
+                    </button>
+                    <button class="btn-danger">
+                        <a href="#">완제품</a>
+                    </button>
+
                 </div>
                 <div class="container1">
                     <table id="table" class="table table-striped table-bordered table-hover">
