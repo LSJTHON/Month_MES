@@ -28,11 +28,11 @@
             white-space: nowrap;
         }
         .modal-custom {
-            max-width: 50%; /* 필요에 따라 조정 */
+            max-width: 50%;  /*모달 높이 설정값*/
         }
         .modal-body-scrollable {
-            max-height: 600px;
-            overflow-y: auto;
+            max-height: 600px; /*모달의 최대 높이*/
+            overflow-y: auto; /*세로 스크롤 가능하게 만들어줌*/
         }
         .product-field-row {
             display: flex;
@@ -41,14 +41,14 @@
         }
         .product-field-row .col {
             margin-right: 10px;
-            top: 10px; /* 필요에 따라 조정 */
+            top: 10px; /*input 태그와 제품추가 버튼이랑 높이가 안맞아서 상단 여백 추가 */
         }
         .product-field-row .col-auto {
             display: flex;
             align-items: center;
             margin-left: auto;
             position: relative;
-            top: 10px; /* 필요에 따라 조정 */
+            top: 10px; /* input 태그랑 삭제버튼이랑 높이가 안맞아서 상단 여백 추가 */
         }
         #calendar {
             width: 100%;
@@ -59,7 +59,7 @@
             padding: 15px; /* 모달 바디에 여백 추가 */
         }
         .modal-lg {
-            max-width: 80%; /* 필요에 따라 조정 */
+            max-width: 80%; /* 모달의 가로 너비 조정 */
         }
         .delivery-date-group {
             display: flex;
@@ -69,7 +69,7 @@
             margin-right: 10px;
         }
         .delivery-date-group button {
-            white-space: nowrap; /* 버튼 글자 줄넘김 방지 */
+            white-space: nowrap; /* 버튼 글자 줄넘김 생기면 이걸로 해결 가능함 */
         }
     </style>
 </th:block>
@@ -78,12 +78,13 @@
     <script>
         var table = null;
         $(document).ready(function () {
+            /*테이블 초기화 및 설정하는거 테이블 만들때 여기부터 시작함*/
             var table = $('#table').DataTable({
                 dom: 'Bfrtip',
                 buttons: [
                     {
                         extend: 'colvis',
-                        text: "선택",
+                        text: "선택", /*컬럼 선택한것만 보이도록 만들어줌*/
                     },
                     {
                         extend: 'copy',
@@ -133,7 +134,16 @@
                     {title: "업체명", data: 'client'},
                     {title: "상태", data: 'status'},
                     {title: "담당자", data: 'manager'},
-                    {title: "수주 확정일", data: 'regTime'},
+                    {title: "수주 확정일", data: 'regTime', render: function(data, type, row) {
+                            // LocalDateTime을 년월일시간으로 변경
+                            var date = new Date(data);
+                            var year = date.getFullYear();
+                            var month = ('0' + (date.getMonth() + 1)).slice(-2);
+                            var day = ('0' + date.getDate()).slice(-2);
+                            var hours = ('0' + date.getHours()).slice(-2);
+                            var minutes = ('0' + date.getMinutes()).slice(-2);
+                            return `${year}-${month}-${day} ${hours}:${minutes}`;
+                        }},
                     {title: "전화번호", data: 'phoneNumber'},
                     {title: "납품일", data: 'deliveryDate'},
                 ],
@@ -158,16 +168,19 @@
                 }
             });
 
+
+            // 테이블 행 클릭 이벤트임
             $('#table tbody').on('click', 'tr', function () {
-                var data = table.row(this).data();
-                loadOrderItems(data.orderNumber); // 클릭된 수주 번호에 대한 주문 품목 로드
+                var data = table.row(this).data();  //클릭한 행 this 로 인식하고 값 가져옴
+                loadOrderItems(data.orderNumber); // 클릭된 수주 번호에 대한 주문 품목 가져오기
             });
 
+            //특정 수주 번호에 대한 수주목록 가져오기
             function loadOrderItems(orderNumber) {
                 $.ajax({
-                    url: `/api/orderItems/${orderNumber}`,
+                    url: `/api/orderItems/${orderNumber}`, //컨트롤러 요청 url
                     type: 'GET',
-                    success: function (data) {
+                    success: function (data) {  //요청이 성공적으로 보내졌을 시 실행
                         table2.clear().rows.add(data).draw(); // 데이터로 테이블2를 채움
                     },
                     error: function () {
@@ -178,19 +191,22 @@
         });
 
 
-        let productCount = 1;
-        const maxProducts = 5;
+        let productCount = 1; // input 태그 갯수 초기값
+        const maxProducts = 5; // input 태그 최대갯수 설정값 ( 추가폼 포함 5개까지 가능함 )
 
+        //제품추가 클릭 시 최소 20개 최대 1000개 유효성 검사 기능
         $(document).ready(function () {
             $('#addProductButton').click(function () {
-                const productQuantity = parseInt($('#productQuantity1').val());
+                const productQuantity = parseInt($('#productQuantity1').val());  //제품 추가 눌렀을 시 해당 값 가져옴
                 if (productQuantity < 20 || productQuantity > 1000) {
                     alert('수량은 20개부터 1000개까지 주문 가능합니다.');
                     return;
                 }
 
-                if (productCount < maxProducts) {
-                    const productName = $('#productName1').val();
+                if (productCount < maxProducts) {  //최대갯수 넘었을 시 제품 추가 불가능
+                    const productName = $('#productName1').val(); //제품이름의 값을 가져옴
+
+                    // 제품 추가 시 추가한 값 input으로 추가
                     $('#productFields').append(`
                 <div class="product-field-row" id="productField${productCount + 1}">
                     <div class="col">
@@ -248,8 +264,8 @@
             const orderData = {
                 orderNumber: orderNumber,
                 client: client,
-                phoneNumber: phoneNumber,
-                manager: manager,
+                phoneNumber: phoneNumber,  //연락처
+                manager: manager,  //담당자
                 deliveryDate: deliveryDate, // 납품일 추가
                 orderItems: orderItems
             };
@@ -273,12 +289,50 @@
         // 새로운 FullCalendar 스크립트
         document.addEventListener('DOMContentLoaded', function() {
             var calendarEl = document.getElementById('calendar');
+            var colors = ['#2e4053', '#1c2833', '#6c3483', '#1f618d',]; // 사용할 어두운 색상 배열
+
+            var colorIndex = 0;
             var calendar = new FullCalendar.Calendar(calendarEl, {
+
                 initialView: 'dayGridMonth',
+
                 dateClick: function(info) {
                     var selectedDate = info.dateStr;
                     $('#deliveryDate').val(selectedDate);
                     $('#addCalendarModal').modal('hide');
+                },
+
+                events: function(fetchInfo, successCallback, failureCallback) {
+
+                    $.ajax({
+                        url: '/api/orderCalendar',
+                        type: 'GET',
+                        success: function(data) {
+                            var events = data.map(function(order) {
+                                var endDate = new Date(order.deliveryDate);
+                                var startDate = new Date(order.deliveryDate);
+                                startDate.setDate(startDate.getDate() - 2); // 3일 전부터 시작 숫자만 수정하면 1싸이클 수정 가능함
+
+                                // end날짜 포함 안되서 하루 추가해야함
+                                endDate.setDate(endDate.getDate() + 1);
+
+                                // 색깔 순서대로 들어가게 해주는놈
+                                var color = colors[colorIndex];
+                                colorIndex = (colorIndex + 1) % colors.length;
+
+                                return {
+                                    title: `수주번호: ${order.orderNumber}, 업체명: ${order.client}`,
+                                    start: startDate.toISOString().split('T')[0],
+                                    end: endDate.toISOString().split('T')[0],
+                                    backgroundColor: color // 이벤트의 리스트로 순서대로 생성
+                                };
+                            });
+                            successCallback(events);
+                        },
+                        error: function() {
+                            failureCallback();
+                        }
+                    });
                 }
             });
 
@@ -313,8 +367,8 @@
                                 <input type="text" class="form-control" id="client" name="client">
                             </div>
                             <div class="mb-3">
-                                <label for="phoneNumber" class="form-label">전화번호</label>
-                                <input type="text" class="form-control" id="phoneNumber" name="phoneNumber">
+                                <label for="phoneNumber" class="form-label">전o화번호</label>
+                                <input type="text" class="form-control" id="phoneNumber" name="phneNumber">
                             </div>
                             <div class="mb-3">
                                 <label for="manager" class="form-label">담당자</label>
@@ -354,11 +408,9 @@
                     </div>
                 </div>
             </div>
-
             <!--End Order Modal1-->
 
             <!--Start Calendar Modal2-->
-
             <div class="modal fade" id="addCalendarModal" tabindex="-1" aria-labelledby="addOrderModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content">
@@ -374,7 +426,6 @@
                     </div>
                 </div>
             </div>
-
             <!--End Calendar Modal2-->
         </div>
     </div>

@@ -4,6 +4,7 @@ import com.CabbageAndGarlic.constant.Status;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -23,7 +24,7 @@ public class Order extends BaseTimeEntity {
     private Status status;  // 수주상태
 
     @Column(name = "delivery_date")
-    private LocalDateTime deliveryDate;  // 납품일
+    private LocalDate deliveryDate;  // 납품일
 
     @Column(name = "phone_number")
     private String phoneNumber;  // 연락처

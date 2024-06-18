@@ -2,6 +2,7 @@ package com.CabbageAndGarlic.controller;
 
 
 import com.CabbageAndGarlic.dto.OrderDto;
+import com.CabbageAndGarlic.entity.Order;
 import com.CabbageAndGarlic.entity.OrderItem;
 import com.CabbageAndGarlic.service.OrderService;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +29,11 @@ public class OrderApiController {
         getAllOrders.put("data",orderService.findAll());
 
         return getAllOrders;
+    }
+
+    @GetMapping("/orderCalendar")
+    public List<Order> getCalendarOrder() {
+        return orderService.findAll();
     }
 
     @PostMapping("/createOrder")
