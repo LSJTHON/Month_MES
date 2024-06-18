@@ -36,18 +36,6 @@ public class OrderApiController {
         return "등록 성공";
     }
 
-
-//    @GetMapping("/orderItems/{orderNumber}")
-//    public Map<String,Object> getOrderItemsByOrderNumber(@PathVariable Long orderNumber) {
-//        Map<String,Object> getOrderItems = new HashMap<>();
-//
-//        System.out.println(orderNumber+"이게 수주번호다 이말이야");
-//
-//        getOrderItems.put("data",orderService.findById(orderNumber));
-//
-//        return getOrderItems;
-//    }
-
     @GetMapping("/orderItems/{orderNumber}")
     public ResponseEntity<List<OrderItem>> getOrderItemsByOrderNumber(@PathVariable Long orderNumber) {
         List<OrderItem> items = orderService.findOrderItemsByOrderNumber(orderNumber);
