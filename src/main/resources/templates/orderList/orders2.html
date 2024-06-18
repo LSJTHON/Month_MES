@@ -70,7 +70,7 @@
                             {
                                 text: '작업 계획',
                                 action: function (e, dt, node, config) {
-                                    $('#addOrderModal').modal('show');
+                                    $('#addCalendarModal').modal('show');
                                 }
                             },
                         ]
@@ -233,6 +233,15 @@
             });
         }
 
+
+        var calendar = new tui.Calendar('#calendar', {
+            defaultView: 'month',
+            taskView: true,
+            scheduleView: true,
+            useCreationPopup: true,
+            useDetailPopup: true
+        });
+
     </script>
 </th:block>
 
@@ -242,7 +251,7 @@
         <table id="table" class="table table-striped table-bordered table-hover"></table>
         <table id="table2" class="table table-striped table-bordered table-hover"></table>
 
-        <!-- Modal -->
+        <!-- Start Order Modal1 -->
         <div class="modal fade" id="addOrderModal" tabindex="-1" aria-labelledby="addOrderModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
@@ -286,12 +295,34 @@
                         </form>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
                         <button type="button" class="btn btn-primary" onclick="saveOrder()">저장</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
                     </div>
                 </div>
             </div>
         </div>
+        <!--End Order Modal1-->
+
+        <!--Start Calendar Modal2-->
+
+        <div class="modal fade" id="addCalendarModal" tabindex="-1" aria-labelledby="addOrderModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="calendar" style="height: 800px;"></div> <!-- 달력 왜 안나옴? -->
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" onclick="">저장</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--End Calendar Modal2-->
     </div>
     </div>
 </div>
