@@ -241,13 +241,51 @@
                     success: function (data) {  //요청이 성공적으로 보내졌을 시 실행
                         table2.clear().rows.add(data).draw(); // 데이터로 테이블2를 채움
                     },
-                    error: function () {
-                        alert('상품 정보를 불러오는 데 실패했습니다.');
+                    responsive: true,
+                    destroy: true,
+                    select: true,
+                    processing: true,
+                    serverSide: false,
+                    ordering: true,
+                    scrollX: true,
+                    info: false,
+                    ajax: {
+                        url: 'http://localhost:8080/api/orders',
+                        type: 'GET',
+                        dataFilter: function (res) {
+                            var json = $.parseJSON(res);
+                            var data = {
+                                'draw': json.data.draw,
+                                'recordsTotal': json.data.recordsTotal,
+                                'recordsFiltered': json.data.recordsFiltered,
+                                'data': json.data,
+                            };
+                            return JSON.stringify(data);
+                        }
+                    },
+                    columns: [
+                        {title: "수주번호", data: 'orderNumber'},
+                        {title: "업체명", data: 'client'},
+                        {title: "상태", data: 'status'},
+                        {title: "담당자", data: 'manager'},
+                        {title: "전화번호", data: 'phoneNumber'},
+                        {title: "납품일", data: 'deliveryDate'},
+                    ],
+                    language: {
+                        search: "검색:"
                     }
                 });
-            }
-        });
 
+                var table2 = $('#table2').DataTable({
+                    columns: [
+                        {title: "상품명", data: 'productName'},
+                        {title: "수량", data: 'amount'}
+                    ],
+                    language: {
+                        search: "검색:",
+                        emptyTable: "선택된 수주의 상품 정보가 없습니다"
+                    }
+                });
 
         let productCount = 1; // input 태그 갯수 초기값
         const maxProducts = 5; // input 태그 최대갯수 설정값 ( 추가폼 포함 5개까지 가능함 )
@@ -260,6 +298,7 @@
                     alert('수량은 20개부터 1000개까지 주문 가능합니다.');
                     return;
                 }
+            });
 
                 if (productCount < maxProducts) {  //최대갯수 넘었을 시 제품 추가 불가능
                     const productName = $('#productName1').val(); //제품이름의 값을 가져옴
