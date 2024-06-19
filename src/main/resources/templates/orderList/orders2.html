@@ -343,9 +343,9 @@
 
                                 return {
                                     title: `수주번호: ${order.orderNumber}, 업체명: ${order.client}`,
-                                    start: startDate.toISOString().split('T')[0],
-                                    end: endDate.toISOString().split('T')[0],
-                                    backgroundColor: color // 이벤트의 리스트로 순서대로 생성
+                                    start: startDate.toISOString().split('T')[0],    //최종적으로 달력에 시작날짜 가로바 생성
+                                    end: endDate.toISOString().split('T')[0],        //최종적으로 달력에 시작날짜 가로바 생성
+                                    backgroundColor: color // 이벤트의 리스트로 순서대로 생성함
                                 };
                             });
                             successCallback(events);
@@ -361,7 +361,7 @@
                 calendar.render();
             });
 
-            $('#selectDeliveryDate').click(function () {
+            $('#selectDeliveryDate').click(function () { //수주추가에서 버튼 클릭 시 달력 모달 생기게 해줌
                 $('#addCalendarModal').modal('show');
             });
         });

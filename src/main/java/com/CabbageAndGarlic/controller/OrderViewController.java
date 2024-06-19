@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class OrderViewController {
 
-    @GetMapping("/hello")
+    @GetMapping("/orders")
     public String hello(){
 
         return "/orderList/orders2";
