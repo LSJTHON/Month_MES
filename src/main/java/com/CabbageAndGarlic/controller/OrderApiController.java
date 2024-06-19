@@ -38,7 +38,9 @@ public class OrderApiController {
 
     @PostMapping("/createOrder")
     public String saveOrder(@RequestBody OrderDto orderDto) {
+
         orderService.saveOrder(orderDto);
+
         return "등록 성공";
     }
 
@@ -47,5 +49,4 @@ public class OrderApiController {
         List<OrderItem> items = orderService.findOrderItemsByOrderNumber(orderNumber);
         return ResponseEntity.ok(items);
     }
-
 }

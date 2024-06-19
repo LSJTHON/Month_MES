@@ -1,6 +1,7 @@
 package com.CabbageAndGarlic.service;
 
 
+import com.CabbageAndGarlic.constant.Status;
 import com.CabbageAndGarlic.dto.OrderDto;
 import com.CabbageAndGarlic.dto.OrderItemDto;
 import com.CabbageAndGarlic.entity.Order;
@@ -34,7 +35,7 @@ public class OrderService {
         Order order = new Order();
         order.setOrderNumber(orderDto.getOrderNumber());
         order.setClient(orderDto.getClient());
-//        order.setStatus(Status.valueOf(orderDto.getStatus()));
+        order.setStatus(Status.WAITING);
         order.setDeliveryDate(orderDto.getDeliveryDate());
         order.setPhoneNumber(orderDto.getPhoneNumber());
         order.setManager(orderDto.getManager());
