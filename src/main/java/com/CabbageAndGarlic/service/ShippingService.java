@@ -48,7 +48,7 @@ public class ShippingService {
         System.out.println(shippings.size() + "개의 출하 정보가 있습니다."); // 디버깅용 출력
         return shippings.stream().map(shipping -> {
             ShippingDto dto = new ShippingDto();
-            dto.setOrderNumber(shipping.getOrderNumber().getOrderNumber());
+            dto.setOrderNumber(shipping.getOrderNumber().getOrderNumber()); //get을 두번 사용하는 이유는 수주번호는 shipping안에 있는 order 필드이기 때문
             dto.setShippingCompany(shipping.getShippingCompany());
             dto.setShippingDate(shipping.getShippingDate().toString());
             dto.setShippingStatus(shipping.getOrderNumber().getStatus().toString());
