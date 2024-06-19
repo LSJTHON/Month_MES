@@ -1,5 +1,9 @@
 package com.CabbageAndGarlic.constant;
 
 public enum Status {
-    one,two,three,four
+    IN_PROGRESS,
+    WAITING,
+    CANCELED,
+    COMPLETED;
 }
+

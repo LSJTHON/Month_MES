@@ -7,10 +7,11 @@ import lombok.*;
 @Getter
 @Setter
 @Table(name = "product")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Product {
     @Id
     @Column(name="product_code")
-    private Long productCode;  // 품목코드
+    private String productCode;  // 품목코드
     //품목 코드는 알파벳을 섞을 것인가?
 
     @Column(name = "product_name", nullable = false)
@@ -27,4 +28,15 @@ public class Product {
 
     @Column(name = "bom")
     private String bom;  // BOM
+
+    @Builder
+    public Product(String productCode, String productName, int maxAmount, int unitPrice, int sellingPrice, String bom) {
+        this.productCode = productCode;
+        this.productName = productName;
+        this.maxAmount = maxAmount;
+        this.unitPrice = unitPrice;
+        this.sellingPrice = sellingPrice;
+        this.bom = bom;
+    }
+
 }
