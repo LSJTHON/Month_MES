@@ -15,17 +15,16 @@ public class ProductionPlan {
     @Column(name = "production_plan_number")
     private Long productionPlanNumber;  // 생산계획번호
 
-    @ManyToOne
-    @JoinColumn(name = "order_number", nullable = false)
-    private Order orderNumber;  // 수주번호
-
-    @Column(name = "start_date", nullable = false)
+    @Column(name = "start_date")
     private LocalDateTime startDate;  // 시작일
 
-    @Column(name = "end_date", nullable = false)
+    @Column(name = "end_date")
     private LocalDateTime endDate;  // 종료일
 
     @Column(name = "production_plan_status", nullable = false)
     @Enumerated(EnumType.STRING)
     private Status productionPlanStatus;  // 상태
+
+    @Column(name = "plan_date", nullable = false)
+    private LocalDateTime planDate;
 }

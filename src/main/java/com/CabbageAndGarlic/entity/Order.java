@@ -9,10 +9,10 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Setter
-@Table(name = "order") //수주 테이블
+@Table(name = "order_table") //수주 테이블
 public class Order extends BaseTimeEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "order_number")
     private Long orderNumber;  // 수주번호
 
     @Column(name = "client", nullable = false)
