@@ -23,12 +23,9 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
 
-
     public List<Order> findAll() {
         return orderRepository.findAll();
     }
-
-
 
     @Transactional
     public void saveOrder(OrderDto orderDto) {
