@@ -10,21 +10,21 @@
             margin-top: 10px;
         }
 
-        .order-search-table th {
+        .order-search-table th, .shipping-status-table th {
             padding: 5px;
             text-align: center;
             vertical-align: middle;
-            width: 5%;
+            width: 10%;
         }
 
-        .order-search-table td {
+        .order-search-table td, .shipping-status-table td {
             padding: 5px;
             text-align: center;
             vertical-align: middle;
-            width: 5.5%;
+            width: 10%;
         }
 
-        .order-search-table input {
+        .order-search-table input, .shipping-status-table input {
             width: 50%;
             box-sizing: border-box;
         }
@@ -34,6 +34,8 @@
 <th:block layout:fragment="script">
     <script>
         var table2 = null;
+        var table3 = null;
+
         $(document).ready(function () {
             // 출하 관리 테이블 (COMPLETED 상태인 수주 정보만 표시)
             table2 = $('#table2').DataTable({
@@ -128,6 +130,63 @@
                 }
             });
 
+            // 출하 현황 테이블 (PendingShipment, SHIPPED 상태인 수주 정보만 표시)
+            table3 = $('#table3').DataTable({
+                dom: 'Bfrtip',
+                buttons: [
+                    {
+                        extend: 'colvis',
+                        text: "선택",
+                    },
+                    {
+                        extend: 'copy',
+                        text: "복사",
+                    },
+                    {
+                        extend: 'excel',
+                        text: "엑셀다운로드",
+                    },
+                ],
+                searching: true,
+                responsive: true,
+                destroy: true,
+                processing: true,
+                serverSide: false,
+                ordering: true,
+                scrollX: true,
+                info: false,
+                ajax: {
+                    url: 'http://localhost:8080/Shipping/shippingStatus',
+                    type: 'GET',
+                    dataFilter: function (res) {
+                        console.log(res);
+                        var json = $.parseJSON(res);
+                        return JSON.stringify({
+                            'draw': json.draw,
+                            'recordsTotal': json.recordsTotal,
+                            'recordsFiltered': json.recordsFiltered,
+                            'data': json.data,
+                        });
+                    }
+                },
+                columns: [
+                    {title: "수주번호", data: 'orderNumber'},
+                    {title: "출하일", data: 'shippingDate'},
+                    {title: "출하상태", data: 'shippingStatus'},
+                    {title: "운송업체", data: 'shippingCompany'}
+                ],
+                language: {
+                    search: "검색:",
+                    emptyTable: "출하된 정보가 없습니다",
+                    zeroRecords: "검색 결과가 없습니다"
+                },
+                rowCallback: function (row, data) {
+                    if (data.shippingStatus !== 'PendingShipment' && data.shippingStatus !== 'SHIPPED') {
+                        $(row).hide();
+                    }
+                }
+            });
+
             // Select/Deselect all checkboxes
             $('#select-all').on('click', function(){
                 var rows = table2.rows({ 'search': 'applied' }).nodes();
@@ -166,6 +225,7 @@
                 data: JSON.stringify(data),
                 success: function(response) {
                     table2.ajax.reload();
+                    table3.ajax.reload(); // 출하 현황 테이블도 갱신
                 },
                 error: function(xhr, status, error) {
                     alert('상태 업데이트 실패: ' + error);
@@ -179,7 +239,7 @@
     <div class="main-panel">
         <div class="container-fluid">
             <h2 class="h2-header">출하 현황</h2>
-            <table id="table1" class="table table-striped table-bordered order-search-table"></table>
+            <table id="table3" class="table table-striped table-bordered shipping-status-table"></table>
 
             <h2 class="h2-header">출하 관리</h2>
             <table id="table2" class="table table-striped table-bordered order-search-table"></table>

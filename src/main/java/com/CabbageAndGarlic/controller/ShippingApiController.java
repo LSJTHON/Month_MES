@@ -32,6 +32,13 @@ public class ShippingApiController {
         getAllOrders.put("data", orderService.findAll());
         return getAllOrders;
     }
+    // 출하 현황 데이터를 가져옴
+    @GetMapping("/shippingStatus")
+    public Map<String, Object> getShippingStatus() {
+        Map<String, Object> shippingStatus = new HashMap<>();
+        shippingStatus.put("data", shippingService.findPendingAndShippedOrders());
+        return shippingStatus;
+    }
 
     //출하버튼 클릭 시 받는 요청
     @PostMapping("/updateAndCreate")

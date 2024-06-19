@@ -42,4 +42,17 @@ public class ShippingService {
             shippingRepository.save(shipping);
         }
     }
+    // PendingShipment, SHIPPED 상태인 수주 정보만 조회
+    public List<ShippingDto> findPendingAndShippedOrders() {
+        List<Shipping> shippings = shippingRepository.findAllByOrderNumber_StatusIn(List.of(Status.PendingShipment, Status.SHIPPED));
+        System.out.println(shippings.size() + "개의 출하 정보가 있습니다."); // 디버깅용 출력
+        return shippings.stream().map(shipping -> {
+            ShippingDto dto = new ShippingDto();
+            dto.setOrderNumber(shipping.getOrderNumber().getOrderNumber());
+            dto.setShippingCompany(shipping.getShippingCompany());
+            dto.setShippingDate(shipping.getShippingDate().toString());
+            dto.setShippingStatus(shipping.getOrderNumber().getStatus().toString());
+            return dto;
+        }).collect(Collectors.toList());
+    }
 }
