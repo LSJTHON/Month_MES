@@ -22,4 +22,8 @@ public class ProductService {
         return productRepository.save(request.toEntity());
     }
 
+    public void delete(String productCode){
+        productRepository.deleteById(productCode);
+    }
+
 }

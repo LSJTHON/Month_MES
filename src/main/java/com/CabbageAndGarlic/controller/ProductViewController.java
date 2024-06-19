@@ -9,12 +9,17 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class ProductViewController {
 
-    @GetMapping(value = "/test")
+    @GetMapping(value = "/product")
     public String product(Model model) {
 
         return "product/ProductView";
     }
 
 
+    @GetMapping(value = "/material")
+    public String material(Model model) {
+
+        return "product/MaterialView";
+    }
 
 }
