@@ -7,7 +7,7 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-@Table(name = "supplierMaterial") //발주처랑 자재 연결
+@Table(name = "supplier_material") //발주처랑 자재 연결
 public class SupplierMaterial {
 
     @Id
@@ -16,18 +16,18 @@ public class SupplierMaterial {
 
     @ManyToOne
     @JoinColumn(name = "supplier_code", nullable = false)
-    private SupplierManager supplierCode;
+    private SupplierManager supplier;   //발주처코드
 
     @ManyToOne
     @JoinColumn(name = "material_code", nullable = false)
-    private Material materialCode;
+    private Material material;  //자재코드
 
     @Column(name = "min_amount", nullable = false)
-    private int minAmount;
+    private int minAmount;  //최소주문수량
 
     @Column(name = "max_amount", nullable = false)
-    private int maxAmount;
+    private int maxAmount;  //최대주문수량
 
     @Column(name = "unit_price", nullable = false)
-    private int unitPrice;
+    private int unitPrice;  //단가
 }

@@ -1,10 +1,8 @@
 package com.CabbageAndGarlic.dto;
 
-import com.CabbageAndGarlic.entity.InOutBound;
-import com.CabbageAndGarlic.entity.PurchaseOrder;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.cglib.core.Local;
+
 
 import java.time.LocalDateTime;
 
@@ -13,17 +11,15 @@ public class InOutBoundDto {
 
     private long purchaseNumber; //발주번호
 
-    private String MaterialName; //자재명
+    private String materialName; //자재명
 
-    private LocalDateTime inboundDate; //입고일
+    private LocalDateTime transactionDate; // 입출고일
 
-    private LocalDateTime outboundDate;  // 출고일
-
-    private String location;  // 위치
+    private String transactionType; // 입출고 타입 (IN, OUT)
 
     private int quantity;  // 수량
 
     private String supplierName;  // 발주처
 
-    private String managerName;  // 담당자
+    private String manager;  // 담당자 : 고정?
 }

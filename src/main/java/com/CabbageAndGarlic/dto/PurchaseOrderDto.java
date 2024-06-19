@@ -1,6 +1,5 @@
 package com.CabbageAndGarlic.dto;
 
-import com.CabbageAndGarlic.entity.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -21,12 +20,12 @@ public class PurchaseOrderDto {
 
     private int amount; //발주수량
 
-    private LocalDateTime order_date; //발주일
+    private LocalDateTime orderDate; // 발주일
 
-    private LocalDateTime receipt_date; //입고일
+    private LocalDateTime receiptDate; // 입고일
 
     private String purchaseOrderStatus; //발주상태
 
-    private String manager; //담당자
+    private String manager; //담당자 : 고정?
 
 }

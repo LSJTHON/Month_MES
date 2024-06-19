@@ -1,8 +1,5 @@
 package com.CabbageAndGarlic.dto;
 
-import com.CabbageAndGarlic.entity.Material;
-import com.CabbageAndGarlic.entity.SupplierManager;
-import com.CabbageAndGarlic.entity.SupplierMaterial;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -21,7 +18,7 @@ public class SupplierManagerDto {
 
     private int maxAmount; //최대주문수량
 
-    private int unit_price; //단가
+    private int unitPrice; //단가
 
 
 }
