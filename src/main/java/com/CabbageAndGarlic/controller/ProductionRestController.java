@@ -39,10 +39,10 @@ public class ProductionRestController {
         return "Data saved to session.";
     }
 
-    @GetMapping("/api/data")
-    public List<ProductionDto> getData(HttpSession session) {
-
-        return dataService.getAllData(orders);
-    }
+//    @GetMapping("/api/data")
+//    public List<ProductionDto> getData(HttpSession session) {
+//
+//        return dataService.getAllData(orders);
+//    }
 
 }

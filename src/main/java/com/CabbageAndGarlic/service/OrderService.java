@@ -5,8 +5,11 @@ import com.CabbageAndGarlic.dto.OrderDto;
 import com.CabbageAndGarlic.dto.OrderItemDto;
 import com.CabbageAndGarlic.entity.Order;
 import com.CabbageAndGarlic.entity.OrderItem;
+import com.CabbageAndGarlic.entity.ProductionPlan;
+import com.CabbageAndGarlic.entity.ProductionPlanOrderMap;
 import com.CabbageAndGarlic.repository.OrderItemRepository;
 import com.CabbageAndGarlic.repository.OrderRepository;
+import com.CabbageAndGarlic.repository.ProductionPlanOrderMapRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,13 +24,11 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
-
+    private final ProductionPlanOrderMapRepository productionPlanOrderMapRepository;
 
     public List<Order> findAll() {
         return orderRepository.findAll();
     }
-
-
 
     @Transactional
     public void saveOrder(OrderDto orderDto) {
@@ -56,9 +57,6 @@ public class OrderService {
                 .orElseThrow(() -> new IllegalStateException("수주 번호를 찾을 수 없습니다.: " + orderNumber));
         return orderItemRepository.findByOrderNumber(order);
     }
-
-
-    private final ProductionPlanOrderMapRepository productionPlanOrderMapRepository;
 
     public List<Order> getOrder(ProductionPlan productionPlan) {
         List<ProductionPlanOrderMap> productionPlanOrderMaps = productionPlanOrderMapRepository.findProductionPlanOrderMapByProductionPlanNumber(productionPlan);
