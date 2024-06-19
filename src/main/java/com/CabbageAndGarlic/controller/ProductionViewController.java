@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 @RequestMapping("/production")
 @RequiredArgsConstructor
-public class ProductionController {
+public class ProductionViewController {
 
     @GetMapping
     public String production() {
