@@ -9,14 +9,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class ProductViewController {
 
-    @GetMapping(value = "/product")
+    @GetMapping(value = "/product")//완제품
     public String product(Model model) {
 
         return "product/ProductView";
     }
 
 
-    @GetMapping(value = "/material")
+    @GetMapping(value = "/material")//지재
     public String material(Model model) {
 
         return "product/MaterialView";

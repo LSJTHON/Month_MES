@@ -26,6 +26,7 @@
 </th:block>
 <th:block layout:fragment="script">
     <script>
+        let materialCodes = [];
 
         $(document).ready(function () {
             table = $('#table').DataTable({
@@ -76,16 +77,9 @@
                 ajax: {
                     url: 'http://localhost:8080/api/materials',
                     type: 'GET',
-                    dataFilter: function (res) {
-                        var json = $.parseJSON(res);
-
-                        var data = {
-                            'draw': json.data.draw,
-                            'recordsTotal': json.data.recordsTotal,
-                            'recordsFiltered': json.data.recordsFiltered,
-                            'data': json.data,
-                        };
-                        return JSON.stringify(data);
+                    dataSrc: function (json) {
+                        materialCodes = json.data.map(material => material.materialCode);
+                        return json.data;
                     }
                 },
                 columns: [
@@ -97,14 +91,6 @@
                 }
             });
 
-            // $('#table tbody').on('click', 'tr', function () {
-            //     if ($(this).hasClass('selected')) {
-            //         $(this).removeClass('selected');
-            //     } else {
-            //         table.$('tr.selected').removeClass('selected');
-            //         $(this).addClass('selected');
-            //     }
-            // });
         });
 
 
@@ -118,6 +104,12 @@
                 alert('모든 필드를 채워주세요.');
                 return;
             }
+
+            if (materialCodes.includes(materialCode)) {
+                alert('이미 존재하는 자재코드입니다.');
+                return;
+            }
+
 
             const data = {
                 materialCode: materialCode,

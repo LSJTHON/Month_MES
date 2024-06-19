@@ -3,8 +3,31 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/layout1}">
 
+<th:block layout:fragment="style">
+    <style>
+
+        .product-search-table th{
+            padding: 5px;
+            text-align: center;
+            vertical-align: middle;
+            width: 5%;
+        }
+        .product-search-table td {
+            padding: 5px;
+            text-align: center;
+            vertical-align: middle;
+            width: 5.5%;
+        }
+        .product-search-table input {
+            width: 50%;
+            box-sizing: border-box;
+        }
+    </style>
+</th:block>
+
 <th:block layout:fragment="script">
     <script>
+        let productCodes = [];
 
         $(document).ready(function () {
             table = $('#table').DataTable({
@@ -55,16 +78,9 @@
                 ajax: {
                     url: 'http://localhost:8080/api/products',
                     type: 'GET',
-                    dataFilter: function (res) {
-                        var json = $.parseJSON(res);
-
-                        var data = {
-                            'draw': json.data.draw,
-                            'recordsTotal': json.data.recordsTotal,
-                            'recordsFiltered': json.data.recordsFiltered,
-                            'data': json.data,
-                        };
-                        return JSON.stringify(data);
+                    dataSrc: function (json) {
+                        productCodes = json.data.map(product => product.productCode);
+                        return json.data;
                     }
                 },
                 columns: [
@@ -81,14 +97,6 @@
                 }
             });
 
-            // $('#table tbody').on('click', 'tr', function () {
-            //     if ($(this).hasClass('selected')) {
-            //         $(this).removeClass('selected');
-            //     } else {
-            //         table.$('tr.selected').removeClass('selected');
-            //         $(this).addClass('selected');
-            //     }
-            // });
         });
 
 
@@ -105,6 +113,10 @@
             // 유효성 검사 추가
             if (!productCode || !productName || !maxAmount || !minAmount || !unitPrice || !sellingPrice || !bom) {
                 alert('모든 필드를 채워주세요.');
+                return;
+            }
+            if (productCodes.includes(productCode)) {
+                alert('이미 존재하는 품목코드입니다.');
                 return;
             }
 
@@ -170,7 +182,7 @@
 
                 </div>
                 <div class="container1">
-                    <table id="table" class="table table-striped table-bordered table-hover">
+                    <table id="table" class="table table-striped table-bordered product-search-table">
                     </table>
                 </div>
             </div>
