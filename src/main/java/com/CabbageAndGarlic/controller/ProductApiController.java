@@ -1,5 +1,6 @@
 package com.CabbageAndGarlic.controller;
 
+import com.CabbageAndGarlic.dto.AddMaterialRequest;
 import com.CabbageAndGarlic.dto.AddProductRequest;
 import com.CabbageAndGarlic.dto.ProductListViewResponse;
 import com.CabbageAndGarlic.service.MaterialService;
@@ -27,6 +28,21 @@ public class ProductApiController {
         return getAllProducts;
     }
 
+    @PostMapping("/createProduct")// 완제품 저장
+    public String saveProduct(@RequestBody AddProductRequest addProductRequest) {
+        System.out.println(addProductRequest.getProductName()+"dwofjwioefjioefjioefjioefjifjioefjiofjiofj");
+        productService.saveProduct(addProductRequest);
+        return "등록 성공";
+    }
+
+    @DeleteMapping("/products/{productCode}")// 완제품 삭제
+    public ResponseEntity<Void> deleteProduct(@PathVariable String productCode) {
+        productService.delete(productCode);
+
+        return ResponseEntity.ok()
+                .build();
+    }
+
     @GetMapping("/materials") // 자재 조회
     public Map<String,Object> getAllMaterial() {
 
@@ -37,20 +53,21 @@ public class ProductApiController {
         return getAllMaterial;
     }
 
-    @PostMapping("/createProduct")
-    public String saveOrder(@RequestBody AddProductRequest addProductRequest) {
-        System.out.println(addProductRequest.getProductName()+"dwofjwioefjioefjioefjioefjifjioefjiofjiofj");
-        productService.saveProduct(addProductRequest);
+    @PostMapping("/createMaterial")// 자재 저장
+    public String saveMaterial(@RequestBody AddMaterialRequest addMaterialRequest) {
+        System.out.println(addMaterialRequest.getMaterialCode()+"dwofjwioefjioefjioefjioefjifjioefjiofjiofj");
+        materialService.saveMaterial(addMaterialRequest);
         return "등록 성공";
     }
 
-    @DeleteMapping("/products/{productCode}")
-    public ResponseEntity<Void> deleteProduct(@PathVariable String productCode) {
-        productService.delete(productCode);
+    @DeleteMapping("/materials/{materialCode}")// 자재 삭제
+    public ResponseEntity<Void> deleteMaterial(@PathVariable String materialCode) {
+        materialService.deleteMaterial(materialCode);
 
         return ResponseEntity.ok()
                 .build();
     }
+
 
 
 }

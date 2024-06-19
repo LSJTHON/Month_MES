@@ -46,7 +46,7 @@
                     {
                         text: '품목 추가',
                         action: function (e, dt, node, config) {
-                            $('#addProductModal').modal('show'); // 모달 창을 띄움
+                            $('#addMaterialModal').modal('show'); // 모달 창을 띄움
                         }
                     },
                     {
@@ -55,9 +55,9 @@
                             var selectedRow = table.row({ selected: true });
                             if (selectedRow.any()) {
                                 var data = selectedRow.data();
-                                var productCode = data.productCode;
+                                var materialCode = data.materialCode;
                                 if (confirm('정말로 삭제하시겠습니까?')) {
-                                    deleteProduct(productCode);
+                                    deleteMaterial(materialCode);
                                 }
                             } else {
                                 alert('삭제할 행을 선택하세요.');
@@ -109,39 +109,29 @@
 
 
 
-        function saveProduct() {
-            const productCode = $('#productCode').val();
-            const productName = $('#productName').val();
-            const maxAmount = $('#maxAmount').val();
-            const minAmount = $('#minAmount').val();
-            const unitPrice = $('#unitPrice').val();
-            const sellingPrice = $('#sellingPrice').val();
-            const bom = $('#bom').val();
+        function saveMaterial() {
+            const materialCode = $('#materialCode').val();
+            const materialName = $('#materialName').val();
 
             // 유효성 검사 추가
-            if (!productCode || !productName || !maxAmount || !minAmount || !unitPrice || !sellingPrice || !bom) {
+            if (!materialCode || !materialName ) {
                 alert('모든 필드를 채워주세요.');
                 return;
             }
 
             const data = {
-                productCode: productCode,
-                productName: productName,
-                maxAmount: maxAmount,
-                minAmount: minAmount,
-                unitPrice: unitPrice,
-                sellingPrice: sellingPrice,
-                bom: bom
+                materialCode: materialCode,
+                materialName: materialName
             };
 
             $.ajax({
-                url: '/api/createProduct',
+                url: '/api/createMaterial',
                 type: 'POST',
                 contentType: 'application/json',
                 data: JSON.stringify(data),
                 success: function (response) {
                     alert('등록 완료되었습니다.');
-                    location.replace('/product');
+                    location.replace('/material');
                 },
                 error: function (xhr, status, error) {
                     console.error('Error: ' + error);
@@ -151,9 +141,9 @@
         }
 
 
-        function deleteProduct(productCode) {
+        function deleteMaterial(materialCode) {
             $.ajax({
-                url: `/api/products/${productCode}`,
+                url: `/api/materials/${materialCode}`,
                 type: 'DELETE',
                 success: function (response) {
                     alert('삭제가 완료되었습니다');
@@ -194,42 +184,22 @@
         </div>
     </div>
     <!-- Modal -->
-    <div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductLabel" aria-hidden="true">
+    <div class="modal fade" id="addMaterialModal" tabindex="-1" aria-labelledby="addMaterialLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label for="productCode" class="form-label">품목코드</label>
-                        <input type="text" class="form-control" id="productCode" name="productCode">
+                        <label for="materialCode" class="form-label">품목코드</label>
+                        <input type="text" class="form-control" id="materialCode" name="materialCode">
                     </div>
                     <div class="mb-3">
-                        <label for="productName" class="form-label">품목명</label>
-                        <input type="text" class="form-control" id="productName" name="productName">
-                    </div>
-                    <div class="mb-3">
-                        <label for="minAmount" class="form-label">최소수량</label>
-                        <input type="text" class="form-control" id="minAmount" name="minAmount">
-                    </div>
-                    <div class="mb-3">
-                        <label for="maxAmount" class="form-label">최대수량</label>
-                        <input type="text" class="form-control" id="maxAmount" name="maxAmount">
-                    </div>
-                    <div class="mb-3">
-                        <label for="unitPrice" class="form-label">단가</label>
-                        <input type="text" class="form-control" id="unitPrice" name="unitPrice">
-                    </div>
-                    <div class="mb-3">
-                        <label for="sellingPrice" class="form-label">판매가</label>
-                        <input type="text" class="form-control" id="sellingPrice" name="sellingPrice">
-                    </div>
-                    <div class="mb-3">
-                        <label for="bom" class="form-label">BOM</label>
-                        <input type="text" class="form-control" id="bom" name="bom">
+                        <label for="materialName" class="form-label">품목명</label>
+                        <input type="text" class="form-control" id="materialName" name="materialName">
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-                    <button type="button" class="btn btn-primary" onclick="saveProduct()">저장</button>
+                    <button type="button" class="btn btn-primary" onclick="saveMaterial()">저장</button>
                 </div>
             </div>
         </div>
