@@ -35,8 +35,7 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
-	implementation group: 'com.vonage', name: 'client', version: '6.1.0'
-
+	implementation 'net.nurigo:sdk:4.3.0'
 }
 
 tasks.named('test') {

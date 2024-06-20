@@ -1,33 +1,35 @@
 package com.CabbageAndGarlic.service;
 
-import com.vonage.client.VonageClient;
-import com.vonage.client.sms.MessageStatus;
-import com.vonage.client.sms.SmsSubmissionResponse;
-import com.vonage.client.sms.messages.TextMessage;
+
+import lombok.RequiredArgsConstructor;
+import net.nurigo.sdk.NurigoApp;
+import net.nurigo.sdk.message.model.Message;
+import net.nurigo.sdk.message.request.SingleMessageSendingRequest;
+import net.nurigo.sdk.message.response.SingleMessageSentResponse;
+import net.nurigo.sdk.message.service.DefaultMessageService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+
 @Service
+@RequiredArgsConstructor
 public class SmsService {
 
-    private final VonageClient vonageClient;
+    final DefaultMessageService messageService;
 
-    public SmsService(@Value("${vonage.apiKey}") String apiKey, @Value("${vonage.apiSecret}") String apiSecret) {
-        this.vonageClient = VonageClient.builder()
-                .apiKey(apiKey)
-                .apiSecret(apiSecret)
-                .build();
+    public SmsService() {
+        // 반드시 계정 내 등록된 유효한 API 키, API Secret Key를 입력해주셔야 합니다!
+        this.messageService = NurigoApp.INSTANCE.initialize("NCSL3KONHV7IYYFL", "CNDFEWYZ64TH9FGCYSIB4KWFJ92JBHC7", "https://api.coolsms.co.kr");
     }
 
-    public void sendSms(String to, String from, String text) {
-        TextMessage message = new TextMessage(from, to, text);
+    public void messageSend(String to, String text) {
+        Message message = new Message();
+        // 발신번호 및 수신번호는 반드시 01012345678 형태로 입력되어야 합니다.
+        message.setFrom("01072663760");
+        message.setTo(to);
+        message.setText(text);
 
-        SmsSubmissionResponse response = vonageClient.getSmsClient().submitMessage(message);
-
-        if (response.getMessages().get(0).getStatus() == MessageStatus.OK) {
-            System.out.println("Message sent successfully.");
-        } else {
-            System.out.println("Message failed with error: " + response.getMessages().get(0).getErrorText());
-        }
+        SingleMessageSentResponse response = this.messageService.sendOne(new SingleMessageSendingRequest(message));
+        System.out.println(response);
     }
 }

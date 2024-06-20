@@ -4,12 +4,15 @@ package com.CabbageAndGarlic.service;
 import com.CabbageAndGarlic.constant.Status;
 import com.CabbageAndGarlic.dto.ShippingDto;
 import com.CabbageAndGarlic.entity.Order;
+import com.CabbageAndGarlic.entity.OrderItem;
 import com.CabbageAndGarlic.entity.Shipping;
+import com.CabbageAndGarlic.repository.OrderItemRepository;
 import com.CabbageAndGarlic.repository.OrderRepository;
 import com.CabbageAndGarlic.repository.ShippingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,6 +22,8 @@ import java.util.stream.Collectors;
 public class ShippingService {
 
     private final ShippingRepository shippingRepository;
+
+    private final OrderService orderService;
 
     private final OrderRepository orderRepository;
 
@@ -34,22 +39,29 @@ public class ShippingService {
         orderRepository.saveAll(orders);
     }
 
-    public void createShippings(List<ShippingDto> shippingRequests) {
+    public void createShippings(List<ShippingDto> shippingRequests) throws IOException {
         for (ShippingDto request : shippingRequests) {
-            Order order = orderRepository.findById(request.getOrderNumber()).orElseThrow(() -> new RuntimeException("Order not found"));
+            Order order = orderRepository.findById(request.getOrderNumber())
+                    .orElseThrow(() -> new RuntimeException("Order not found"));
+
+            List<OrderItem> orderItems = orderService.findOrderItemsByOrderNumber(request.getOrderNumber());
+
             Shipping shipping = new Shipping();
             shipping.setOrderNumber(order);
             shipping.setShippingCompany(request.getShippingCompany());
             shipping.setShippingDate(LocalDate.parse(request.getShippingDate()));
             shippingRepository.save(shipping);
 
-//            System.out.println(order.getPhoneNumber()+"휴대전화번호 들어오나???ㅇ?ㅉㅇ?ㅉ?ㅇㅉ?ㅇ?ㅉ?ㅇㅉ?ㅇㅉ?ㅇㅉ??ㅉ");
-            // 문자 전송 기능 추가
-            String to = order.getPhoneNumber();
-            String from = "ManulNara BaechuGongju";
-            String text = "Sujubunho " + order.getOrderNumber() + " Unsongupche " + request.getShippingCompany() + "." + " RaendeomBakSeu baesongdoemida. Gidaehaseyo ke ";
-            smsService.sendSms(to, from, text);
 
+            String orderItemsInfo = "";
+            for(int i=0;i<orderItems.size();i++){
+                orderItemsInfo += orderItems.get(i).getProductName() + " " +orderItems.get(i).getAmount()+"개\n";
+            }
+
+            String body = "수주번호 " + order.getOrderNumber() + " \n운송업체 " + request.getShippingCompany()+"\n"+ orderItemsInfo +". 드럼통마렵농";
+
+            System.out.println(body);
+            //smsService.messageSend(order.getPhoneNumber(), body);    //문자 최종 전송 기본 30원 길면 50원이상
         }
     }
     // PendingShipment, SHIPPED 상태인 수주 정보만 조회
