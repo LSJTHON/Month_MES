@@ -22,4 +22,10 @@ public class ProductViewController {
         return "product/MaterialView";
     }
 
+    @GetMapping(value = "/process")//지재
+    public String processManage(Model model) {
+
+        return "processManagement/ProcessManageView";
+    }
+
 }

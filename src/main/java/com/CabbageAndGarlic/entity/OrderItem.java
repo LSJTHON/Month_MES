@@ -3,6 +3,8 @@ package com.CabbageAndGarlic.entity;
 import lombok.*;
 import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
+
 @Data
 @Entity
 @Getter
@@ -24,4 +26,10 @@ public class OrderItem {
     @ManyToOne
     @JoinColumn(name = "order_number", nullable = false)
     private Order orderNumber;  // 수주번호
+
+    @Column(name = "start_date")
+    private LocalDateTime startDate;  // 시작일
+
+    @Column(name = "end_date")
+    private LocalDateTime endDate;  // 종료일
 }
