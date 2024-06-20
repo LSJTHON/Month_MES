@@ -55,5 +55,4 @@ public class OrderService {
                 .orElseThrow(() -> new IllegalStateException("수주 번호를 찾을 수 없습니다.: " + orderNumber));
         return orderItemRepository.findByOrderNumber(order);
     }
-
 }

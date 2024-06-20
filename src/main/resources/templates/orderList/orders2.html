@@ -3,41 +3,34 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/layout1}">
 
-<!-- 스타일을 정의하는 섹션입니다 -->
 <th:block layout:fragment="style">
     <style>
-        /* 검색 필드를 포함한 섹션의 스타일 정의 */
-        .dt-search {
+
+        .dt-search{
             display: flex;
             margin-top: 10px;
         }
 
-        /* 큰 헤더의 스타일 정의 */
-        .h2-header {
+        .h2-header{
             margin-top: 50px;
         }
 
-        /* 폼 그룹 내 레이블의 스타일 정의 */
         .align-items-center .form-group label {
             margin-right: 10px;
         }
 
-        /* 폼 그룹 내 인풋 필드의 스타일 정의 */
         .align-items-center .form-group .form-control {
             margin-right: 10px;
         }
 
-        /* .form-row > .col-auto 클래스: 폼 행의 오른쪽 마진 정의 */
         .form-row > .col-auto {
             margin-right: 10px;
         }
 
-        /* .form-row > .col-auto:last-child 클래스: 폼 행의 마지막 자식의 오른쪽 마진 제거 */
         .form-row > .col-auto:last-child {
             margin-right: 0;
         }
 
-        /* 인풋 필드 아래 작은 정보 텍스트의 스타일 정의 */
         .input-with-info small {
             position: absolute;
             left: 0;
@@ -45,144 +38,137 @@
             white-space: nowrap;
         }
 
-        /* 모달 창의 최대 너비 설정 */
         .modal-custom {
-            max-width: 50%;
+            max-width: 50%; /*모달 높이 설정값*/
         }
 
-        /* 모달 창의 최대 높이와 스크롤 설정 */
         .modal-body-scrollable {
-            max-height: 600px;
-            overflow-y: auto;
+            max-height: 600px; /*모달의 최대 높이*/
+            overflow-y: auto; /*세로 스크롤 가능하게 만들어줌*/
         }
 
-        /* 제품 필드 행의 스타일 정의 */
         .product-field-row {
             display: flex;
             align-items: center;
             margin-bottom: 10px;
         }
 
-        /* 제품 필드 행의 컬럼 스타일 정의 */
         .product-field-row .col {
             margin-right: 10px;
-            top: 10px; /* input 태그와 제품 추가 버튼이 높이가 맞지 않아 상단 여백 추가 */
+            top: 10px; /*input 태그와 제품추가 버튼이랑 높이가 안맞아서 상단 여백 추가 */
         }
 
-        /* 제품 필드 행에서 오른쪽 정렬 요소의 스타일 정의 */
         .product-field-row .col-auto {
             display: flex;
             align-items: center;
             margin-left: auto;
             position: relative;
-            top: 10px; /* input 태그와 삭제 버튼이 높이가 맞지 않아 상단 여백 추가 */
+            top: 10px; /* input 태그랑 삭제버튼이랑 높이가 안맞아서 상단 여백 추가 */
         }
 
-        /* 달력의 스타일 정의 */
         #calendar {
             width: 100%;
             height: 100%;
             max-height: 600px; /* 모달 높이에 맞추기 */
         }
 
-        /* 모달 창의 내부 여백 추가 */
         .modal-body {
-            padding: 15px;
+            padding: 15px; /* 모달 바디에 여백 추가 */
         }
 
-        /* 큰 모달 창의 최대 너비 설정 */
         .modal-lg {
-            max-width: 80%;
+            max-width: 80%; /* 모달의 가로 너비 조정 */
         }
 
-        /* 납품일 그룹의 스타일 정의 */
         .delivery-date-group {
             display: flex;
             align-items: center;
         }
 
-        /* 납품일 그룹 내 인풋 필드의 스타일 정의 */
         .delivery-date-group input {
             margin-right: 10px;
         }
 
-        /* 납품일 그룹 내 버튼의 스타일 정의 */
         .delivery-date-group button {
-            white-space: nowrap; /* 버튼 글자가 줄넘김되지 않도록 설정 */
+            white-space: nowrap; /* 버튼 글자 줄넘김 생기면 이걸로 해결 가능함 */
         }
 
-        /* 테이블 헤더의 스타일 정의 */
-        .order-search-table th {
+        .order-search-table th{
             padding: 5px;
             text-align: center;
             vertical-align: middle;
             width: 10%;
         }
 
-        /* 테이블 데이터 셀의 스타일 정의 */
-        .order-search-table td {
+        .order-search-table td{
             padding: 5px;
             text-align: center;
             vertical-align: middle;
             width: 10%;
         }
 
-        /* 테이블 내부의 인풋 필드 스타일 정의 */
-        .order-search-table input {
+        .order-search-table input{
             width: 50%;
-            box-sizing: border-box; /* 인풋 필드가 박스 크기에 맞춰지도록 설정 */
+            box-sizing: border-box;
         }
+
     </style>
 </th:block>
 
-<!-- 스크립트를 정의하는 섹션입니다 -->
 <th:block layout:fragment="script">
     <script>
-        var table = null; // 테이블을 저장할 변수 선언
+        var table = null;
         $(document).ready(function () {
-            /* 테이블 초기화 및 설정 */
+            /*테이블 초기화 및 설정하는거 테이블 만들때 여기부터 시작함*/
             var table = $('#table').DataTable({
-                dom: 'Bfrtip', // B - 버튼, f - 필터(검색창), r - 정보 표시, t - 테이블, i - 정보 요약, p - 페이징 컨트롤
+                dom: 'Bfrtip',
                 buttons: [
                     {
                         extend: 'colvis',
-                        text: "선택", /* 컬럼 선택한 것만 보이도록 만들어줌 */
+                        text: "선택", /*컬럼 선택한것만 보이도록 만들어줌*/
                     },
                     {
                         extend: 'copy',
                         text: "복사",
                     },
                     {
-                        extend: 'excel', // 엑셀 다운로드 버튼 추가
+                        extend: 'excel',
                         text: "엑셀다운로드",
                     },
                     {
                         text: '수주 추가',
                         action: function (e, dt, node, config) {
-                            $('#addOrderModal').modal('show'); // 수주 추가 모달을 보여줌
+                            $('#addOrderModal').modal('show');
                         }
                     },
                     {
                         text: '작업 계획',
                         action: function (e, dt, node, config) {
-                            $('#addCalendarModal').modal('show'); // 작업 계획 모달을 보여줌
+                            $('#addCalendarModal').modal('show');
                         }
                     },
                 ],
-                select: true, // 행 선택 기능 활성화
-                searching: true, // 검색 기능 활성화
-                responsive: true, // 반응형 테이블 활성화
-                destroy: true, // 기존 테이블 초기화
-                processing: true, // 처리 중 메시지 표시
-                serverSide: false, // 서버 사이드 처리 비활성화
-                ordering: true, // 정렬 기능 활성화
-                scrollX: true, // 가로 스크롤 활성화
-                info: false, // 정보 메시지 비활성화
+                // responsive: true,
+                // destroy: true,
+                select: true,  //행 선택 기능
+                // processing: true,
+                // serverSide: false,
+                // ordering: true,
+                // scrollX: true,
+                // info: false,
+                searching: true,
+                responsive: true,
+                destroy: true,
+                processing: true,
+                serverSide: false,
+                ordering: true,
+                scrollX: true,
+                info: false,
                 ajax: {
-                    url: 'http://localhost:8080/api/orders', // 데이터 불러올 URL
+                    url: 'http://localhost:8080/api/orders',
                     type: 'GET',
+                    //이 데이터는 json 형식의 정보를 datatables의 형식에 맞게 필터링 해주는거 이거 안해주면 데이터 못받음
                     dataFilter: function (res) {
-                        // JSON 형식의 데이터를 DataTables 형식에 맞게 필터링
                         var json = $.parseJSON(res);
                         var data = {
                             'draw': json.data.draw,
@@ -200,7 +186,7 @@
                     {title: "담당자", data: 'manager'},
                     {
                         title: "수주 확정일", data: 'regTime', render: function (data, type, row) {
-                            // 날짜와 시간을 년-월-일 시간:분 형식으로 변환
+                            // LocalDateTime을 년월일시간으로 변경
                             var date = new Date(data);
                             var year = date.getFullYear();
                             var month = ('0' + (date.getMonth() + 1)).slice(-2);
@@ -214,75 +200,76 @@
                     {title: "납품일", data: 'deliveryDate'},
                 ],
                 language: {
-                    search: "검색:", // 검색 필드의 레이블
-                    emptyTable: "선택된 수주 정보가 없습니다", // 테이블이 비어 있을 때의 메시지
-                    zeroRecords: "검색 결과가 없습니다" // 검색 결과가 없을 때의 메시지
+                    search: "검색:",
+                    emptyTable: "선택된 수주 정보가 없습니다", // 처음 페이지 로드 시 조회내용이 없을때 나오는거
+                    zeroRecords: "검색 결과가 없습니다" // 검색 결과가 없을 떄 나오는거
                 }
             });
 
-            // 두 번째 테이블 초기화 및 설정
             var table2 = $('#table2').DataTable({
                 paging: false, // 페이징 기능 비활성화
                 searching: false, // 검색 기능 비활성화
                 info: false, // 정보 메시지 비활성화
-                responsive: true, // 반응형 테이블 활성화
-                destroy: true, // 기존 테이블 초기화
-                processing: true, // 처리 중 메시지 표시
-                ordering: true, // 정렬 기능 활성화
-                serverSide: false, // 서버 사이드 처리 비활성화
-                scrollX: true, // 가로 스크롤 활성화
+                responsive: true,
+                destroy: true,
+                processing: true,
+                ordering: true,
+                serverSide: false,
+                scrollX: true,
+
 
                 columns: [
                     {title: "상품명", data: 'productName'},
                     {
                         title: "수량", data: 'amount', render: function (data, type, row) {
-                            return data + ' box'; // 수량 뒤에 ' box' 추가
+                            return data + 'box';
                         }
                     }
                 ],
                 language: {
-                    search: "검색:", // 검색 필드의 레이블
-                    emptyTable: "선택된 상품 정보가 없습니다" // 테이블이 비어 있을 때의 메시지
+                    search: "검색:",
+                    emptyTable: "선택된 상품 정보가 없습니다"
                 }
             });
 
-            // 첫 번째 테이블의 행 클릭 이벤트 설정
+            // 테이블 행 클릭 이벤트임
             $('#table tbody').on('click', 'tr', function () {
-                var data = table.row(this).data(); // 클릭한 행의 데이터를 가져옴
+                var data = table.row(this).data();  //클릭한 행 this 로 인식하고 값 가져옴
                 loadOrderItems(data.orderNumber); // 클릭된 수주 번호에 대한 주문 품목 가져오기
             });
 
-            // 특정 수주 번호에 대한 수주 목록 가져오기
+            //특정 수주 번호에 대한 수주목록 가져오기
             function loadOrderItems(orderNumber) {
                 $.ajax({
-                    url: `/api/orderItems/${orderNumber}`, // 컨트롤러 요청 URL
+                    url: `/api/orderItems/${orderNumber}`, //컨트롤러 요청 url
                     type: 'GET',
-                    success: function (data) { // 요청이 성공했을 때 실행
-                        table2.clear().rows.add(data).draw(); // 데이터로 두 번째 테이블을 채움
+                    success: function (data) {  //요청이 성공적으로 보내졌을 시 실행
+                        table2.clear().rows.add(data).draw(); // 데이터로 테이블2를 채움
                     },
                     error: function () {
-                        alert('상품 정보를 불러오는 데 실패했습니다.'); // 오류 메시지 출력
+                        alert('상품 정보를 불러오는 데 실패했습니다.');
                     }
                 });
             }
         });
 
-        // 제품 추가 클릭 시 유효성 검사 및 필드 추가
-        let productCount = 1; // 초기 제품 필드 갯수
-        const maxProducts = 5; // 최대 제품 필드 갯수
 
+        let productCount = 1; // input 태그 갯수 초기값
+        const maxProducts = 5; // input 태그 최대갯수 설정값 ( 추가폼 포함 5개까지 가능함 )
+
+        //제품추가 클릭 시 최소 20개 최대 1000개 유효성 검사 기능
         $(document).ready(function () {
             $('#addProductButton').click(function () {
-                const productQuantity = parseInt($('#productQuantity1').val()); // 제품 수량 값 가져오기
-                if (productQuantity < 20 || productQuantity > 1000) { // 유효성 검사
+                const productQuantity = parseInt($('#productQuantity1').val());  //제품 추가 눌렀을 시 해당 값 가져옴
+                if (productQuantity < 20 || productQuantity > 1000) {
                     alert('수량은 20개부터 1000개까지 주문 가능합니다.');
                     return;
                 }
 
-                if (productCount < maxProducts) { // 최대 제품 수를 넘지 않았을 때
-                    const productName = $('#productName1').val(); // 제품명 값 가져오기
+                if (productCount < maxProducts) {  //최대갯수 넘었을 시 제품 추가 불가능
+                    const productName = $('#productName1').val(); //제품이름의 값을 가져옴
 
-                    // 새로운 제품 필드를 추가
+                    // 제품 추가 시 추가한 값 input으로 추가
                     $('#productFields').append(`
                 <div class="product-field-row" id="productField${productCount + 1}">
                     <div class="col">
@@ -303,7 +290,7 @@
                     </div>
                 </div>
             `);
-                    productCount++; // 제품 필드 갯수 증가
+                    productCount++;
                     // 초기 입력 필드 초기화
                     $('#productName1').val('양배추즙');
                     $('#productQuantity1').val('40');
@@ -312,154 +299,149 @@
                 }
             });
 
-            // 삭제 버튼 클릭 이벤트 설정
             $(document).on('click', '.removeProductButton', function () {
-                var id = $(this).data('id'); // 삭제할 필드의 ID 가져오기
-                $('#productField' + id).remove(); // 해당 필드 삭제
-                productCount--; // 제품 필드 갯수 감소
+                var id = $(this).data('id');
+                $('#productField' + id).remove();
+                productCount--;
             });
         });
 
-        // 새로운 수주를 저장하는 함수
+        // 기존 saveOrder 함수 수정 없이 추가된 코드
         function saveOrder() {
-            const orderNumber = new Date().getTime(); // 현재 타임스탬프를 사용하여 수주번호 생성
-            const client = $('#client').val(); // 업체명 값 가져오기
-            const phoneNumber = $('#phoneNumber').val(); // 전화번호 값 가져오기
-            const manager = $('#manager').val(); // 담당자 값 가져오기
-            const deliveryDate = $('#deliveryDate').val(); // 납품일 값 가져오기
-            const orderItems = []; // 주문 품목 배열 초기화
+            const orderNumber = new Date().getTime();  // 예시로 현재 타임스탬프를 사용하여 수주번호 생성
+            const client = $('#client').val();
+            const phoneNumber = $('#phoneNumber').val();
+            const manager = $('#manager').val();
+            const deliveryDate = $('#deliveryDate').val(); // 납품일 추가
+            const orderItems = [];
 
-            // 제품 필드들을 반복하면서 값을 가져옴
             $('#productFields').children().each(function () {
-                const productName = $(this).find('select').val(); // 제품명 값 가져오기
-                const productQuantity = $(this).find('input').val(); // 제품 수량 값 가져오기
+                const productName = $(this).find('select').val();
+                const productQuantity = $(this).find('input').val();
                 orderItems.push({
                     productName: productName,
                     amount: productQuantity
                 });
             });
 
-            // 수주 데이터를 객체로 생성
             const orderData = {
                 orderNumber: orderNumber,
                 client: client,
-                phoneNumber: phoneNumber, // 연락처
-                manager: manager, // 담당자
-                deliveryDate: deliveryDate, // 납품일
-                orderItems: orderItems // 주문 품목들
+                phoneNumber: phoneNumber,  //연락처
+                manager: manager,  //담당자
+                deliveryDate: deliveryDate, // 납품일 추가
+                orderItems: orderItems
             };
-            console.log(orderData); // 생성된 수주 데이터 로그 출력
+            console.log(orderData);
 
-            // 수주 데이터를 서버에 전송
             $.ajax({
-                url: '/api/createOrder', // 수주 등록 요청 URL
+                url: '/api/createOrder',
                 type: 'POST',
                 contentType: 'application/json',
-                data: JSON.stringify(orderData), // 수주 데이터를 JSON 형식으로 변환하여 전송
+                data: JSON.stringify(orderData),
                 success: function (response) {
-                    alert(response); // 성공 시 응답 메시지 출력
-                    location.reload(); // 페이지 새로고침
+                    alert(response);
+                    location.reload();
                 },
                 error: function (xhr, status, error) {
-                    alert('Error: ' + error); // 에러 메시지 출력
+                    alert('Error: ' + error);
                 }
             });
         }
 
-        // FullCalendar 초기화 및 설정
+        // 새로운 FullCalendar 스크립트
         document.addEventListener('DOMContentLoaded', function () {
-            var calendarEl = document.getElementById('calendar'); // 달력 요소 가져오기
+            var calendarEl = document.getElementById('calendar');
             var colors = ['#2e4053', '#1c2833', '#6c3483', '#1f618d',]; // 사용할 어두운 색상 배열
 
-            var colorIndex = 0; // 색상 인덱스 초기화
+            var colorIndex = 0;
             var calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'dayGridMonth', // 초기 달력 뷰 설정
+
+                initialView: 'dayGridMonth',
 
                 datesSet: function(dateInfo) {
                     // 모든 날짜 셀에 대해 이벤트 리스너 추가
                     var cells = document.querySelectorAll('.fc-daygrid-day');
                     cells.forEach(function(cell) {
                         cell.addEventListener('mouseenter', function() {
-                            // 마우스가 셀에 들어갔을 때 배경색 변경
-                            cell.style.backgroundColor = '#e3f2fd';
+                            // 마우스가 셀에 들어갔을 때 실행할 코드
+                            cell.style.backgroundColor = '#e3f2fd'; // 예: 배경색 변경
                         });
                         cell.addEventListener('mouseleave', function() {
-                            // 마우스가 셀에서 나갔을 때 배경색 원래대로
-                            cell.style.backgroundColor = '';
+                            // 마우스가 셀에서 나갔을 때 실행할 코드
+                            cell.style.backgroundColor = ''; // 배경색을 원래대로
                         });
                     });
                 },
 
+
                 dateClick: function (info) {
-                    var selectedDate = info.dateStr; // 클릭한 날짜 가져오기
+                    var selectedDate = info.dateStr;
                     console.log(selectedDate);
-                    $('#deliveryDate').val(selectedDate); // 납품일 인풋 필드에 선택된 날짜 설정
-                    $('#addCalendarModal').modal('hide'); // 달력 모달 닫기
+                    $('#deliveryDate').val(selectedDate);
+                    $('#addCalendarModal').modal('hide');
                 },
 
                 events: function (fetchInfo, successCallback, failureCallback) {
+
                     $.ajax({
-                        url: '/api/orderCalendar', // 이벤트 데이터를 가져올 URL
+                        url: '/api/orderCalendar',
                         type: 'GET',
                         success: function (data) {
                             var events = data.map(function (order) {
                                 var endDate = new Date(order.deliveryDate);
                                 var startDate = new Date(order.deliveryDate);
-                                startDate.setDate(startDate.getDate() - 2); // 3일 전부터 시작
+                                startDate.setDate(startDate.getDate() - 2); // 3일 전부터 시작 숫자만 수정하면 1싸이클 수정 가능함
 
-                                // end날짜 포함 안 되어서 하루 추가해야 함
+                                // end날짜 포함 안되서 하루 추가해야함
                                 endDate.setDate(endDate.getDate() + 1);
 
-                                // 색깔 순서대로 들어가게 설정
+                                // 색깔 순서대로 들어가게 해주는놈
                                 var color = colors[colorIndex];
                                 colorIndex = (colorIndex + 1) % colors.length;
 
                                 return {
                                     title: `수주번호: ${order.orderNumber}, 업체명: ${order.client}`,
-                                    start: startDate.toISOString().split('T')[0], // 달력에 시작 날짜 설정
-                                    end: endDate.toISOString().split('T')[0], // 달력에 종료 날짜 설정
-                                    backgroundColor: color // 이벤트 배경색 설정
+                                    start: startDate.toISOString().split('T')[0],    //최종적으로 달력에 시작날짜 가로바 생성
+                                    end: endDate.toISOString().split('T')[0],        //최종적으로 달력에 시작날짜 가로바 생성
+                                    backgroundColor: color // 이벤트의 리스트로 순서대로 생성함
                                 };
                             });
-                            successCallback(events); // 성공 시 이벤트 추가
+                            successCallback(events);
                         },
                         error: function () {
-                            failureCallback(); // 실패 시 콜백 호출
+                            failureCallback();
                         }
                     });
                 }
             });
 
             $('#addCalendarModal').on('shown.bs.modal', function () {
-                calendar.render(); // 달력 렌더링
+                calendar.render();
             });
 
-            $('#selectDeliveryDate').click(function () { // 수주 추가에서 버튼 클릭 시 달력 모달 열기
+            $('#selectDeliveryDate').click(function () { //수주추가에서 버튼 클릭 시 달력 모달 생기게 해줌
                 $('#addCalendarModal').modal('show');
             });
         });
     </script>
-</th:block>
 
-<!-- 본문 내용을 정의하는 섹션입니다 -->
 <div layout:fragment="content">
     <div class="main-panel">
         <div class="container-fluid">
 
-            <h2 class="h2-header">수주 현황 관리</h2> <!-- 큰 헤더 -->
+            <h2 class="h2-header">수주 현황 관리</h2>
 
-            <!-- 수주 정보를 표시하는 테이블 -->
             <table id="table" class="table table-striped table-bordered order-search-table"></table>
-            <!-- 수주 품목 정보를 표시하는 테이블 -->
             <table id="table2" class="table table-striped table-bordered order-search-table"></table>
 
-            <!-- 수주 추가 모달 창 -->
+            <!-- Start Order Modal1 -->
             <div class="modal fade" id="addOrderModal" tabindex="-1" aria-labelledby="addOrderModalLabel"
                  aria-hidden="true">
                 <div class="modal-dialog modal-custom">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="addOrderModalLabel">수주 추가</h5> <!-- 모달 제목 -->
+                            <h5 class="modal-title" id="addOrderModalLabel">수주 추가</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body modal-body-scrollable">
@@ -469,7 +451,7 @@
                             </div>
                             <div class="mb-3">
                                 <label for="phoneNumber" class="form-label">전화번호</label>
-                                <input type="text" class="form-control" id="phoneNumber" name="phoneNumber">
+                                <input type="text" class="form-control" id="phoneNumber" name="phneNumber">
                             </div>
                             <div class="mb-3">
                                 <label for="manager" class="form-label">담당자</label>
@@ -479,7 +461,9 @@
                                 <label for="deliveryDate" class="form-label">납품일</label>
                                 <div class="delivery-date-group">
                                     <input type="text" class="form-control" id="deliveryDate" name="deliveryDate">
-                                    <button class="btn btn-outline-secondary" type="button" id="selectDeliveryDate">작업 계획</button>
+                                    <button class="btn btn-outline-secondary" type="button" id="selectDeliveryDate">작업
+                                        계획
+                                    </button>
                                 </div>
                             </div>
                             <div class="product-field-row">
@@ -504,15 +488,15 @@
                             <div id="productFields"></div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-primary" onclick="saveOrder()">저장</button> <!-- 저장 버튼 -->
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button> <!-- 닫기 버튼 -->
+                            <button type="button" class="btn btn-primary" onclick="saveOrder()">저장</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
                         </div>
                     </div>
                 </div>
             </div>
-            <!-- 수주 추가 모달 창 끝 -->
+            <!--End Order Modal1-->
 
-            <!-- 작업 계획 모달 창 -->
+            <!--Start Calendar Modal2-->
             <div class="modal fade" id="addCalendarModal" tabindex="-1" aria-labelledby="addOrderModalLabel"
                  aria-hidden="true">
                 <div class="modal-dialog modal-lg">
@@ -521,16 +505,17 @@
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            <div id="calendar"></div> <!-- 달력 요소 -->
+                            <div id="calendar"></div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button> <!-- 닫기 버튼 -->
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
                         </div>
                     </div>
                 </div>
             </div>
-            <!-- 작업 계획 모달 창 끝 -->
+            <!--End Calendar Modal2-->
         </div>
     </div>
 </div>
+</th:block>
 </html>
