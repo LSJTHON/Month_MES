@@ -87,7 +87,10 @@
                 },
                 columns: [
                     { title: "자재코드", data: 'materialCode' },
-                    { title: "자재명", data: 'materialName' }
+                    { title: "자재명", data: 'materialName' },
+                    { title: "자재양", data: 'materialAmount',render:function(data,type,row){
+                        return data+"KG";
+                        } }
                 ],
                 language: {
                     search: "검색:"

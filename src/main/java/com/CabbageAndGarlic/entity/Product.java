@@ -24,23 +24,19 @@ public class Product {
     @Column(name = "min_amount", nullable = false)
     private Integer minAmount;  // 최대수량
 
-    @Column(name = "unit_price", nullable = false)
-    private Integer unitPrice;  // 단가
-
-    @Column(name = "selling_price", nullable = false)
-    private Integer sellingPrice;  // 판매가
+    @Column(name = "product_amount", nullable = false)
+    private Integer productAmount;  // 완제품 양
 
     @Column(name = "bom")
     private String bom;  // BOM
 
     @Builder
-    public Product(String productCode, String productName, int maxAmount, int minAmount, int unitPrice, int sellingPrice, String bom) {
+    public Product(String productCode, String productName, int maxAmount, int minAmount, String bom, int productAmount) {
         this.productCode = productCode;
         this.productName = productName;
         this.maxAmount = maxAmount;
         this.minAmount = minAmount;
-        this.unitPrice = unitPrice;
-        this.sellingPrice = sellingPrice;
+        this.productAmount = productAmount;
         this.bom = bom;
     }
 

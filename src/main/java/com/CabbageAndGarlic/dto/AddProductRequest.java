@@ -15,8 +15,6 @@ public class AddProductRequest {
     private  String productName;
     private  int maxAmount;
     private  int minAmount;
-    private  int unitPrice;
-    private  int sellingPrice;
     private  String bom;
     public Product toEntity(){
         return Product.builder()
@@ -24,8 +22,6 @@ public class AddProductRequest {
                 .productName(productName)
                 .maxAmount(maxAmount)
                 .minAmount(minAmount)
-                .unitPrice(unitPrice)
-                .sellingPrice(sellingPrice)
                 .bom(bom)
                 .build();
     }

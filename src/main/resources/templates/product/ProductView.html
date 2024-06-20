@@ -91,9 +91,9 @@
                     { title: "품목명", data: 'productName' },
                     { title: "최소수량", data: 'minAmount' },
                     { title: "최대수량", data: 'maxAmount' },
+                    { title: "완제품양", data: 'productAmount',render:function(data,type,row){
+                            return data+"BOX"; }},
                     { title: "BOM", data: 'bom' },
-                    { title: "원가", data: 'unitPrice' },
-                    { title: "판매가", data: 'sellingPrice' },
                 ],
                 language: {
                     search: "검색:"
@@ -109,12 +109,10 @@
             const productName = $('#productName').val();
             const maxAmount = $('#maxAmount').val();
             const minAmount = $('#minAmount').val();
-            const unitPrice = $('#unitPrice').val();
-            const sellingPrice = $('#sellingPrice').val();
             const bom = $('#bom').val();
 
             // 유효성 검사 추가
-            if (!productCode || !productName || !maxAmount || !minAmount || !unitPrice || !sellingPrice || !bom) {
+            if (!productCode || !productName || !maxAmount || !minAmount || !bom) {
                 alert('모든 필드를 채워주세요.');
                 return;
             }
@@ -128,8 +126,6 @@
                 productName: productName,
                 maxAmount: maxAmount,
                 minAmount: minAmount,
-                unitPrice: unitPrice,
-                sellingPrice: sellingPrice,
                 bom: bom
             };
 
@@ -211,14 +207,6 @@
                             <div class="mb-3">
                                 <label for="maxAmount" class="form-label">최대수량</label>
                                 <input type="text" class="form-control" id="maxAmount" name="maxAmount">
-                            </div>
-                            <div class="mb-3">
-                                <label for="unitPrice" class="form-label">단가</label>
-                                <input type="text" class="form-control" id="unitPrice" name="unitPrice">
-                            </div>
-                            <div class="mb-3">
-                                <label for="sellingPrice" class="form-label">판매가</label>
-                                <input type="text" class="form-control" id="sellingPrice" name="sellingPrice">
                             </div>
                             <div class="mb-3">
                                 <label for="bom" class="form-label">BOM</label>
