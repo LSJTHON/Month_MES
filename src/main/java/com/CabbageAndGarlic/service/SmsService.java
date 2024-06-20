@@ -7,7 +7,6 @@ import net.nurigo.sdk.message.model.Message;
 import net.nurigo.sdk.message.request.SingleMessageSendingRequest;
 import net.nurigo.sdk.message.response.SingleMessageSentResponse;
 import net.nurigo.sdk.message.service.DefaultMessageService;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 
@@ -28,7 +27,7 @@ public class SmsService {
         message.setFrom("01072663760");
         message.setTo(to);
         message.setText(text);
-
+        //문자 전송은 꺼놓으세요 돈나갑니다.
         SingleMessageSentResponse response = this.messageService.sendOne(new SingleMessageSendingRequest(message));
         System.out.println(response);
     }

@@ -52,14 +52,11 @@ public class ShippingService {
             shipping.setShippingDate(LocalDate.parse(request.getShippingDate()));
             shippingRepository.save(shipping);
 
-
             String orderItemsInfo = "";
             for(int i=0;i<orderItems.size();i++){
                 orderItemsInfo += orderItems.get(i).getProductName() + " " +orderItems.get(i).getAmount()+"개\n";
             }
-
-            String body = "수주번호 " + order.getOrderNumber() + " \n운송업체 " + request.getShippingCompany()+"\n"+ orderItemsInfo +". 드럼통마렵농";
-
+            String body = "수주번호 " + order.getOrderNumber() + " \n운송업체 " + request.getShippingCompany()+"\n"+ orderItemsInfo +" 맞짱뜨자 시발!";
             System.out.println(body);
             //smsService.messageSend(order.getPhoneNumber(), body);    //문자 최종 전송 기본 30원 길면 50원이상
         }
