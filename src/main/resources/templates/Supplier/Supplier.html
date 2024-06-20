@@ -1,16 +1,206 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout/layout1}">
-
-<th:block layout:fragment="script">
-    <script>
-
-    </script>
-</th:block>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>발주처 관리</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+        .action-buttons {
+            margin-top: 10px;
+        }
+        .pagination {
+            margin-top: 10px;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
 <body>
-<div layout:fragment="content">
+<h1>발주처 관리</h1>
 
+<div>
+    <label for="searchCategory">검색 기준:</label>
+    <select id="searchCategory">
+        <option value="supplier_code">발주처 코드</option>
+        <option value="supplier_name">발주처 명</option>
+        <option value="material_name">품목명</option>
+    </select>
+    <input type="text" id="searchQuery">
+    <button onclick="searchSupplier()">검색</button>
 </div>
+
+<table id="supplierTable">
+    <thead>
+    <tr>
+        <th>발주처 코드</th>
+        <th>발주처 명</th>
+        <th>품목코드</th>
+        <th>품목명</th>
+        <th>최소수량</th>
+        <th>최대수량</th>
+        <th>단가</th>
+    </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<div class="action-buttons">
+    <button onclick="showAddForm()">추가</button>
+    <button onclick="deleteSelected()">삭제</button>
+    <button onclick="downloadExcel()">엑셀 다운로드</button>
+</div>
+
+<div class="pagination">
+    <button onclick="prevPage()">이전</button>
+    <span id="currentPage">1</span>
+    <button onclick="nextPage()">다음</button>
+</div>
+
+<div id="addForm" style="display:none;">
+    <h2>발주처 추가</h2>
+    <form id="supplierForm">
+        <label for="supplierCode">발주처 코드:</label>
+        <input type="text" id="supplierCode" name="supplierCode" required>
+        <br>
+        <label for="supplierName">발주처 명:</label>
+        <input type="text" id="supplierName" name="supplierName" required>
+        <br>
+        <label for="materialCode">품목코드:</label>
+        <input type="text" id="materialCode" name="materialCode" required>
+        <br>
+        <label for="materialName">품목명:</label>
+        <input type="text" id="materialName" name="materialName" required>
+        <br>
+        <label for="minAmount">최소수량:</label>
+        <input type="text" id="minAmount" name="minAmount" required>
+        <br>
+        <label for="maxAmount">최대수량:</label>
+        <input type="text" id="maxAmount" name="maxAmount" required>
+        <br>
+        <label for="unitPrice">단가:</label>
+        <input type="text" id="unitPrice" name="unitPrice" required>
+        <br>
+        <button type="submit">저장</button>
+        <button type="button" onclick="hideAddForm()">취소</button>
+    </form>
+</div>
+
+<script>
+    $(document).ready(function() {
+        fetchSuppliers();
+    });
+
+    function fetchSuppliers() {
+        $.ajax({
+            url: '/supplier-manages/all',
+            method: 'GET',
+            success: function(data) {
+                const supplierTableBody = $('#supplierTable tbody');
+                supplierTableBody.empty();
+                data.forEach(supplier => {
+                    const row = `
+                            <tr>
+                                <td>${supplier.supplierCode}</td>
+                                <td>${supplier.supplierName}</td>
+                                <td>${supplier.materialCode}</td>
+                                <td>${supplier.materialName}</td>
+                                <td>${supplier.minAmount}</td>
+                                <td>${supplier.maxAmount}</td>
+                                <td>${supplier.unitPrice}</td>
+                            </tr>
+                        `;
+                    supplierTableBody.append(row);
+                });
+            }
+        });
+    }
+
+    function searchSupplier() {
+        const category = $('#searchCategory').val();
+        const query = $('#searchQuery').val();
+        $.ajax({
+            url: `/supplier-manages/search?category=${category}&query=${query}`,
+            method: 'GET',
+            success: function(data) {
+                const supplierTableBody = $('#supplierTable tbody');
+                supplierTableBody.empty();
+                data.forEach(supplier => {
+                    const row = `
+                            <tr>
+                                <td>${supplier.supplierCode}</td>
+                                <td>${supplier.supplierName}</td>
+                                <td>${supplier.materialCode}</td>
+                                <td>${supplier.materialName}</td>
+                                <td>${supplier.minAmount}</td>
+                                <td>${supplier.maxAmount}</td>
+                                <td>${supplier.unitPrice}</td>
+                            </tr>
+                        `;
+                    supplierTableBody.append(row);
+                });
+            }
+        });
+    }
+
+    function showAddForm() {
+        $('#addForm').show();
+    }
+
+    function hideAddForm() {
+        $('#addForm').hide();
+    }
+
+    function deleteSelected() {
+        // Implement delete functionality
+    }
+
+    function downloadExcel() {
+        // Implement Excel download functionality
+    }
+
+    function prevPage() {
+        // Implement previous page functionality
+    }
+
+    function nextPage() {
+        // Implement next page functionality
+    }
+
+    $('#supplierForm').on('submit', function(event) {
+        event.preventDefault();
+        const supplier = {
+            supplierCode: $('#supplierCode').val(),
+            supplierName: $('#supplierName').val(),
+            materialCode: $('#materialCode').val(),
+            materialName: $('#materialName').val(),
+            minAmount: $('#minAmount').val(),
+            maxAmount: $('#maxAmount').val(),
+            unitPrice: $('#unitPrice').val()
+        };
+
+        $.ajax({
+            url: '/supplier-manages',
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(supplier),
+            success: function() {
+                fetchSuppliers();
+                hideAddForm();
+                $('#supplierForm')[0].reset();
+            }
+        });
+    });
+</script>
 </body>
 </html>
+333

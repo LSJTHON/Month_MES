@@ -16,7 +16,7 @@ public class SupplierMaterial {
 
     @ManyToOne
     @JoinColumn(name = "supplier_code", nullable = false)
-    private SupplierManager supplier;   //발주처코드
+    private SupplierManage supplier;   //발주처코드
 
     @ManyToOne
     @JoinColumn(name = "material_code", nullable = false)
