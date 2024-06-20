@@ -6,7 +6,7 @@ import lombok.Getter;
 
 @Getter
 public class ProcessManageListViewResponse {
-    private final Long processNumber;
+    private final String processNumber;
     private final String processName;
     private final int productionCapacity;
     private final int productionSetupTime;

@@ -11,7 +11,7 @@ import lombok.*;
 public class ProcessManagement {
     @Id
     @Column(name = "process_number")
-    private Long processNumber;  // 공정번호
+    private String processNumber;  // 공정번호
     //공정번호는 알파벳을 섞을 것인가?
 
     @Column(name = "process_name", nullable = false)
@@ -27,7 +27,7 @@ public class ProcessManagement {
     private Integer cycleHour;  // 사이클 시간
 
     @Builder
-    public ProcessManagement(Long processNumber, String processName, int productionCapacity, int productionSetupTime, int cycleHour) {
+    public ProcessManagement(String processNumber, String processName, int productionCapacity, int productionSetupTime, int cycleHour) {
         this.processNumber = processNumber;
         this.processName = processName;
         this.productionCapacity = productionCapacity;
