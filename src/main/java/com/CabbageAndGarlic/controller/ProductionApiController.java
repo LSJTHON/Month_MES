@@ -1,18 +1,22 @@
 package com.CabbageAndGarlic.controller;
 
+import com.CabbageAndGarlic.dto.ProductionDto;
 import com.CabbageAndGarlic.entity.Order;
+import com.CabbageAndGarlic.entity.OrderItem;
 import com.CabbageAndGarlic.entity.ProductionPlan;
 import com.CabbageAndGarlic.service.*;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.aspectj.weaver.ast.Or;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 @RestController
 @RequestMapping("/production")
@@ -22,24 +26,42 @@ public class ProductionApiController {
     private final OrderService orderService;
     private final DataService dataService;
 
-    @GetMapping(value = "/plan")
-    public Map<String,Object> production(@RequestBody String text) throws ParseException {
-        ProductionPlan productionPlan = productionPlanService.findProductionPlan(text);
-
-        Map<String,Object> Orders = new HashMap<>();
-        Orders.put("data", orderService.getOrder(productionPlan));
-
-
-        return Orders;
+    @GetMapping(value = "/today")
+    public ResponseEntity<?> productionOrders() throws ParseException {
+        Map<String, Object> response = new HashMap<>();
+        List<ProductionDto> productionDtos = new ArrayList<>();
+        LocalDateTime date = LocalDateTime.now();
+        List<ProductionPlan> productionPlans = productionPlanService.findProductionPlan(date);
+        for (ProductionPlan productionPlan : productionPlans) {
+            Order order = orderService.getOrder(productionPlan);
+                List<OrderItem> items = orderService.findOrderItemsByOrderNumber(order.getOrderNumber());
+                for(OrderItem item : items) {
+                    ProductionDto productionDto = new ProductionDto(order.getOrderNumber(), item.getProductName(),
+                            order.getClient(),item.getStartDate(),item.getEndDate(),item.getAmount(),order.getStatus());
+                    productionDtos.add(productionDto);
+                }
+        }
+        response.put("data", productionDtos);
+        return ResponseEntity.ok(response);
     }
 
-    @GetMapping(value = "production/orders?date={date}")
-    public Map<String,Object> productionOrders(@PathVariable String date) throws ParseException {
-        Map<String,Object> Orders = new HashMap<>();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        Date d = sdf.parse(date);
-        Orders.put("date", d);
-        return Orders;
+
+    @GetMapping(value = "/{date}")
+    public ResponseEntity<?> productionOrders(@PathVariable String date) throws ParseException {
+        Map<String, Object> response = new HashMap<>();
+        List<ProductionDto> productionDtos = new ArrayList<>();
+        List<ProductionPlan> productionPlans = productionPlanService.findProductionPlan(date);
+        for(ProductionPlan productionPlan : productionPlans) {
+            Order order = orderService.getOrder(productionPlan);
+                List<OrderItem> items = orderService.findOrderItemsByOrderNumber(order.getOrderNumber());
+                for(OrderItem item : items) {
+                    ProductionDto productionDto = new ProductionDto(order.getOrderNumber(), item.getProductName(),
+                            order.getClient(), item.getStartDate(), item.getEndDate(), item.getAmount(), order.getStatus());
+                    productionDtos.add(productionDto);
+                }
+            }
+        response.put("data", productionDtos);
+        return ResponseEntity.ok(response);
     }
 
 }

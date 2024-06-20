@@ -23,30 +23,30 @@ public class DataService {
     @Autowired
     private ProductionPlanRepository productionPlanRepository;
 
-    public List<ProductionDto> getAllData(List<Order> orders) {
-        List<OrderItem> orderItems = orderItemRepository.findAll();
-        List<ProductionPlan> productionPlans = productionPlanRepository.findAll();
-
-        return orders.stream().flatMap(order -> {
-            List<OrderItem> items = orderItems.stream()
-                    .filter(item -> item.getOrderNumber().getOrderNumber().equals(order.getOrderNumber()))
-                    .collect(Collectors.toList());
-
-            return items.stream().map(item -> {
-                ProductionPlan plan = productionPlans.stream()
-                        .filter(pp -> pp.getProductionPlanNumber().equals(item.getOrderNumber().getOrderNumber()))
-                        .findFirst().orElse(null);
-
-                return new ProductionDto(
-                        order.getOrderNumber(),
-                        item.getProductName(),
-                        order.getClient(),
-                        plan != null ? plan.getStartDate() : null,
-                        plan != null ? plan.getEndDate() : null,
-                        item.getAmount(),
-                        plan != null ? plan.getProductionPlanStatus() : null
-                );
-            });
-        }).collect(Collectors.toList());
-    }
+//    public List<ProductionDto> getAllData(List<Order> orders) {
+//        List<OrderItem> orderItems = orderItemRepository.findAll();
+//        List<ProductionPlan> productionPlans = productionPlanRepository.findAll();
+//
+//        return orders.stream().flatMap(order -> {
+//            List<OrderItem> items = orderItems.stream()
+//                    .filter(item -> item.getOrderNumber().getOrderNumber().equals(order.getOrderNumber()))
+//                    .collect(Collectors.toList());
+//
+//            return items.stream().map(item -> {
+//                ProductionPlan plan = productionPlans.stream()
+//                        .filter(pp -> pp.getProductionPlanNumber().equals(item.getOrderNumber().getOrderNumber()))
+//                        .findFirst().orElse(null);
+//
+//                return new ProductionDto(
+//                        order.getOrderNumber(),
+//                        item.getProductName(),
+//                        order.getClient(),
+//                        plan != null ? plan.getStartDate() : null,
+//                        plan != null ? plan.getEndDate() : null,
+//                        item.getAmount(),
+//                        plan != null ? plan.getProductionPlanStatus() : null
+//                );
+//            });
+//        }).collect(Collectors.toList());
+//    }
 }
