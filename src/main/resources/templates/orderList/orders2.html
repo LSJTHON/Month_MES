@@ -220,14 +220,17 @@
 
                 columns: [
                     {title: "상품명", data: 'productName'},
-                    {title: "수량", data: 'amount'}
+                    {
+                        title: "수량", data: 'amount', render: function (data, type, row) {
+                            return data + 'box';
+                        }
+                    }
                 ],
                 language: {
                     search: "검색:",
                     emptyTable: "선택된 상품 정보가 없습니다"
                 }
             });
-
 
             // 테이블 행 클릭 이벤트임
             $('#table tbody').on('click', 'tr', function () {

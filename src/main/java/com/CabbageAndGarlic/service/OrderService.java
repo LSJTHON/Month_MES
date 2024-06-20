@@ -35,6 +35,7 @@ public class OrderService {
         order.setStatus(Status.WAITING);
         order.setDeliveryDate(orderDto.getDeliveryDate());
         order.setPhoneNumber(orderDto.getPhoneNumber());
+
         order.setManager(orderDto.getManager());
 
         orderRepository.save(order);
