@@ -29,7 +29,7 @@
 <th:block layout:fragment="script">
     <script>
         let processNumbers = [];
-
+        let processName2;
         $(document).ready(function () {
             table = $('#table').DataTable({
                 dom: 'Bfrtip',
@@ -87,8 +87,14 @@
                 },
                 columns: [
                     { title: "공정번호", data: 'processNumber' },
-                    { title: "공정명", data: 'processName' },
-                    { title: "생산 가능량", data: 'productionCapacity' },
+                    { title: "공정명", data: 'processName' ,render:function(data,type,row){
+                            return processName2=data }},
+                    { title: "생산 가능량", data: 'productionCapacity' ,render:function(data,type,row){
+                            if(processName2 == "충진" || processName2 == "검사" || processName2 == "포장" || processName2 == "냉각" ){
+                                return data+"EA/Hour";
+                            }else
+                                return data+"KG";
+                        }},
                     { title: "생산 준비 시간", data: 'productionSetupTime' },
                     { title: "사이클 시간", data: 'cycleHour' }
                 ],

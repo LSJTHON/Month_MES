@@ -30,7 +30,7 @@
 <th:block layout:fragment="script">
     <script>
         let materialCodes = [];
-
+        let materialName2;
         $(document).ready(function () {
             table = $('#table').DataTable({
                 dom: 'Bfrtip',
@@ -87,10 +87,14 @@
                 },
                 columns: [
                     { title: "자재코드", data: 'materialCode' },
-                    { title: "자재명", data: 'materialName' },
+                    { title: "자재명", data: 'materialName' ,render:function(data,type,row){
+                            return materialName2=data }},
                     { title: "자재양", data: 'materialAmount',render:function(data,type,row){
+                        if(materialName2 == "포장지" || materialName2 == "Box"  || materialName2 == "박스" || materialName2 == "BOX"){
+                            return data+"EA";
+                        }else
                         return data+"KG";
-                        } }
+                        }}
                 ],
                 language: {
                     search: "검색:"
