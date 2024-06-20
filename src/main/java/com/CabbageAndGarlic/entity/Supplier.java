@@ -1,14 +1,18 @@
 package com.CabbageAndGarlic.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
 @Entity
 @Getter
 @Setter
-@Table(name = "supplier_material") //발주처랑 자재 연결
-public class SupplierMaterial {
+@Builder
+@Table(name = "supplier") //발주처랑 자재 연결
+@AllArgsConstructor
+public class Supplier {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,11 +20,11 @@ public class SupplierMaterial {
 
     @ManyToOne
     @JoinColumn(name = "supplier_code", nullable = false)
-    private SupplierManage supplier;   //발주처코드
+    private SupplierManage supplierCode;   //발주처코드
 
     @ManyToOne
     @JoinColumn(name = "material_code", nullable = false)
-    private Material material;  //자재코드
+    private Material materialCode;  //자재코드
 
     @Column(name = "min_amount", nullable = false)
     private int minAmount;  //최소주문수량
@@ -30,4 +34,8 @@ public class SupplierMaterial {
 
     @Column(name = "unit_price", nullable = false)
     private int unitPrice;  //단가
+
+    public Supplier() {
+
+    }
 }

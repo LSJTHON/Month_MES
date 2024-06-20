@@ -1,60 +1,74 @@
 package com.CabbageAndGarlic.controller;
 
+import com.CabbageAndGarlic.dto.SupplierDto;
 import com.CabbageAndGarlic.entity.SupplierManage;
 import com.CabbageAndGarlic.service.SupplierManageService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
-@Controller
-@RequestMapping("/supplier-manages")
+@RestController
+@RequestMapping("/api/supplier")
+@RequiredArgsConstructor
 public class SupplierManageController {
 
-    @Autowired
-    private SupplierManageService supplierManageService;
+    private final SupplierManageService supplierManageService;
 
-    //발주처페이지
+    //발주처 정보 조회
     @GetMapping
-    public String viewSupplierPage(Model model) {
-        return "Supplier/Supplier";
+    public ResponseEntity<List<SupplierDto>> getAllSuppliers() {
+        List<SupplierManage> suppliers = supplierManageService.getAllSuppliers();
+        List<SupplierDto> supplierDtos = suppliers.stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(supplierDtos);
     }
 
-    //발주처목록가져옴
-    @GetMapping("/all")
-    @ResponseBody
-    public List<SupplierManage> getAllSupplierManages() {
-        return supplierManageService.getAllSupplierManages();
-    }
-
-    //특정 발주처코드를 기반으로 발주처 가져옴
+    //특정 발주처코드를 기반으로 발주처 정보 조회
     @GetMapping("/{supplierCode}")
-    @ResponseBody
-    public Optional<SupplierManage> getSupplierManageById(@PathVariable String supplierCode) {
-        return supplierManageService.getSupplierManageById(supplierCode);
+    public ResponseEntity<SupplierDto> getSupplierByCode(@PathVariable String supplierCode) {
+        SupplierManage supplier = supplierManageService.getSupplierByCode(supplierCode);
+        return ResponseEntity.ok(convertToDto(supplier));
     }
 
-    //발주처 생성
+    //발주처 추가
     @PostMapping
-    @ResponseBody
-    public SupplierManage createSupplierManage(@RequestBody SupplierManage supplierManage) {
-        return supplierManageService.createSupplierManage(supplierManage);
+    public ResponseEntity<SupplierDto> createSupplier(@RequestBody SupplierDto supplierDto) {
+        SupplierManage supplier = supplierManageService.createSupplier(convertToEntity(supplierDto));
+        return ResponseEntity.ok(convertToDto(supplier));
     }
 
-    //기존 발주처 업데이트
+    //특정 발주처코드를 기반으로 발주처 업데이트
     @PutMapping("/{supplierCode}")
-    @ResponseBody
-    public SupplierManage updateSupplierManage(@PathVariable String supplierCode, @RequestBody SupplierManage supplierManageDetails) {
-        return supplierManageService.updateSupplierManage(supplierCode, supplierManageDetails);
+    public ResponseEntity<SupplierDto> updateSupplier(@PathVariable String supplierCode, @RequestBody SupplierDto supplierDto) {
+        SupplierManage updatedSupplier = supplierManageService.updateSupplier(supplierCode, convertToEntity(supplierDto));
+        return ResponseEntity.ok(convertToDto(updatedSupplier));
     }
 
-    //특정 발주처코드를 기반으로 발주처 삭제
+    //특정 발주처코드 삭제
     @DeleteMapping("/{supplierCode}")
-    @ResponseBody
-    public void deleteSupplierManage(@PathVariable String supplierCode) {
-        supplierManageService.deleteSupplierManage(supplierCode);
+    public ResponseEntity<Void> deleteSupplier(@PathVariable String supplierCode) {
+        supplierManageService.deleteSupplier(supplierCode);
+        return ResponseEntity.noContent().build();
+    }
+
+    //SupplierManage 엔터티를 SupplierManageDto로 변환
+    private SupplierDto convertToDto(SupplierManage supplierManage) {
+        SupplierDto supplierDto = new SupplierDto();
+        supplierDto.setSupplierCode(supplierDto.getSupplierCode());
+        supplierDto.setSupplierName(supplierDto.getSupplierName());
+        return supplierDto;
+    }
+
+    //SupplierManageDto를 SupplierManage 엔터티로 변환
+    private SupplierManage convertToEntity(SupplierDto supplierDto) {
+        SupplierManage supplier = new SupplierManage();
+        supplier.setSupplierCode(supplierDto.getSupplierCode());
+        supplier.setSupplierName(supplierDto.getSupplierName());
+        supplier.setManager(supplierDto.getManager());
+        return supplier;
     }
 }

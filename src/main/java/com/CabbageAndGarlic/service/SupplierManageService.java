@@ -1,18 +1,20 @@
 package com.CabbageAndGarlic.service;
 
+import com.CabbageAndGarlic.entity.Material;
 import com.CabbageAndGarlic.entity.SupplierManage;
+import com.CabbageAndGarlic.entity.Supplier;
 import com.CabbageAndGarlic.repository.SupplierManageRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class SupplierManageService {
 
-    @Autowired
-    private SupplierManageRepository supplierManageRepository;
+    private final SupplierManageRepository supplierManageRepository;
 
     //발주처 목록 가져오기
     public List<SupplierManage> getAllSupplierManages() {
@@ -25,8 +27,13 @@ public class SupplierManageService {
     }
 
     //새로운 발주처 생성
-    public SupplierManage createSupplierManage(SupplierManage supplierManage) {
-        return supplierManageRepository.save(supplierManage);
+//    public SupplierManage createSupplierManage(SupplierManage supplierManage) {
+//        return supplierManageRepository.save(supplierManage);
+//    }
+
+    public void addSupplier(SupplierManage supplierManage, Material material, int minAmount, int maxAmount, int unitPrice){
+        Supplier supplier = Supplier.builder()
+                .
     }
 
     //기존 발주처 정보 업데이트

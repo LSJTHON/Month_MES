@@ -1,206 +1,248 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>발주처 관리</title>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout1}">
+
+<th:block layout:fragment="style">
     <style>
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        th, td {
-            padding: 8px 12px;
-            border: 1px solid #ddd;
-        }
-        th {
-            background-color: #f4f4f4;
-        }
-        .action-buttons {
+        .dt-search {
+            display: flex;
             margin-top: 10px;
         }
-        .pagination {
-            margin-top: 10px;
+
+        .h2-header {
+            margin-top: 50px;
+        }
+
+        .align-items-center .form-group label {
+            margin-right: 10px;
+        }
+
+        .input-with-info small {
+            position: absolute;
+            left: 0;
+            top: 100%;
+            white-space: nowrap;
+        }
+
+        .modal-custom {
+            max-width: 50%;
+        }
+
+        .modal-body-scrollable {
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .product-field-row .col {
+            margin-right: 10px;
+            top: 10px;
+        }
+
+        .product-field-row .col-auto {
+            display: flex;
+            align-items: center;
+            margin-left: auto;
+            position: relative;
+            top: 10px;
+        }
+
+        .modal-body {
+            padding: 15px;
+        }
+
+        .delivery-date-group input {
+            margin-right: 10px;
+        }
+
+        .delivery-date-group button {
+            white-space: nowrap;
+        }
+
+        .order-search-table th,
+        .order-search-table td {
+            padding: 5px;
+            text-align: center;
+            vertical-align: middle;
+            width: 10%;
+        }
+
+        .order-search-table input {
+            width: 50%;
+            box-sizing: border-box;
         }
     </style>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-</head>
-<body>
-<h1>발주처 관리</h1>
+</th:block>
 
-<div>
-    <label for="searchCategory">검색 기준:</label>
-    <select id="searchCategory">
-        <option value="supplier_code">발주처 코드</option>
-        <option value="supplier_name">발주처 명</option>
-        <option value="material_name">품목명</option>
-    </select>
-    <input type="text" id="searchQuery">
-    <button onclick="searchSupplier()">검색</button>
-</div>
+<th:block layout:fragment="script">
+    <script>
+        $(document).ready(function () {
+            var table = $('#table').DataTable({
+                dom: 'Bfrtip',
+                buttons: [
+                    {
+                        extend: 'colvis',
+                        text: "선택",
+                    },
+                    {
+                        extend: 'copy',
+                        text: "복사",
+                    },
+                    {
+                        extend: 'excel',
+                        text: "엑셀다운로드",
+                    },
+                    {
+                        text: '발주 추가',
+                        action: function () {
+                            $('#addSupplierModal').modal('show');
+                        }
+                    },
+                    {
+                        text: '발주 삭제',
+                        action: function () {
+                            $('#deleteSupplierModal').modal('show');
+                        }
+                    },
+                ],
+                select: true,
+                searching: true,
+                responsive: true,
+                destroy: true,
+                processing: true,
+                serverSide: false,
+                ordering: true,
+                scrollX: true,
+                info: false,
+                ajax: {
+                    url: '/supplier-manages/all',
+                    type: 'GET',
+                    dataFilter: function (res) {
+                        var json = $.parseJSON(res);
+                        var data = {
+                            draw: json.draw,
+                            recordsTotal: json.recordsTotal,
+                            recordsFiltered: json.recordsFiltered,
+                            data: json.data,
+                        };
+                        return JSON.stringify(data);
+                    }
+                },
+                columns: [
+                    { title: "supplier_code", data: 'supplierCode' },
+                    { title: "supplier_name", data: 'supplierName' },
+                    { title: "material_code", data: 'materialCode' },
+                    { title: "material_name", data: 'materialName' },
+                    { title: "min_amount", data: 'minAmount' },
+                    { title: "max_amount", data: 'maxAmount' },
+                    { title: "unit_price", data: 'unitPrice' }
+                ],
+                language: {
+                    search: "검색:",
+                    emptyTable: "선택된 발주처 정보가 없습니다",
+                    zeroRecords: "검색 결과가 없습니다"
+                }
+            });
 
-<table id="supplierTable">
-    <thead>
-    <tr>
-        <th>발주처 코드</th>
-        <th>발주처 명</th>
-        <th>품목코드</th>
-        <th>품목명</th>
-        <th>최소수량</th>
-        <th>최대수량</th>
-        <th>단가</th>
-    </tr>
-    </thead>
-    <tbody></tbody>
-</table>
-
-<div class="action-buttons">
-    <button onclick="showAddForm()">추가</button>
-    <button onclick="deleteSelected()">삭제</button>
-    <button onclick="downloadExcel()">엑셀 다운로드</button>
-</div>
-
-<div class="pagination">
-    <button onclick="prevPage()">이전</button>
-    <span id="currentPage">1</span>
-    <button onclick="nextPage()">다음</button>
-</div>
-
-<div id="addForm" style="display:none;">
-    <h2>발주처 추가</h2>
-    <form id="supplierForm">
-        <label for="supplierCode">발주처 코드:</label>
-        <input type="text" id="supplierCode" name="supplierCode" required>
-        <br>
-        <label for="supplierName">발주처 명:</label>
-        <input type="text" id="supplierName" name="supplierName" required>
-        <br>
-        <label for="materialCode">품목코드:</label>
-        <input type="text" id="materialCode" name="materialCode" required>
-        <br>
-        <label for="materialName">품목명:</label>
-        <input type="text" id="materialName" name="materialName" required>
-        <br>
-        <label for="minAmount">최소수량:</label>
-        <input type="text" id="minAmount" name="minAmount" required>
-        <br>
-        <label for="maxAmount">최대수량:</label>
-        <input type="text" id="maxAmount" name="maxAmount" required>
-        <br>
-        <label for="unitPrice">단가:</label>
-        <input type="text" id="unitPrice" name="unitPrice" required>
-        <br>
-        <button type="submit">저장</button>
-        <button type="button" onclick="hideAddForm()">취소</button>
-    </form>
-</div>
-
-<script>
-    $(document).ready(function() {
-        fetchSuppliers();
-    });
-
-    function fetchSuppliers() {
-        $.ajax({
-            url: '/supplier-manages/all',
-            method: 'GET',
-            success: function(data) {
-                const supplierTableBody = $('#supplierTable tbody');
-                supplierTableBody.empty();
-                data.forEach(supplier => {
-                    const row = `
-                            <tr>
-                                <td>${supplier.supplierCode}</td>
-                                <td>${supplier.supplierName}</td>
-                                <td>${supplier.materialCode}</td>
-                                <td>${supplier.materialName}</td>
-                                <td>${supplier.minAmount}</td>
-                                <td>${supplier.maxAmount}</td>
-                                <td>${supplier.unitPrice}</td>
-                            </tr>
-                        `;
-                    supplierTableBody.append(row);
-                });
-            }
+            $('#table tbody').on('click', 'tr', function () {
+                // 테이블 행 클릭시 발생하는 이벤트
+            });
         });
-    }
 
-    function searchSupplier() {
-        const category = $('#searchCategory').val();
-        const query = $('#searchQuery').val();
-        $.ajax({
-            url: `/supplier-manages/search?category=${category}&query=${query}`,
-            method: 'GET',
-            success: function(data) {
-                const supplierTableBody = $('#supplierTable tbody');
-                supplierTableBody.empty();
-                data.forEach(supplier => {
-                    const row = `
-                            <tr>
-                                <td>${supplier.supplierCode}</td>
-                                <td>${supplier.supplierName}</td>
-                                <td>${supplier.materialCode}</td>
-                                <td>${supplier.materialName}</td>
-                                <td>${supplier.minAmount}</td>
-                                <td>${supplier.maxAmount}</td>
-                                <td>${supplier.unitPrice}</td>
-                            </tr>
-                        `;
-                    supplierTableBody.append(row);
-                });
-            }
-        });
-    }
+        function saveSupplier() {
+            const supplierCode = $('#supplierCode').val();
+            const supplierName = $('#supplierName').val();
+            const materialCode = $('#materialCode').val();
+            const materialName = $('#materialName').val();
+            const minAmount = $('#minAmount').val();
+            const maxAmount = $('#maxAmount').val();
+            const unitPrice = $('#unitPrice').val();
 
-    function showAddForm() {
-        $('#addForm').show();
-    }
+            const supplierData = {
+                supplierCode: supplierCode,
+                supplierName: supplierName,
+                materialCode: materialCode,
+                materialName: materialName,
+                minAmount: minAmount,
+                maxAmount: maxAmount,
+                unitPrice: unitPrice
+            };
 
-    function hideAddForm() {
-        $('#addForm').hide();
-    }
+            console.log(supplierData);
 
-    function deleteSelected() {
-        // Implement delete functionality
-    }
+            $.ajax({
+                url: '/supplier-manages',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(supplierData),
+                success: function (response) {
+                    alert('발주처가 성공적으로 추가되었습니다.');
+                    location.reload();
+                },
+                error: function (xhr, status, error) {
+                    alert('Error: ' + error);
+                }
+            });
+        }
+    </script>
+</th:block>
 
-    function downloadExcel() {
-        // Implement Excel download functionality
-    }
+<div layout:fragment="content">
+    <div class="main-panel">
+        <div class="container-fluid">
 
-    function prevPage() {
-        // Implement previous page functionality
-    }
+            <h2 class="h2-header">발주처 관리</h2>
 
-    function nextPage() {
-        // Implement next page functionality
-    }
+            <table id="table" class="table table-striped table-bordered order-search-table"></table>
 
-    $('#supplierForm').on('submit', function(event) {
-        event.preventDefault();
-        const supplier = {
-            supplierCode: $('#supplierCode').val(),
-            supplierName: $('#supplierName').val(),
-            materialCode: $('#materialCode').val(),
-            materialName: $('#materialName').val(),
-            minAmount: $('#minAmount').val(),
-            maxAmount: $('#maxAmount').val(),
-            unitPrice: $('#unitPrice').val()
-        };
+            <!-- Start Supplier Modal -->
+            <div class="modal fade" id="addSupplierModal" tabindex="-1" aria-labelledby="addSupplierModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-custom">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="addSupplierModalLabel">발주 추가</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body modal-body-scrollable">
+                            <div class="mb-3">
+                                <label for="supplierCode" class="form-label">발주처 코드</label>
+                                <input type="text" class="form-control" id="supplierCode" name="supplierCode">
+                            </div>
+                            <div class="mb-3">
+                                <label for="supplierName" class="form-label">발주처</label>
+                                <input type="text" class="form-control" id="supplierName" name="supplierName">
+                            </div>
+                            <div class="mb-3">
+                                <label for="materialCode" class="form-label">자재코드</label>
+                                <input type="text" class="form-control" id="materialCode" name="materialCode">
+                            </div>
+                            <div class="mb-3">
+                                <label for="materialName" class="form-label">자재명</label>
+                                <input type="text" class="form-control" id="materialName" name="materialName">
+                            </div>
+                            <div class="mb-3">
+                                <label for="minAmount" class="form-label">최소수량</label>
+                                <input type="text" class="form-control" id="minAmount" name="minAmount">
+                            </div>
+                            <div class="mb-3">
+                                <label for="maxAmount" class="form-label">최대수량</label>
+                                <input type="text" class="form-control" id="maxAmount" name="maxAmount">
+                            </div>
+                            <div class="mb-3">
+                                <label for="unitPrice" class="form-label">단가</label>
+                                <input type="text" class="form-control" id="unitPrice" name="unitPrice">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" onclick="saveSupplier()">저장</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- End Supplier Modal -->
 
-        $.ajax({
-            url: '/supplier-manages',
-            method: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify(supplier),
-            success: function() {
-                fetchSuppliers();
-                hideAddForm();
-                $('#supplierForm')[0].reset();
-            }
-        });
-    });
-</script>
-</body>
+        </div>
+    </div>
+</div>
 </html>
-333
