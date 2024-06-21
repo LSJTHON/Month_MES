@@ -18,10 +18,6 @@ public class WorkOrder {
     @Column(name = "work_order_number")
     private Long workOrderNumber;  // 작업지시번호
 
-    @ManyToOne
-    @JoinColumn(name = "production_plan_number", nullable = false)
-    private ProductionPlan productionPlanNumber;  // 생산계획번호
-
     @Column(name = "process", nullable = false)
     private String process;  // 공정
 
@@ -37,4 +33,7 @@ public class WorkOrder {
     @Column(name = "work_status", nullable = false)
     @Enumerated(EnumType.STRING)
     private Status workStatus;  // 상태
+
+    @Column(name = "orderDate", nullable = false)
+    private LocalDateTime orderDate; //지시날짜
 }

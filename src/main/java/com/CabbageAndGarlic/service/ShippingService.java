@@ -58,7 +58,7 @@ public class ShippingService {
             }
             String body = "수주번호 " + order.getOrderNumber() + " \n운송업체 " + request.getShippingCompany()+"\n"+ orderItemsInfo +" 맞짱뜨자 시발!";
             System.out.println(body);
-            //smsService.messageSend(order.getPhoneNumber(), body);    //문자 최종 전송 기본 30원 길면 50원이상
+//            smsService.messageSend(order.getPhoneNumber(), body);    //문자 최종 전송 기본 30원 길면 50원이상
         }
     }
     // PendingShipment, SHIPPED 상태인 수주 정보만 조회
