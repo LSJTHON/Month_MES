@@ -6,6 +6,7 @@ import com.CabbageAndGarlic.entity.Supplier;
 import com.CabbageAndGarlic.service.MaterialService;
 import com.CabbageAndGarlic.service.SupplierManageService;
 import com.CabbageAndGarlic.service.SupplierService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,16 +14,15 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/supplier")
-public class SupplierManageRestController {
+@RequiredArgsConstructor
+public class SupplierManageApiController {
 
-    @Autowired
-    private SupplierManageService supplierManageService;
 
-    @Autowired
-    private SupplierService supplierService;
+    private final SupplierManageService supplierManageService;
 
-    @Autowired
-    private MaterialService materialService;
+    private final SupplierService supplierService;
+
+    private final MaterialService materialService;
 
     @GetMapping("/manage")
     public List<SupplierManageDto> getSupplierManage() {

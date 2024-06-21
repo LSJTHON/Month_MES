@@ -16,7 +16,7 @@ public class SupplierManageController {
 
     @GetMapping
     public String getSupplierManagementPage(Model model) {
-        return "/Supplier/Supplier"; // 뷰 템플릿 이름
+        return "/Supplier/Supplier";
     }
 }
 
