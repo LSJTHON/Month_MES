@@ -24,7 +24,7 @@ public class ProcessManagement {
     private Integer productionSetupTime;  // 생산 가능량
 
     @Column(name = "cycle_hour", nullable = false)
-    private Integer cycleHour;  // 사이클 시간
+    private Integer cycleHour;  // 작업 시간
 
     @Builder
     public ProcessManagement(String processNumber, String processName, int productionCapacity, int productionSetupTime, int cycleHour) {
