@@ -15,7 +15,7 @@ public class Routing {
 
     @ManyToOne
     @JoinColumn(name = "process_number")
-    private ProcessManagement process_number;  // 라우팅 번호
+    private ProcessManagement routingNumber;  // 라우팅 번호
 
     @ManyToOne
     @JoinColumn(name = "process_name", nullable = false)
@@ -23,8 +23,12 @@ public class Routing {
 
     @ManyToOne
     @JoinColumn(name = "cycle_hour", nullable = false)
-    private ProcessManagement cycleHour2;  // 작업시간
+    private ProcessManagement cycleHour;  // 작업시간
 
-    @Column(name = "cycle_time", nullable = false)
-    private Integer cycleTime;  // 전체공정 시간
+    @ManyToOne
+    @JoinColumn(name = "product_name", nullable = false)
+    private Product routingProductName;  // 품목명
+
+    @Column(name = "all_cycle_time", nullable = false)
+    private Integer allCycleTime;  // 전체공정 시간
 }

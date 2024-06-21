@@ -13,5 +13,8 @@ public class OrderViewController {
         return "/orderList/orders2";
     }
 
-
+    @GetMapping("/productionStatus")
+    public String productionStatus(){
+        return "/production/productionStatus";
+    }
 }

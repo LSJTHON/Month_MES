@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chart.js 도넛 차트 예제</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        #chartContainer {
+            width: 50%;
+            margin: auto;
+            position: relative;
+        }
+        #chartContainer canvas {
+            display: block;
+            margin: auto;
+        }
+        .center-text {
+            text-align: center;
+            font-size: 24px;
+            color: #000000; /* 퍼센테이지 텍스트 색상 */
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+    </style>
+</head>
+<body>
+<div id="chartContainer">
+    <canvas id="myChart"></canvas>
+    <div class="center-text">40%</div>
+</div>
+<script>
+    var ctx = document.getElementById('myChart').getContext('2d');
+    var myChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: ['now', '나머지'],
+            datasets: [{
+                data: [100, 100],
+                backgroundColor: [
+                    '#6A5ACD', /* 페이지 테마에 맞춘 색상 */
+                    '#D3D3D3'
+                ],
+                borderColor: [
+                    '#6A5ACD', /* 페이지 테마에 맞춘 색상 */
+                    '#D3D3D3'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    enabled: false
+                }
+            },
+            cutout: '70%'
+        }
+    });
+</script>
+</body>
+</html>

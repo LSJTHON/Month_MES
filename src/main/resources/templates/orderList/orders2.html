@@ -116,6 +116,7 @@
 </th:block>
 
 <th:block layout:fragment="script">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         var table = null;
         $(document).ready(function () {
@@ -147,6 +148,12 @@
                             $('#addCalendarModal').modal('show');
                         }
                     },
+                    {
+                        text:'완료처리',
+                        action: function (e,dt,node,config){
+                            processSelectedRows(table);
+                        }
+                    },
                 ],
                 // responsive: true,
                 // destroy: true,
@@ -163,7 +170,6 @@
                 serverSide: false,
                 ordering: true,
                 scrollX: true,
-                info: false,
                 ajax: {
                     url: 'http://localhost:8080/api/orders',
                     type: 'GET',
@@ -348,7 +354,6 @@
                 }
             });
         }
-
         // 새로운 FullCalendar 스크립트
         document.addEventListener('DOMContentLoaded', function () {
             var calendarEl = document.getElementById('calendar');
@@ -373,8 +378,6 @@
                         });
                     });
                 },
-
-
                 dateClick: function (info) {
                     var selectedDate = info.dateStr;
                     console.log(selectedDate);
@@ -415,7 +418,6 @@
                     });
                 }
             });
-
             $('#addCalendarModal').on('shown.bs.modal', function () {
                 calendar.render();
             });
@@ -424,6 +426,32 @@
                 $('#addCalendarModal').modal('show');
             });
         });
+        function processSelectedRows(table) {
+            var selectedData = table.rows({ selected: true }).data(); // 선택된 행의 데이터 가져오기
+            if (selectedData.length === 0) {
+                alert("선택된 행이 없습니다.");
+            } else {
+                selectedData.each(function(value, index) {
+                    var orderNumber = value.orderNumber; // 수주 번호 가져오기
+                    console.log("선택된 행의 수주 번호:", orderNumber);
+
+                    $.ajax({
+                        url: '/api/testComplete/${orderNumber}',
+                        type: 'PUT',
+                        contentType: 'application/json',
+                        data: JSON.stringify({ orderNumber: orderNumber }), // 수주 번호 전송
+                        success: function (response) {
+                            alert(response);
+                            location.reload();
+                        },
+                        error: function (xhr, status, error) {
+                            alert('Error: ' + error);
+                        }
+                    });
+                });
+            }
+        }
+
     </script>
 </th:block>
 

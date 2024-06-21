@@ -53,4 +53,9 @@ public class OrderApiController {
         List<OrderItem> items = orderService.findOrderItemsByOrderNumber(orderNumber);
         return ResponseEntity.ok(items);
     }
+
+    @PutMapping("/testComplete/{orderNumber}")
+    public void testComplete(@PathVariable Long orderNumber) {
+        System.out.println(orderNumber+"dwioqjfioejfiowejfiowejfiowejfiowejfiojfiojfio");
+    }
 }
