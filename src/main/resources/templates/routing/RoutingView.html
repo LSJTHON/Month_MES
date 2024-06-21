@@ -207,7 +207,7 @@
                     {title: "공정번호", data: 'routingNumber.processNumber'},
                     {title: "공정명", data: 'routingProduct.processName'},
                     {
-                        title: "작업시간", data: 'cycleHour', render: function (data, type, row) {
+                        title: "작업시간", data: 'cycleHour.cycleHour', render: function (data, type, row) {
                             return data + 'box';
                         }
                     }
@@ -221,13 +221,14 @@
             // 테이블 행 클릭 이벤트임
             $('#table tbody').on('click', 'tr', function () {
                 var data = table.row(this).data();  //클릭한 행 this 로 인식하고 값 가져옴
-                loadOrderItems(data.routingNumber); // 클릭된 수주 번호에 대한 주문 품목 가져오기
+                loadOrderItems(data.number); // 클릭된 수주 번호에 대한 주문 품목 가져오기
             });
 
             //특정 수주 번호에 대한 수주목록 가져오기
             function loadOrderItems(routingNumber) {
+                console.log(routingNumber+"라우팅번홰ㅑ저랴ㅐ더랴ㅐ젇랴ㅐㄷㄹ젇랴ㅐㅓㄷ")
                 $.ajax({
-                    url: `/api/routings/${routingNumber}`, //컨트롤러 요청 url
+                    url: `/api/routingNumber/${routingNumber}`, //컨트롤러 요청 url
                     type: 'GET',
                     success: function (data) {  //요청이 성공적으로 보내졌을 시 실행
                         table2.clear().rows.add(data).draw(); // 데이터로 테이블2를 채움
