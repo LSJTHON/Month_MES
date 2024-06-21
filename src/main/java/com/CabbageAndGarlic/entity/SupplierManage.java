@@ -1,22 +1,41 @@
 package com.CabbageAndGarlic.entity;
 
-import lombok.*;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Getter
 @Setter
-@Table(name = "supplier_manage") //발주처
+@Builder
+@Table(name = "supplier_manage") //발주처랑 자재 연결
+@AllArgsConstructor
 public class SupplierManage {
+
     @Id
-    @Column(name = "supplier_code")
-    private String supplierCode;  // 발주처코드
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    @Column(name = "supplier_name", nullable = false)
-    private String supplierName; //발주처명
+    @ManyToOne
+    @JoinColumn(name = "supplier_code", nullable = false)
+    private Supplier supplierCode;   //발주처코드
 
-    @Column(name = "manager")
-    private String manager;     //담당자
+    @ManyToOne
+    @JoinColumn(name = "material_code", nullable = false)
+    private Material materialCode;  //자재코드
 
+    @Column(name = "min_amount", nullable = false)
+    private int minAmount;  //최소주문수량
+
+    @Column(name = "max_amount", nullable = false)
+    private int maxAmount;  //최대주문수량
+
+    @Column(name = "unit_price", nullable = false)
+    private int unitPrice;  //단가
+
+    public SupplierManage() {
+
+    }
 }
-

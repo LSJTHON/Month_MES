@@ -1,248 +1,182 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout/layout1}">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supplier Management</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-5">
+    <h1>Supplier Management</h1>
+    <button class="btn btn-primary mb-3" data-toggle="modal" data-target="#addSupplierModal">Add Supplier</button>
+    <table class="table table-bordered" id="supplierManageTable">
+        <thead>
+        <tr>
+            <th>Supplier Code</th>
+            <th>Supplier Name</th>
+            <th>Material Code</th>
+            <th>Material Name</th>
+            <th>Min Amount</th>
+            <th>Max Amount</th>
+            <th>Unit Price</th>
+        </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
 
-<th:block layout:fragment="style">
-    <style>
-        .dt-search {
-            display: flex;
-            margin-top: 10px;
-        }
-
-        .h2-header {
-            margin-top: 50px;
-        }
-
-        .align-items-center .form-group label {
-            margin-right: 10px;
-        }
-
-        .input-with-info small {
-            position: absolute;
-            left: 0;
-            top: 100%;
-            white-space: nowrap;
-        }
-
-        .modal-custom {
-            max-width: 50%;
-        }
-
-        .modal-body-scrollable {
-            max-height: 600px;
-            overflow-y: auto;
-        }
-
-        .product-field-row .col {
-            margin-right: 10px;
-            top: 10px;
-        }
-
-        .product-field-row .col-auto {
-            display: flex;
-            align-items: center;
-            margin-left: auto;
-            position: relative;
-            top: 10px;
-        }
-
-        .modal-body {
-            padding: 15px;
-        }
-
-        .delivery-date-group input {
-            margin-right: 10px;
-        }
-
-        .delivery-date-group button {
-            white-space: nowrap;
-        }
-
-        .order-search-table th,
-        .order-search-table td {
-            padding: 5px;
-            text-align: center;
-            vertical-align: middle;
-            width: 10%;
-        }
-
-        .order-search-table input {
-            width: 50%;
-            box-sizing: border-box;
-        }
-    </style>
-</th:block>
-
-<th:block layout:fragment="script">
-    <script>
-        $(document).ready(function () {
-            var table = $('#table').DataTable({
-                dom: 'Bfrtip',
-                buttons: [
-                    {
-                        extend: 'colvis',
-                        text: "선택",
-                    },
-                    {
-                        extend: 'copy',
-                        text: "복사",
-                    },
-                    {
-                        extend: 'excel',
-                        text: "엑셀다운로드",
-                    },
-                    {
-                        text: '발주 추가',
-                        action: function () {
-                            $('#addSupplierModal').modal('show');
-                        }
-                    },
-                    {
-                        text: '발주 삭제',
-                        action: function () {
-                            $('#deleteSupplierModal').modal('show');
-                        }
-                    },
-                ],
-                select: true,
-                searching: true,
-                responsive: true,
-                destroy: true,
-                processing: true,
-                serverSide: false,
-                ordering: true,
-                scrollX: true,
-                info: false,
-                ajax: {
-                    url: '/supplier-manages/all',
-                    type: 'GET',
-                    dataFilter: function (res) {
-                        var json = $.parseJSON(res);
-                        var data = {
-                            draw: json.draw,
-                            recordsTotal: json.recordsTotal,
-                            recordsFiltered: json.recordsFiltered,
-                            data: json.data,
-                        };
-                        return JSON.stringify(data);
-                    }
-                },
-                columns: [
-                    { title: "supplier_code", data: 'supplierCode' },
-                    { title: "supplier_name", data: 'supplierName' },
-                    { title: "material_code", data: 'materialCode' },
-                    { title: "material_name", data: 'materialName' },
-                    { title: "min_amount", data: 'minAmount' },
-                    { title: "max_amount", data: 'maxAmount' },
-                    { title: "unit_price", data: 'unitPrice' }
-                ],
-                language: {
-                    search: "검색:",
-                    emptyTable: "선택된 발주처 정보가 없습니다",
-                    zeroRecords: "검색 결과가 없습니다"
-                }
-            });
-
-            $('#table tbody').on('click', 'tr', function () {
-                // 테이블 행 클릭시 발생하는 이벤트
-            });
-        });
-
-        function saveSupplier() {
-            const supplierCode = $('#supplierCode').val();
-            const supplierName = $('#supplierName').val();
-            const materialCode = $('#materialCode').val();
-            const materialName = $('#materialName').val();
-            const minAmount = $('#minAmount').val();
-            const maxAmount = $('#maxAmount').val();
-            const unitPrice = $('#unitPrice').val();
-
-            const supplierData = {
-                supplierCode: supplierCode,
-                supplierName: supplierName,
-                materialCode: materialCode,
-                materialName: materialName,
-                minAmount: minAmount,
-                maxAmount: maxAmount,
-                unitPrice: unitPrice
-            };
-
-            console.log(supplierData);
-
-            $.ajax({
-                url: '/supplier-manages',
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify(supplierData),
-                success: function (response) {
-                    alert('발주처가 성공적으로 추가되었습니다.');
-                    location.reload();
-                },
-                error: function (xhr, status, error) {
-                    alert('Error: ' + error);
-                }
-            });
-        }
-    </script>
-</th:block>
-
-<div layout:fragment="content">
-    <div class="main-panel">
-        <div class="container-fluid">
-
-            <h2 class="h2-header">발주처 관리</h2>
-
-            <table id="table" class="table table-striped table-bordered order-search-table"></table>
-
-            <!-- Start Supplier Modal -->
-            <div class="modal fade" id="addSupplierModal" tabindex="-1" aria-labelledby="addSupplierModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-custom">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="addSupplierModalLabel">발주 추가</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body modal-body-scrollable">
-                            <div class="mb-3">
-                                <label for="supplierCode" class="form-label">발주처 코드</label>
-                                <input type="text" class="form-control" id="supplierCode" name="supplierCode">
-                            </div>
-                            <div class="mb-3">
-                                <label for="supplierName" class="form-label">발주처</label>
-                                <input type="text" class="form-control" id="supplierName" name="supplierName">
-                            </div>
-                            <div class="mb-3">
-                                <label for="materialCode" class="form-label">자재코드</label>
-                                <input type="text" class="form-control" id="materialCode" name="materialCode">
-                            </div>
-                            <div class="mb-3">
-                                <label for="materialName" class="form-label">자재명</label>
-                                <input type="text" class="form-control" id="materialName" name="materialName">
-                            </div>
-                            <div class="mb-3">
-                                <label for="minAmount" class="form-label">최소수량</label>
-                                <input type="text" class="form-control" id="minAmount" name="minAmount">
-                            </div>
-                            <div class="mb-3">
-                                <label for="maxAmount" class="form-label">최대수량</label>
-                                <input type="text" class="form-control" id="maxAmount" name="maxAmount">
-                            </div>
-                            <div class="mb-3">
-                                <label for="unitPrice" class="form-label">단가</label>
-                                <input type="text" class="form-control" id="unitPrice" name="unitPrice">
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-primary" onclick="saveSupplier()">저장</button>
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-                        </div>
-                    </div>
-                </div>
+<!-- Add Supplier Modal -->
+<div class="modal fade" id="addSupplierModal" tabindex="-1" role="dialog" aria-labelledby="addSupplierModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addSupplierModalLabel">Add Supplier</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
-            <!-- End Supplier Modal -->
-
+            <div class="modal-body">
+                <form id="addSupplierForm">
+                    <div class="form-group">
+                        <label for="supplierName">Supplier Name</label>
+                        <select class="form-control" id="supplierName" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="supplierCode">Supplier Code</label>
+                        <input type="text" class="form-control" id="supplierCode" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="materialName">Material Name</label>
+                        <select class="form-control" id="materialName" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="minAmount">Min Amount</label>
+                        <input type="number" class="form-control" id="minAmount" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="maxAmount">Max Amount</label>
+                        <input type="number" class="form-control" id="maxAmount" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="unitPrice">Unit Price</label>
+                        <input type="number" class="form-control" id="unitPrice" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Register</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                </form>
+            </div>
         </div>
     </div>
 </div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+<script>
+    $(document).ready(function() {
+        // Load initial data
+        loadSupplierManageData();
+
+        // Load supplier and material data for the modal form
+        loadSupplierAndMaterialData();
+
+        // Handle form submission
+        $('#addSupplierForm').on('submit', function(event) {
+            event.preventDefault();
+            addSupplierManage();
+        });
+    });
+
+    function loadSupplierManageData() {
+        $.ajax({
+            url: '/api/supplier/manage',
+            method: 'GET',
+            success: function(data) {
+                var tableBody = $('#supplierManageTable tbody');
+                tableBody.empty();
+                data.forEach(function(item) {
+                    var row = '<tr>' +
+                        '<td>' + item.supplierCode + '</td>' +
+                        '<td>' + item.supplierName + '</td>' +
+                        '<td>' + item.materialCode + '</td>' +
+                        '<td>' + item.materialName + '</td>' +
+                        '<td>' + item.minAmount + '</td>' +
+                        '<td>' + item.maxAmount + '</td>' +
+                        '<td>' + item.unitPrice + '</td>' +
+                        '</tr>';
+                    tableBody.append(row);
+                });
+            },
+            error: function(error) {
+                console.error('Error fetching data:', error);
+            }
+        });
+    }
+
+    function loadSupplierAndMaterialData() {
+        $.ajax({
+            url: '/api/supplier/suppliers',
+            method: 'GET',
+            success: function(data) {
+                var supplierSelect = $('#supplierName');
+                supplierSelect.empty();
+                data.forEach(function(item) {
+                    var option = '<option value="' + item.supplierCode + '">' + item.supplierName + '</option>';
+                    supplierSelect.append(option);
+                });
+
+                // Automatically set supplier code based on selected supplier name
+                supplierSelect.on('change', function() {
+                    var selectedSupplierCode = $(this).val();
+                    $('#supplierCode').val(selectedSupplierCode);
+                });
+            },
+            error: function(error) {
+                console.error('Error fetching supplier data:', error);
+            }
+        });
+
+        $.ajax({
+            url: '/api/supplier/materials',
+            method: 'GET',
+            success: function(data) {
+                var materialSelect = $('#materialName');
+                materialSelect.empty();
+                data.forEach(function(item) {
+                    var option = '<option value="' + item.materialCode + '">' + item.materialName + '</option>';
+                    materialSelect.append(option);
+                });
+            },
+            error: function(error) {
+                console.error('Error fetching material data:', error);
+            }
+        });
+    }
+
+    function addSupplierManage() {
+        var supplierManage = {
+            supplierCode: $('#supplierCode').val(),
+            materialCode: $('#materialName').val(),
+            minAmount: $('#minAmount').val(),
+            maxAmount: $('#maxAmount').val(),
+            unitPrice: $('#unitPrice').val()
+        };
+
+        $.ajax({
+            url: '/api/supplier/manage',
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(supplierManage),
+            success: function() {
+                $('#addSupplierModal').modal('hide');
+                loadSupplierManageData();
+            },
+            error: function(error) {
+                console.error('Error adding supplier manage:', error);
+            }
+        });
+    }
+</script>
+</body>
 </html>

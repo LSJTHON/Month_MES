@@ -27,4 +27,12 @@ public class MaterialService {
     public void deleteMaterial(String materialCode){
         materialRepository.deleteById(materialCode);
     }
+
+    //-----eunji--------------------------------------------------------------------------------
+
+    public List<Material> getAllMaterials() {
+        return materialRepository.findAll();
+    }
+
 }
+
