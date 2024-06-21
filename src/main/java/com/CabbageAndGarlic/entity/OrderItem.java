@@ -32,4 +32,6 @@ public class OrderItem {
 
     @Column(name = "end_date")
     private LocalDateTime endDate;  // 종료일
+
+    
 }
