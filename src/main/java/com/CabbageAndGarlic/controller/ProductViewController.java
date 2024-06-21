@@ -16,16 +16,22 @@ public class ProductViewController {
     }
 
 
-    @GetMapping(value = "/material")//지재
+    @GetMapping(value = "/material")//자재
     public String material(Model model) {
 
         return "product/MaterialView";
     }
 
-    @GetMapping(value = "/process")//지재
+    @GetMapping(value = "/process")//공정
     public String processManage(Model model) {
 
         return "processManagement/ProcessManageView";
+    }
+
+    @GetMapping(value = "/routing")//라우팅
+    public String routing(Model model) {
+
+        return "routing/RoutingView";
     }
 
 }
