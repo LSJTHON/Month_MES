@@ -12,7 +12,7 @@ import jakarta.persistence.*;
 public class Routing {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long number;
+    private Integer number;
 
     @ManyToOne
     @JoinColumn(name = "process_number")
@@ -33,9 +33,8 @@ public class Routing {
     @Column(name = "all_cycle_time", nullable = false)
     private Integer allCycleTime;  // 전체공정 시간
 
-
     @Builder
-    public Routing(Long number, ProcessManagement routingNumber, ProcessManagement routingProduct, ProcessManagement cycleHour, Product routingProductName, Integer allCycleTime) {
+    public Routing(int number, ProcessManagement routingNumber, ProcessManagement routingProduct, ProcessManagement cycleHour, Product routingProductName, Integer allCycleTime) {
         this.number = number;
         this.routingNumber = routingNumber;
         this.routingProduct = routingProduct;

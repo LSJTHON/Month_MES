@@ -8,6 +8,7 @@ import com.CabbageAndGarlic.repository.RoutingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,14 +21,20 @@ public class RoutingService {
         return routingRepository.findAll();
     }
 
-    public List<RoutingListViewResponse> findRoutingItemsByRoutingNumber(Long routingNumber) {
+    public List<RoutingListViewResponse> findRoutingItemsByRoutingNumber(int routingNumber) {
         List<Routing> routings = routingRepository.findByNumber(routingNumber);
-        if (routings.isEmpty()) {
-            throw new IllegalStateException("라우팅을 찾을 수 없습니다: " + routingNumber);
+
+        List<RoutingListViewResponse> resultList = new ArrayList<>();
+        for (Routing routing : routings) {
+            resultList.add(new RoutingListViewResponse(routing));
         }
-        return routings.stream()
-                .map(RoutingListViewResponse::new)
-                .collect(Collectors.toList());
+        return resultList;
     }
+
+
+    public void deleteRouting(int number){
+        routingRepository.deleteById(number);
+    }
+
 
 }

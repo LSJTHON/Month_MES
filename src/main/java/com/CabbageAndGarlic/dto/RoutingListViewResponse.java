@@ -7,7 +7,7 @@ import lombok.Getter;
 
 @Getter
 public class RoutingListViewResponse {
-    private final Long number;
+    private final int number;
     private final ProcessManagement routingNumber;
     private final ProcessManagement routingProduct;  // 공정명
     private final ProcessManagement cycleHour;  // 작업시간

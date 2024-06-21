@@ -138,13 +138,27 @@
                     {
                         text: '라우팅 추가',
                         action: function (e, dt, node, config) {
-                            $('#addOrderModal').modal('show');
+                            $('#addRoutingModal').modal('show');
                         }
                     },
                     {
                         text: '삭제',
                         action: function (e, dt, node, config) {
-                            $('#addCalendarModal').modal('show');
+                            var selectedRows = table.rows({ selected: true }).data(); // 선택된 행의 데이터 가져오기
+                            if (selectedRows.length === 0) {
+                                alert("선택된 행이 없습니다.");
+                                return;
+                            }
+
+                            var deletedCount = 0;
+                            selectedRows.each(function (value, index) {
+                                var routingNumber = value.number; // 선택된 각 행의 라우팅 번호 가져오기
+
+                                if (confirm('라우팅 번호 ' + routingNumber + '를 정말로 삭제하시겠습니까?')) {
+                                    deleteRouting(routingNumber); // 라우팅 번호를 파라미터로 전달하여 삭제 함수 호출
+                                    deletedCount++;
+                                }
+                            });
                         }
                     },
                 ],
@@ -226,7 +240,6 @@
 
             //특정 수주 번호에 대한 수주목록 가져오기
             function loadOrderItems(routingNumber) {
-                console.log(routingNumber+"라우팅번홰ㅑ저랴ㅐ더랴ㅐ젇랴ㅐㄷㄹ젇랴ㅐㅓㄷ")
                 $.ajax({
                     url: `/api/routingNumber/${routingNumber}`, //컨트롤러 요청 url
                     type: 'GET',
@@ -336,6 +349,23 @@
             });
         }
 
+
+        function deleteRouting(routingNumber) {
+            $.ajax({
+                url: '/api/routings/' + routingNumber, // 삭제할 라우팅 번호를 포함한 URL
+                type: 'DELETE',
+                success: function () {
+                    console.log('라우팅 번호 ' + routingNumber + ' 삭제 완료');
+                    location.reload();
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error: ' + error);
+                    alert('라우팅 번호 ' + routingNumber + ' 삭제에 실패했습니다. 다시 시도해주세요.');
+                }
+            });
+        }
+
+
     </script>
 </th:block>
 
@@ -349,12 +379,12 @@
             <table id="table2" class="table table-striped table-bordered order-search-table"></table>
 
             <!-- Start Order Modal1 -->
-            <div class="modal fade" id="addOrderModal" tabindex="-1" aria-labelledby="addOrderModalLabel"
+            <div class="modal fade" id="addRoutingModal" tabindex="-1" aria-labelledby="addRoutingModalLabel"
                  aria-hidden="true">
                 <div class="modal-dialog modal-custom">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="addOrderModalLabel">수주 추가</h5>
+                            <h5 class="modal-title" id="addRoutingModalLabel">수주 추가</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body modal-body-scrollable">
