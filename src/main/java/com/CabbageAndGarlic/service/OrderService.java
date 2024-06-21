@@ -1,6 +1,7 @@
 package com.CabbageAndGarlic.service;
 
 
+import com.CabbageAndGarlic.constant.Status;
 import com.CabbageAndGarlic.dto.OrderDto;
 import com.CabbageAndGarlic.dto.OrderItemDto;
 import com.CabbageAndGarlic.entity.Order;
@@ -22,21 +23,19 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
 
-
     public List<Order> findAll() {
         return orderRepository.findAll();
     }
-
-
 
     @Transactional
     public void saveOrder(OrderDto orderDto) {
         Order order = new Order();
         order.setOrderNumber(orderDto.getOrderNumber());
         order.setClient(orderDto.getClient());
-//        order.setStatus(Status.valueOf(orderDto.getStatus()));
+        order.setStatus(Status.WAITING);
         order.setDeliveryDate(orderDto.getDeliveryDate());
         order.setPhoneNumber(orderDto.getPhoneNumber());
+
         order.setManager(orderDto.getManager());
 
         orderRepository.save(order);
@@ -56,5 +55,4 @@ public class OrderService {
                 .orElseThrow(() -> new IllegalStateException("수주 번호를 찾을 수 없습니다.: " + orderNumber));
         return orderItemRepository.findByOrderNumber(order);
     }
-
 }

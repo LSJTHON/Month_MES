@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout1}">
+
+<!-- 스타일을 정의하는 섹션입니다 -->
+<th:block layout:fragment="style">
+    <style>
+        /* .dt-search 클래스의 스타일: 검색창의 배치 및 여백 설정 */
+        .dt-search {
+            display: flex;
+            margin-top: 10px;
+        }
+
+        /* 테이블 헤더 셀의 스타일 설정: 패딩, 텍스트 정렬, 너비 */
+        .order-search-table th, .shipping-status-table th {
+            padding: 5px;
+            text-align: center;
+            vertical-align: middle;
+            width: 10%;
+        }
+
+        /* 테이블 데이터 셀의 스타일 설정: 패딩, 텍스트 정렬, 너비 */
+        .order-search-table td, .shipping-status-table td {
+            padding: 5px;
+            text-align: center;
+            vertical-align: middle;
+            width: 10%;
+        }
+
+        /* 테이블 내 입력 필드의 스타일 설정: 너비와 박스 크기 설정 */
+        .order-search-table input, .shipping-status-table input {
+            width: 50%;
+            box-sizing: border-box;
+        }
+    </style>
+</th:block>
+
+<!-- 스크립트를 정의하는 섹션입니다 -->
+<th:block layout:fragment="script">
+    <script>
+        var table2 = null; // 출하 관리 테이블 변수
+        var table3 = null; // 출하 현황 테이블 변수
+
+        $(document).ready(function () {
+            // 출하 관리 테이블 설정 (COMPLETED 상태인 수주 정보만 표시)
+            table2 = $('#table2').DataTable({
+                dom: 'Bfrtip', // 테이블의 검색창, 버튼 등을 어디에 배치할지 결정
+                buttons: [ // 테이블에 추가될 버튼들
+                    {
+                        extend: 'colvis', // 컬럼 보이기/숨기기 버튼
+                        text: "선택", // 버튼에 표시될 텍스트
+                    },
+                    {
+                        extend: 'copy', // 복사 버튼
+                        text: "복사", // 버튼에 표시될 텍스트
+                    },
+                    {
+                        extend: 'excel', // 엑셀 다운로드 버튼
+                        text: "엑셀다운로드", // 버튼에 표시될 텍스트
+                    },
+                ],
+                select: true, // 행 선택 가능
+                searching: true, // 검색 기능 활성화
+                responsive: true, // 반응형 테이블
+                destroy: true, // 기존 테이블을 제거하고 다시 생성
+                processing: true, // 서버 처리 중일 때 로딩 화면 표시
+                serverSide: false, // 서버 사이드 처리 비활성화
+                ordering: true, // 정렬 기능 활성화
+                scrollX: true, // 가로 스크롤 활성화
+                info: false, // 테이블 정보 비활성화
+                ajax: { // AJAX 설정
+                    url: 'http://localhost:8080/Shipping/orders', // 데이터 요청 URL
+                    type: 'GET', // HTTP 요청 타입
+                    dataFilter: function (res) { // 데이터 필터링
+                        var json = $.parseJSON(res); // JSON 파싱
+                        return JSON.stringify({ // 필요한 데이터만 반환
+                            'draw': json.draw,
+                            'recordsTotal': json.recordsTotal,
+                            'recordsFiltered': json.recordsFiltered,
+                            'data': json.data,
+                        });
+                    }
+                },
+
+                columns: [ // 테이블 컬럼 설정
+                    {
+                        title: "<input type='checkbox' id='select-all'/>", // 전체 선택 체크박스
+                        data: null, // 데이터 없음
+                        defaultContent: '', // 기본 내용 없음
+                        orderable: false, // 정렬 불가
+                        className: 'select-checkbox', // 체크박스 클래스
+                        render: function (data, type, row) { // 체크박스 렌더링
+                            return '<input type="checkbox" class="select-row"/>';
+                        }
+                    },
+                    {title: "수주번호", data: 'orderNumber'}, // 수주번호 컬럼
+                    {title: "업체명", data: 'client'}, // 업체명 컬럼
+                    {title: "상태", data: 'status'}, // 상태 컬럼
+                    {title: "담당자", data: 'manager'}, // 담당자 컬럼
+                    {
+                        title: "수주 확정일", data: 'updateTime', render: function (data, type, row) { // 수주 확정일 컬럼
+                            var date = new Date(data); // 날짜 객체 생성
+                            var year = date.getFullYear(); // 연도
+                            var month = ('0' + (date.getMonth() + 1)).slice(-2); // 월
+                            var day = ('0' + date.getDate()).slice(-2); // 일
+                            var hours = ('0' + date.getHours()).slice(-2); // 시
+                            var minutes = ('0' + date.getMinutes()).slice(-2); // 분
+                            return `${year}-${month}-${day} ${hours}:${minutes}`; // 형식화된 날짜 반환
+                        }
+                    },
+                    {title: "전화번호", data: 'phoneNumber'}, // 전화번호 컬럼
+                    {title: "납품일", data: 'deliveryDate'}, // 납품일 컬럼
+                    {
+                        title: "운송업체", // 운송업체 컬럼
+                        data: null, // 데이터 없음
+                        render: function (data, type, row) { // 운송업체 셀 렌더링
+                            return `
+                                <select class="shipping-company"> <!-- 운송업체 선택 -->
+                                    <option value="CJ 대한통운">CJ 대한통운</option>
+                                    <option value="로젠택배">로젠택배</option>
+                                    <option value="주식회사뎁스">주식회사뎁스</option>
+                                </select>
+                            `;
+                        }
+                    }
+                ],
+                language: { // 언어 설정
+                    search: "검색:", // 검색창 레이블
+                    emptyTable: "선택된 수주 정보가 없습니다", // 빈 테이블 메시지
+                    zeroRecords: "검색 결과가 없습니다" // 검색 결과 없음 메시지
+                },
+                rowCallback: function (row, data) { // 행 콜백 함수
+                    if (data.status !== 'COMPLETED') { // 상태가 COMPLETED가 아니면
+                        $(row).hide(); // 행 숨기기
+                    }
+                }
+            });
+
+            // 출하 현황 테이블 설정 (PendingShipment, SHIPPED 상태인 수주 정보만 표시)
+            table3 = $('#table3').DataTable({
+                dom: 'Bfrtip', // 테이블의 검색창, 버튼 등을 어디에 배치할지 결정
+                buttons: [ // 테이블에 추가될 버튼들
+                    {
+                        extend: 'colvis', // 컬럼 보이기/숨기기 버튼
+                        text: "선택", // 버튼에 표시될 텍스트
+                    },
+                    {
+                        extend: 'copy', // 복사 버튼
+                        text: "복사", // 버튼에 표시될 텍스트
+                    },
+                    {
+                        extend: 'excel', // 엑셀 다운로드 버튼
+                        text: "엑셀다운로드", // 버튼에 표시될 텍스트
+                    },
+                ],
+                searching: true, // 검색 기능 활성화
+                responsive: true, // 반응형 테이블
+                destroy: true, // 기존 테이블을 제거하고 다시 생성
+                processing: true, // 서버 처리 중일 때 로딩 화면 표시
+                serverSide: false, // 서버 사이드 처리 비활성화
+                ordering: true, // 정렬 기능 활성화
+                scrollX: true, // 가로 스크롤 활성화
+                info: false, // 테이블 정보 비활성화
+                ajax: { // AJAX 설정
+                    url: 'http://localhost:8080/Shipping/shippingStatus', // 데이터 요청 URL
+                    type: 'GET', // HTTP 요청 타입
+                    dataFilter: function (res) { // 데이터 필터링
+                        console.log("Received data: ", res);
+                        var json = $.parseJSON(res); // JSON 파싱
+                        return JSON.stringify({ // 필요한 데이터만 반환
+                            'draw': json.draw,
+                            'recordsTotal': json.recordsTotal,
+                            'recordsFiltered': json.recordsFiltered,
+                            'data': json.data,
+                        });
+                    }
+                },
+                columns: [
+                    {title: "수주번호", data: 'orderNumber'},
+                    {
+                        title: "품목 정보",
+                        data: null,
+                        orderable: false,
+                        render: function (data, type, row) {
+                            return `<button class="item-info-btn btn btn-primary" data-order-number="${row.orderNumber}">품목 보기</button>`;
+                        }
+                    },
+                    {title: "출하일", data: 'shippingDate'},
+                    {title: "출하상태", data: 'shippingStatus'},
+                    {title: "운송업체", data: 'shippingCompany'}
+                ],
+                language: { // 언어 설정
+                    search: "검색:", // 검색창 레이블
+                    emptyTable: "출하된 정보가 없습니다", // 빈 테이블 메시지
+                    zeroRecords: "검색 결과가 없습니다" // 검색 결과 없음 메시지
+                },
+                rowCallback: function (row, data) { // 행 콜백 함수
+                    if (data.shippingStatus !== 'PendingShipment' && data.shippingStatus !== 'SHIPPED') { // 상태가 PendingShipment나 SHIPPED가 아니면
+                        $(row).hide(); // 행 숨기기
+                    }
+                }
+            });
+
+            console.log("Table initialized");
+            //품목 정보 모달창 스크립트
+            // 이벤트 위임을 사용하여 동적으로 생성된 버튼에 대한 클릭 이벤트 처리
+            $('#table3 tbody').on('click', '.item-info-btn', function () {
+                var orderNumber = $(this).data('order-number');
+                console.log("Button clicked, order number: " + orderNumber);
+                $.ajax({
+                    url: 'http://localhost:8080/Shipping/orderItems/' + orderNumber,
+                    type: 'GET',
+                    success: function (data) {
+                        console.log("Received item data: ", data);
+                        var itemsHtml = data.map(item => `
+                <tr>
+                    <td>${item.productName}</td>
+                    <td>${item.amount}</td>
+                    <td>${item.startDate}</td>
+                    <td>${item.endDate}</td>
+                </tr>
+            `).join('');
+                        $('#order-items-table tbody').html(itemsHtml);
+                        $('#orderItemsModal').modal('show'); // 모달 표시
+                    },
+                    error: function (xhr, status, error) {
+                        alert('품목 정보를 가져오는데 실패했습니다: ' + error);
+                    }
+                });
+            });
+
+            // 전체 선택/해제 체크박스 기능
+            $('#select-all').on('click', function () {
+                var rows = table2.rows({'search': 'applied'}).nodes(); // 검색된 모든 행
+                $('input[type="checkbox"]', rows).prop('checked', this.checked); // 체크박스 선택/해제
+            });
+
+            // 상태 업데이트 버튼 클릭 이벤트
+            $('#btn-update-status').on('click', function () {
+                var selectedData = []; // 선택된 데이터 배열
+                table2.$('input[type="checkbox"]').each(function () {
+                    if (this.checked) { // 체크박스가 체크되어 있으면
+                        var row = $(this).closest('tr'); // 해당 행
+                        var shippingCompany = row.find('.shipping-company').val(); // 운송업체 값
+                        selectedData.push({
+                            orderNumber: table2.row(row).data().orderNumber, // 수주번호
+                            shippingCompany: shippingCompany // 운송업체
+                        });
+                    }
+                });
+                updateStatusAndCreateShipping(selectedData); // 상태 업데이트 함수 호출
+            });
+        });
+
+        // 상태 업데이트 및 출하 생성 함수
+        function updateStatusAndCreateShipping(selectedData) {
+            var data = selectedData.map(function (row) { // 선택된 데이터를 맵핑하여 새로운 데이터 생성
+                return {
+                    orderNumber: row.orderNumber, // 수주번호
+                    shippingCompany: row.shippingCompany, // 운송업체
+                    shippingDate: new Date().toISOString().split('T')[0] // 오늘 날짜
+                };
+            });
+
+            // AJAX 요청으로 상태 업데이트 및 출하 생성
+            $.ajax({
+                url: 'http://localhost:8080/Shipping/updateAndCreate', // 요청 URL
+                type: 'POST', // HTTP 요청 타입
+                contentType: 'application/json', // 콘텐츠 타입
+                data: JSON.stringify(data), // 데이터 JSON 문자열로 변환
+                success: function (response) { // 성공 콜백
+                    table2.ajax.reload(); // 출하 관리 테이블 갱신
+                    table3.ajax.reload(); // 출하 현황 테이블 갱신
+                },
+                error: function (xhr, status, error) { // 오류 콜백
+                    alert('상태 업데이트 실패: ' + error); // 오류 메시지 출력
+                }
+            });
+        }
+
+    </script>
+</th:block>
+
+<!-- 본문 내용을 정의하는 섹션입니다 -->
+<div layout:fragment="content">
+    <div class="main-panel">
+        <div class="container-fluid">
+            <h2 class="h2-header">출하 현황</h2>
+            <!-- 출하 현황 테이블 -->
+            <table id="table3" class="table table-striped table-bordered shipping-status-table"></table>
+
+            <h2 class="h2-header">출하 관리</h2>
+            <!-- 출하 관리 테이블 -->
+            <table id="table2" class="table table-striped table-bordered order-search-table"></table>
+            <!-- 상태 업데이트 버튼 -->
+            <button id="btn-update-status">출하</button>
+        </div>
+    </div>
+
+    <!-- 품목 정보 모달 -->
+    <!-- 품목 정보 모달 -->
+    <div class="modal fade" id="orderItemsModal" tabindex="-1" aria-labelledby="orderItemsModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="orderItemsModalLabel">품목 정보</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <table id="order-items-table" class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>상품 이름</th>
+                            <th>수량</th>
+                            <th>시작일</th>
+                            <th>종료일</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <!-- 품목 정보가 여기에 추가됩니다 -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</html>

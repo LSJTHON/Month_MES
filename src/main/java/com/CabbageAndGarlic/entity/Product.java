@@ -21,9 +21,6 @@ public class Product {
     @Column(name = "max_amount", nullable = false)
     private Integer maxAmount;  // 최대수량
 
-    @Column(name = "min_amount", nullable = false)
-    private Integer minAmount;  // 최대수량
-
     @Column(name = "unit_price", nullable = false)
     private Integer unitPrice;  // 단가
 
@@ -34,11 +31,10 @@ public class Product {
     private String bom;  // BOM
 
     @Builder
-    public Product(String productCode, String productName, int maxAmount, int minAmount, int unitPrice, int sellingPrice, String bom) {
+    public Product(String productCode, String productName, int maxAmount, int unitPrice, int sellingPrice, String bom) {
         this.productCode = productCode;
         this.productName = productName;
         this.maxAmount = maxAmount;
-        this.minAmount = minAmount;
         this.unitPrice = unitPrice;
         this.sellingPrice = sellingPrice;
         this.bom = bom;

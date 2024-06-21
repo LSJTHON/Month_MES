@@ -2,6 +2,7 @@ package com.CabbageAndGarlic.controller;
 
 
 import com.CabbageAndGarlic.dto.OrderDto;
+import com.CabbageAndGarlic.entity.Order;
 import com.CabbageAndGarlic.entity.OrderItem;
 import com.CabbageAndGarlic.service.OrderService;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +20,7 @@ public class OrderApiController {
 
     private final OrderService orderService;
 
-
+    //수주정보 전부 가져오기
     @GetMapping("/orders")
     public Map<String,Object> getAllOrders() {
 
@@ -30,6 +31,15 @@ public class OrderApiController {
         return getAllOrders;
     }
 
+    //캘린더에서 수주정보 모두 보여주기
+    @GetMapping("/orderCalendar")
+    public List<Order> getCalendarOrder() {
+        return orderService.findAll();
+    }
+
+
+
+    //수주 등록하기
     @PostMapping("/createOrder")
     public String saveOrder(@RequestBody OrderDto orderDto) {
         orderService.saveOrder(orderDto);
@@ -37,21 +47,10 @@ public class OrderApiController {
     }
 
 
-//    @GetMapping("/orderItems/{orderNumber}")
-//    public Map<String,Object> getOrderItemsByOrderNumber(@PathVariable Long orderNumber) {
-//        Map<String,Object> getOrderItems = new HashMap<>();
-//
-//        System.out.println(orderNumber+"이게 수주번호다 이말이야");
-//
-//        getOrderItems.put("data",orderService.findById(orderNumber));
-//
-//        return getOrderItems;
-//    }
-
+    //상품상세보기
     @GetMapping("/orderItems/{orderNumber}")
     public ResponseEntity<List<OrderItem>> getOrderItemsByOrderNumber(@PathVariable Long orderNumber) {
         List<OrderItem> items = orderService.findOrderItemsByOrderNumber(orderNumber);
         return ResponseEntity.ok(items);
     }
-
 }
