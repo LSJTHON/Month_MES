@@ -185,7 +185,7 @@
                     {
                         text: '지시추가',
                         action: function (e, dt, node, config) {
-                            $('#addWorkOrder')
+                            $('#addWorkOrder').modal('show');
                         }
                     }
 
@@ -199,14 +199,28 @@
                 ordering: true,
                 serverSide: false,
                 scrollX: true,
-
+                ajax: {
+                    url: '/production/workOrder/today',
+                    type: 'GET',
+                    //이 데이터는 json 형식의 정보를 datatables의 형식에 맞게 필터링 해주는거 이거 안해주면 데이터 못받음
+                    dataFilter: function (res) {
+                        var json = $.parseJSON(res);
+                        var data = {
+                            'draw': json.data.draw,
+                            'recordsTotal': json.data.recordsTotal,
+                            'recordsFiltered': json.data.recordsFiltered,
+                            'data': json.data,
+                        };
+                        return JSON.stringify(data);
+                    }
+                },
                 columns: [
                     {title: "작업지시번호", data: 'workOrderNumber'},
                     {title: "공정", data: 'process'},
                     {title: "작업시간", data: 'startTimeOfOperation'},
                     {title: "작업량", data: 'workAmount'},
                     {title: "작업자", data: 'worker'},
-                    {title: "상태", data: 'work_status'},
+                    {title: "상태", data: 'workStatus'},
                 ]
             })
 
@@ -257,19 +271,97 @@
                 });
             }
 
-
             $('#addCalendarModal').on('shown.bs.modal', function () {
                 calendar.render();
             });
 
+            const processSelect = document.getElementById('process');
+            const productTypeSelect = document.getElementById('productType');
 
+            const allOptions = {
+                '매실': '매실',
+                '석류': '석류',
+                '양배추': '양배추',
+                '마늘': '마늘'
+            };
 
+            const filterOptions = (process) => {
+                productTypeSelect.innerHTML = '';
 
+                if (process === '전처리' ||process === '착즙'||process === '여과') {
+                    delete allOptions['매실'];
+                    delete allOptions['석류'];
+                    allOptions['양배추'] = '양배추';
+                    allOptions['마늘'] = '마늘';
+                } else if(process === '혼합'||process === '냉각') {
+                    delete allOptions['양배추'];
+                    delete allOptions['마늘'];
+                    allOptions['매실'] = '매실';
+                    allOptions['석류'] = '석류';
+                } else {
+                    allOptions['양배추'] = '양배추';
+                    allOptions['마늘'] = '마늘';
+                    allOptions['매실'] = '매실';
+                    allOptions['석류'] = '석류';
+                }
 
+                for (const key in allOptions) {
+                    const option = document.createElement('option');
+                    option.value = key;
+                    option.text = allOptions[key];
+                    productTypeSelect.add(option);
+                }
+            };
+
+            processSelect.addEventListener('change', (e) => {
+                filterOptions(e.target.value);
+            });
+
+            filterOptions(processSelect.value);  // 초기화할 때 호출
         });
 
         let productCount = 1; // input 태그 갯수 초기값
         const maxProducts = 5; // input 태그 최대갯수 설정값 ( 추가폼 포함 5개까지 가능함 )
+
+        var day = new Date();
+
+        function saveWorkOrder() {
+            console.log(day+" 찍히나?????");
+
+            const workOrderNumber = new Date().getTime(); //번호는 어떻게 만들지 정하고 코드 다시 짜기
+            const process = $('#process').val();
+            const productType = $('#productType').val();
+            const workAmount = $('#workAmount').val();
+            const worker = $('#worker').val();
+            const orderDate = day;
+
+
+            const workOrderData = {
+                workOrderNumber: workOrderNumber,
+                process: process,
+                productType: productType,
+                workAmount: workAmount,
+                worker: worker,
+                orderDate: orderDate
+            };
+
+            $.ajax({
+                url: '/production/createWork',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(workOrderData),
+                success: function (response) {
+                    alert(response);
+                    $('#addWorkOrder').modal('hide');
+                },
+                error: function (xhr, status, error) {
+
+                }
+            });
+        }
+
+
+
 
     </script>
 
@@ -308,7 +400,47 @@
                  aria-hidden="true">
                 <div class="modal-dialog modal-custom">
                     <div class="modal-content">
-                        
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="addWorkOrderModalLabel">지시 추가</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body modal-body-scrollable">
+                            <div class="mb-3">
+                                <label for="process" class="form-label">공정</label>
+                                <select class="form-control" id="process" name="process[]">
+                                    <option value="전처리">전처리</option>
+                                    <option value="착즙">착즙</option>
+                                    <option value="여과">여과</option>
+                                    <option value="혼합">혼합</option>
+                                    <option value="살균">살균</option>
+                                    <option value="충진">충진</option>
+                                    <option value="냉각">냉각</option>
+                                    <option value="검사">검사</option>
+                                    <option value="포장">포장</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="productType" class="form-label">작업품목</label>
+                                <select class="form-control" id="productType" name="productType[]">
+                                    <option value="양배추">양배추</option>
+                                    <option value="마늘">마늘</option>
+                                    <option value="매실">매실</option>
+                                    <option value="석류">석류</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="workAmount" class="form-label">작업량</label>
+                                <input type="text" class="form-control" id="workAmount" name="workAmount">
+                            </div>
+                            <div class="mb-3">
+                                <label for="worker" class="form-label">작업자</label>
+                                <input type="text" class="form-control" id="worker" name="worker">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" onclick="saveWorkOrder()">저장</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="">닫기</button>
+                        </div>
                     </div>
                 </div>
             </div>

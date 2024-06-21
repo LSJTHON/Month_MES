@@ -4,6 +4,8 @@ package com.CabbageAndGarlic.entity;
 import com.CabbageAndGarlic.constant.Status;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -24,5 +26,5 @@ public class ProductionPlan {
     private Status productionPlanStatus;  // 상태
 
     @Column(name = "plan_date", nullable = false)
-    private LocalDateTime planDate;
+    private LocalDate planDate;
 }

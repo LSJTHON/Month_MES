@@ -1,9 +1,12 @@
 package com.CabbageAndGarlic.controller;
 
 import com.CabbageAndGarlic.dto.ProductionDto;
+import com.CabbageAndGarlic.dto.WorkOrderDto;
 import com.CabbageAndGarlic.entity.Order;
 import com.CabbageAndGarlic.entity.OrderItem;
 import com.CabbageAndGarlic.entity.ProductionPlan;
+import com.CabbageAndGarlic.entity.WorkOrder;
+import com.CabbageAndGarlic.repository.WorkOrderRepository;
 import com.CabbageAndGarlic.service.*;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -24,13 +27,14 @@ import java.util.*;
 public class ProductionApiController {
     private final ProductionPlanService productionPlanService;
     private final OrderService orderService;
-    private final DataService dataService;
+    private final WorkOrderService workOrderService;
+
 
     @GetMapping(value = "/today")
     public ResponseEntity<?> productionOrders() throws ParseException {
         Map<String, Object> response = new HashMap<>();
         List<ProductionDto> productionDtos = new ArrayList<>();
-        LocalDateTime date = LocalDateTime.now();
+        LocalDate date = LocalDate.now();
         List<ProductionPlan> productionPlans = productionPlanService.findProductionPlan(date);
         for (ProductionPlan productionPlan : productionPlans) {
             Order order = orderService.getOrder(productionPlan);
@@ -61,6 +65,24 @@ public class ProductionApiController {
                 }
             }
         response.put("data", productionDtos);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping(value = "/createWork")
+    public String createWork(@RequestBody WorkOrderDto workOrderDto) throws ParseException {
+        System.out.println(workOrderDto);
+        workOrderService.saveWorkOrder(workOrderDto);
+        return "등록 완료";
+    }
+
+    @GetMapping(value = "/workOrder/today")
+    public ResponseEntity<?> workOrders() throws ParseException {
+        Map<String, Object> response = new HashMap<>();
+        LocalDate date = LocalDate.now();
+        List<WorkOrder> workOrders = workOrderService.getWorkOrders(date);
+        System.out.println(workOrders);
+        response.put("data", workOrders);
+
         return ResponseEntity.ok(response);
     }
 
