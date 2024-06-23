@@ -436,16 +436,16 @@
                     console.log("선택된 행의 수주 번호:", orderNumber);
 
                     $.ajax({
-                        url: '/api/testComplete/${orderNumber}',
+                        url: `/api/testComplete/${orderNumber}`, //컨트롤러 요청 url
                         type: 'PUT',
-                        contentType: 'application/json',
-                        data: JSON.stringify({ orderNumber: orderNumber }), // 수주 번호 전송
-                        success: function (response) {
-                            alert(response);
-                            location.reload();
+                        //data 매개변수는 요청측에서 return 값이 있을 시 data 변수로 들어옴 현재 요청은 return 이 없음
+                        success: function (data) {  //요청이 성공적으로 보내졌을 시 실행
+                            alert('상품 정보를 임시 수정했습니다.');
+                            // 변경된 상태를 비동기로 즉시 반영해줌
+                            table.ajax.reload(null, false);
                         },
-                        error: function (xhr, status, error) {
-                            alert('Error: ' + error);
+                        error: function () {
+                            alert('상품 정보를 불러오는 데 실패했습니다.');
                         }
                     });
                 });

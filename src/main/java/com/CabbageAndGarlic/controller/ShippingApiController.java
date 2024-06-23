@@ -37,13 +37,13 @@ public class ShippingApiController {
         return getAllOrders;
     }
 
-    //상품상세보기
+    //출하현황에서 상품상세보기
     @GetMapping("/orderItems/{orderNumber}")
     public ResponseEntity<List<OrderItem>> getOrderItemsByOrderNumber(@PathVariable Long orderNumber) {
 //        System.out.println(orderNumber+"수주번호 가져오나????????321472147985798235734723472347982347234798479823479823478");
         List<OrderItem> items = orderService.findOrderItemsByOrderNumber(orderNumber);
 
-        System.out.println(items.size()+"품목은 몇개 나오냐????#@!?#?@!#?@!#?@!?#@!#?@!?");
+//        System.out.println(items.size()+"품목은 몇개 나오냐????#@!?#?@!#?@!#?@!?#@!#?@!?");
         return ResponseEntity.ok(items);
     }
 

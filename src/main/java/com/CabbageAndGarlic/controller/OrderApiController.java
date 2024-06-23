@@ -54,8 +54,10 @@ public class OrderApiController {
         return ResponseEntity.ok(items);
     }
 
+
+    //상품 작업상태 임시 수정 메소드
     @PutMapping("/testComplete/{orderNumber}")
     public void testComplete(@PathVariable Long orderNumber) {
-        System.out.println(orderNumber+"dwioqjfioejfiowejfiowejfiowejfiowejfiojfiojfio");
+        orderService.testComplete(orderNumber);
     }
 }

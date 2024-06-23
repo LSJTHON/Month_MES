@@ -58,6 +58,8 @@ public class ShippingService {
             }
             String body = "수주번호 " + order.getOrderNumber() + " \n운송업체 " + request.getShippingCompany()+"\n"+ orderItemsInfo +" 맞짱뜨자 시발!";
             System.out.println(body);
+
+            //문자전송은 반드시 꺼놓으세요
 //            smsService.messageSend(order.getPhoneNumber(), body);    //문자 최종 전송 기본 30원 길면 50원이상
         }
     }
