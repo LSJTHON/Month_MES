@@ -1,66 +1,250 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout1}">
 <head>
-    <title>Chart.js 도넛 차트 예제</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="width=device-width, initial-scale=1.0, shrink-to-fit=no" name="viewport"/>
+
+    <title>설비 목표 달성도 Mixed Chart</title>
+
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="/assets/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="/assets/css/plugins.min.css"/>
+    <link rel="stylesheet" href="/assets/css/kaiadmin.min.css"/>
+
+    <!-- Chart.js 라이브러리 추가 -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- jQuery 라이브러리 추가 -->
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <!-- Chart.js Plugin Datalabels 추가 -->
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+
     <style>
-        #chartContainer {
-            width: 50%;
-            margin: auto;
+        /* 로고 헤더 스타일 */
+        .logo-header {
+            text-align: center; /* 텍스트와 이미지를 중앙 정렬 */
+            padding: 20px 0; /* 상하 패딩 추가 */
+            background-color: #333; /* 배경색 설정 */
+        }
+
+        /* 로고 이미지 스타일 */
+        .logo-img {
+            width: 80%; /* 이미지 너비 조절 */
+            height: auto; /* 이미지 높이 자동 조절 */
+            max-height: 100px; /* 최대 높이 설정 */
+        }
+
+        /* 사이드바 스타일 */
+        .sidebar {
+            background-color: #1a1a1a; /* 사이드바 배경색 변경 */
+        }
+
+        /* 네비게이션 아이템 스타일 */
+        .nav-item {
+            margin: 10px 0; /* 네비게이션 아이템 간격 조절 */
+        }
+
+        /* 메인 패널과 헤더 사이 여백 줄이기 */
+        .main-panel {
+            padding-top: 0; /* 상단 패딩 제거 */
+        }
+
+        /* 차트 컨테이너 스타일 */
+        .chart-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        /* 차트 캔버스 스타일 */
+        .chart-container canvas {
+            margin: 20px 0;
+        }
+
+        /* 도넛 차트 컨테이너 스타일 */
+        .donut-chart-container {
+            width: 300px;
+            height: 300px;
+            margin-bottom: 40px;
             position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-        #chartContainer canvas {
-            display: block;
-            margin: auto;
-        }
-        .center-text {
-            text-align: center;
-            font-size: 24px;
-            color: #000000; /* 퍼센테이지 텍스트 색상 */
+
+        /* 중앙 텍스트 스타일 */
+        .donut-chart-container .center-text {
             position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+            font-size: 24px;
+            font-weight: bold;
+            color: black;
+        }
+
+        /* 막대 차트 컨테이너 스타일 */
+        .bar-chart-container {
+            width: 90%;
+            height: 500px;
         }
     </style>
 </head>
-<body>
-<div id="chartContainer">
-    <canvas id="myChart"></canvas>
-    <div class="center-text">40%</div>
-</div>
-<script>
-    var ctx = document.getElementById('myChart').getContext('2d');
-    var myChart = new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-            labels: ['now', '나머지'],
-            datasets: [{
-                data: [100, 100],
-                backgroundColor: [
-                    '#6A5ACD', /* 페이지 테마에 맞춘 색상 */
-                    '#D3D3D3'
-                ],
-                borderColor: [
-                    '#6A5ACD', /* 페이지 테마에 맞춘 색상 */
-                    '#D3D3D3'
-                ],
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    display: false
+<th:block layout:fragment="script">
+    <script>
+        $(document).ready(function (ChartDataLabels) {
+            // 임시 데이터 설정
+            // 'equipment': 설비 이름, 'date': 날짜, 'achievement': 달성도, 'target': 목표치
+            var data = [
+                {
+                    equipment: '착즙기1',     //이런 형태로 요청에서 리턴 해주면됨
+                    date: '2023-06-01',
+                    achievement: 75,         //목표치는 시간으로 계산하기 때문에 작업시작시간을 가져온 다음 계산은 여기서
+                    target: 100
                 },
-                tooltip: {
-                    enabled: false
+                {equipment: '착즙기2', date: '2023-06-01', achievement: 50, target: 100},
+                {equipment: '살균기1', date: '2023-06-01', achievement: 90, target: 100},
+                {equipment: '살균기2', date: '2023-06-01', achievement: 80, target: 100},
+                {equipment: '혼합기', date: '2023-06-01', achievement: 60, target: 100},
+                {equipment: '즙포장기1', date: '2023-06-01', achievement: 85, target: 100},
+                {equipment: '즙포장기2', date: '2023-06-01', achievement: 70, target: 100},
+                {equipment: '스틱포장기1', date: '2023-06-01', achievement: 95, target: 100},
+                {equipment: '스틱포장기2', date: '2023-06-01', achievement: 65, target: 100},
+                {equipment: '여과기', date: '2023-06-01', achievement: 55, target: 100},
+                {equipment: 'box포장기', date: '2023-06-01', achievement: 45, target: 100},
+                {equipment: '금속검출기', date: '2023-06-01', achievement: 85, target: 100}
+            ];
+
+            // 막대 차트와 도넛 차트를 표시할 캔버스 요소 가져오기
+            var ctx = document.getElementById('mixedChart').getContext('2d');
+            var ctxDonut = document.getElementById('donutChart').getContext('2d');
+
+            // 각 설비의 이름을 레이블로 사용
+            var labels = [...new Set(data.map(item => item.equipment))];
+            // 각 설비의 달성도 데이터
+            var achievementData = data.map(item => item.achievement);
+            // 각 설비의 목표치 데이터
+            var targetData = data.map(item => item.target);
+            // 평균 달성도 계산
+            var averageAchievement = achievementData.reduce((a, b) => a + b, 0) / achievementData.length;
+
+            // Mixed Chart 생성 (막대 차트 + 선형 차트)
+            var mixedChart = new Chart(ctx, {
+                type: 'bar', // 기본 차트 유형: 막대 차트
+                data: {
+                    labels: labels, // x축 레이블
+                    datasets: [{
+                        type: 'bar', // 데이터 유형: 막대 차트
+                        label: '목표 달성도 (%)', // 데이터 레이블
+                        data: achievementData, // 달성도 데이터
+                        backgroundColor: 'rgba(0, 123, 255, 0.6)', // 막대 배경색
+                        borderColor: 'rgba(0, 123, 255, 1)', // 막대 테두리색
+                        borderWidth: 1 // 막대 테두리 두께
+                    }, {
+                        type: 'line', // 데이터 유형: 선형 차트
+                        label: '평균 달성도', // 데이터 레이블
+                        data: new Array(labels.length).fill(averageAchievement), // 평균 달성도 데이터
+                        borderColor: 'rgba(255, 193, 7, 0.6)', // 선 색상
+                        borderWidth: 2, // 선 두께
+                        fill: false // 선 아래 영역 채우지 않음
+                    }, {
+                        type: 'line', // 데이터 유형: 선형 차트
+                        label: '목표치', // 데이터 레이블
+                        data: targetData, // 목표치 데이터
+                        borderColor: 'rgba(220, 53, 69, 0.6)', // 선 색상
+                        borderWidth: 2, // 선 두께
+                        fill: false, // 선 아래 영역 채우지 않음
+                        borderDash: [10, 5] // 선 스타일: 대쉬
+                    }]
+                },
+                options: {
+                    responsive: true, // 반응형 차트
+                    scales: {
+                        y: {
+                            beginAtZero: true, // y축 시작 값을 0으로 설정
+                            max: 100 // y축 최대 값을 100으로 설정
+                        }
+                    }
                 }
-            },
-            cutout: '70%'
-        }
-    });
-</script>
-</body>
+            });
+
+            // 도넛 차트 생성
+            var totalAchievement = achievementData.reduce((a, b) => a + b, 0); // 총 달성도 계산
+            var totalTarget = targetData.reduce((a, b) => a + b, 0); // 총 목표치 계산
+            var percentage = ((totalAchievement / totalTarget) * 100).toFixed(2); // 퍼센트 계산
+
+            var donutChart = new Chart(ctxDonut, {
+                type: 'doughnut', // 차트 유형: 도넛 차트
+                data: {
+                    labels: ['금일 달성도', '금일 목표치'], // 도넛 차트 레이블
+                    datasets: [{
+                        data: [totalAchievement, totalTarget - totalAchievement], // 도넛 차트 데이터
+                        backgroundColor: ['rgba(0, 123, 255, 1)', 'rgba(220, 220, 220, 0.6)'], // 각 섹션 배경색
+                        borderColor: ['rgba(0, 123, 255, 1)', 'rgba(220, 220, 220, 1)'], // 각 섹션 테두리색
+                        borderWidth: 1 // 각 섹션 테두리 두께
+                    }]
+                },
+                options: {
+                    responsive: true, // 반응형 차트
+                    plugins: {
+                        legend: {
+                            position: 'top' // 범례 위치: 상단
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function (tooltipItem) {
+                                    return tooltipItem.label + ': ' + tooltipItem.raw + '%'; // 툴팁 표시 형식
+                                }
+                            }
+                        },
+                        datalabels: {
+                            display: function(context) {
+                                return context.dataIndex === 0; // 첫 번째 데이터만 표시
+                            },
+                            formatter: function(value, context) {
+                                if (context.dataIndex === 0) {
+                                    return percentage + '%';
+                                } else {
+                                    return '';
+                                }
+                            },
+                            color: 'black',
+                            font: {
+                                weight: 'bold',
+                                size: 24
+                            }
+                        }
+                    }
+                },
+                plugins: [ChartDataLabels]
+            });
+
+
+            // 중앙 텍스트 업데이트
+            document.querySelector('.center-text').textContent = percentage + '%';
+        });
+    </script>
+</th:block>
+
+<div class="content" layout:fragment="content">
+    <div class="main-panel">
+        <div class="container-fluid">
+            <br>
+            <h2 class="h2-header">실적 현황</h2>
+            <div class="container chart-container">
+                <div class="donut-chart-container">
+                    <canvas id="donutChart"></canvas>
+                    <div class="center-text"></div>
+                </div>
+            </div>
+            <h2 class="h2-header">설비 현황</h2>
+            <div class="container chart-container">
+                <div class="bar-chart-container">
+                    <canvas id="mixedChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 </html>

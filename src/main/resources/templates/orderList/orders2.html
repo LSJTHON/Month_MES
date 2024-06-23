@@ -188,7 +188,14 @@
                 columns: [
                     {title: "수주번호", data: 'orderNumber'},
                     {title: "업체명", data: 'client'},
-                    {title: "상태", data: 'status'},
+                    {title: "상태", data: 'status',render: function (data,type,row){
+                            return data === 'WAITING' ? '작업대기' :
+                                data === 'IN_PROGRESS' ? '진행중' :
+                                    data === 'CANCELED' ? '취소' :
+                                        data === 'COMPLETED' ? '출하 가능' :
+                                            data === 'SHIPPED' ? '배송 완료' :
+                                                data === 'PendingShipment' ? '배송중' : data;
+                        }},
                     {title: "담당자", data: 'manager'},
                     {
                         title: "수주 확정일", data: 'regTime', render: function (data, type, row) {

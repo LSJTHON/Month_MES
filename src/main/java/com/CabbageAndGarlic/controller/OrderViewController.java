@@ -9,7 +9,6 @@ public class OrderViewController {
 
     @GetMapping("/orders")
     public String orderView(){
-
         return "/orderList/orders2";
     }
 

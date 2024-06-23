@@ -73,6 +73,7 @@ public class ShippingService {
             dto.setShippingCompany(shipping.getShippingCompany());
             dto.setShippingDate(shipping.getShippingDate().toString());
             dto.setShippingStatus(shipping.getOrderNumber().getStatus().toString());
+            dto.setShippingClient(shipping.getOrderNumber().getClient());
             return dto;
         }).collect(Collectors.toList());
     }
