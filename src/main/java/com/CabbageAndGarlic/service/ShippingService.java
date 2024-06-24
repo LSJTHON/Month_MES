@@ -60,7 +60,7 @@ public class ShippingService {
             System.out.println(body);
 
             //문자전송은 반드시 꺼놓으세요
-            smsService.messageSend(order.getPhoneNumber(), body);    //문자 최종 전송 기본 30원 길면 50원이상
+            //smsService.messageSend(order.getPhoneNumber(), body);    //문자 최종 전송 기본 30원 길면 50원이상
         }
     }
     // PendingShipment, SHIPPED 상태인 수주 정보만 조회
