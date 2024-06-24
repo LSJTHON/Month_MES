@@ -1,6 +1,5 @@
 package com.CabbageAndGarlic.entity;
 
-
 import com.CabbageAndGarlic.constant.Status;
 import jakarta.persistence.*;
 import lombok.*;

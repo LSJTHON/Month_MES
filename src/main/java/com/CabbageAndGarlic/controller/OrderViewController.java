@@ -8,10 +8,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class OrderViewController {
 
     @GetMapping("/orders")
-    public String hello(){
-
-        return "/orderList/orders2";
+    public String orderView(){
+        return "/order/orders2";
     }
 
-
+    @GetMapping("/")
+    public String productionStatus(){
+        return "/production/productionStatus";
+    }
 }
