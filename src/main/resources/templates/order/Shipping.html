@@ -73,7 +73,7 @@
                 processing: true, // 서버 처리 중일 때 로딩 화면 표시
                 serverSide: false, // 서버 사이드 처리 비활성화
                 ordering: true, // 정렬 기능 활성화
-                scrollX: true, // 가로 스크롤 활성화
+                //scrollX: true, // 가로 스크롤 활성화
                 info: false, // 테이블 정보 비활성화
                 ajax: { // AJAX 설정
                     url: 'http://localhost:8080/Shipping/orders', // 데이터 요청 URL
@@ -135,9 +135,10 @@
                         render: function (data, type, row) { // 운송업체 셀 렌더링
                             return `
                                 <select class="shipping-company"> <!-- 운송업체 선택 -->
-                            <option value="CJ 대한통운">CJ 대한통운</option>
-                            <option value="로젠택배">로젠택배</option>
-                            <option value="쿠팡">쿠팡</option>
+                            <option value="로켓치호">로켓치호</option>
+                            <option value="성종택배">성종택배</option>
+                            <option value="은지물류">은지물류</option>
+                            <option value="이우운송">이우운송</option>
                             </select>
                             `;
                         }
@@ -178,7 +179,7 @@
                 processing: true, // 서버 처리 중일 때 로딩 화면 표시
                 serverSide: false, // 서버 사이드 처리 비활성화
                 ordering: true, // 정렬 기능 활성화
-                scrollX: true, // 가로 스크롤 활성화
+                //scrollX: true, // 가로 스크롤 활성화
                 info: false, // 테이블 정보 비활성화
                 ajax: { // AJAX 설정
                     url: 'http://localhost:8080/Shipping/shippingStatus', // 데이터 요청 URL
@@ -207,13 +208,14 @@
                             return `<button class="item-info-btn btn btn-primary" data-order-number="${row.orderNumber}">품목 보기</button>`;
                         }
                     },
-                    {title: "출하일", data: 'shippingDate'},
                     {
                         title: "출하상태", data: 'shippingStatus', render: function (data, type, tow) {
                             return data === 'PendingShipment' ? '배송중' :
                                 data === 'SHIPPED' ? '완료' : data;
                         }
                     },
+                    {title: "출하일", data: 'shippingDate'},
+                    {title: "전화번호", data: 'phoneNumber'},
                     {title: "운송업체", data: 'shippingCompany'}
                 ],
                 language: { // 언어 설정
@@ -242,7 +244,7 @@
                         var itemsHtml = data.map(item => `
                 <tr>
                     <td>${item.productName}</td>
-                    <td>${item.amount}</td>
+                    <td>${item.amount}BOX</td>
                     <td>${item.startDate}</td>
                     <td>${item.endDate}</td>
                 </tr>
@@ -255,32 +257,6 @@
                     }
                 });
             });
-
-            // $('#table2 tbody').on('click', '.item-info-btn', function () {
-            //     var orderNumber = $(this).data('order-number');
-            //     // console.log("수주 번호 똑바로 가져옴? : " + orderNumber);
-            //     $.ajax({
-            //         url: 'http://localhost:8080/Shipping/orderItems/' + orderNumber,
-            //         type: 'GET',
-            //         success: function (data) {
-            //             console.log("품목 이름: ", data.productName);
-            //             console.log("품목 수량: ", data.amount);
-            //             var itemsHtml = data.map(item => `
-            //     <tr>
-            //         <td>${item.productName}</td>
-            //         <td>${item.amount}</td>
-            //         <td>${item.startDate}</td>
-            //         <td>${item.endDate}</td>
-            //     </tr>
-            // `).join('');
-            //             $('#order-items-table tbody').html(itemsHtml);
-            //             $('#orderItemsModal').modal('show'); // 모달 표시
-            //         },
-            //         error: function (xhr, status, error) {
-            //             alert('품목 정보를 가져오는데 실패했습니다: ' + error);
-            //         }
-            //     });
-            // });
 
             // 전체 선택/해제 체크박스 기능
             $('#select-all').on('click', function () {
@@ -350,10 +326,9 @@
     </div>
 
     <!-- 품목 정보 모달 -->
-    <!-- 품목 정보 모달 -->
     <div class="modal fade" id="orderItemsModal" tabindex="-1" aria-labelledby="orderItemsModalLabel"
          aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog" style="width: auto; max-width: 35%;">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="orderItemsModalLabel">품목 정보</h5>
@@ -363,10 +338,10 @@
                     <table id="order-items-table" class="table table-striped">
                         <thead>
                         <tr>
-                            <th style="white-space: nowrap">상품 이름</th>  <!--구간이 짧아서 글자 줄넘김 생길때 해당 스타일로 해결 가능-->
-                            <th style="white-space: nowrap">수량</th>
-                            <th style="white-space: nowrap">시작일</th>
-                            <th style="white-space: nowrap">종료일</th>
+                            <th>상품 이름</th>  <!--구간이 짧아서 글자 줄넘김 생길때 해당 스타일로 해결 가능-->
+                            <th>수량</th>
+                            <th>시작일</th>
+                            <th>종료일</th>
                         </tr>
                         </thead>
                         <tbody>

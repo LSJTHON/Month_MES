@@ -43,7 +43,7 @@ public class OrderApiController {
     @PostMapping("/createOrder")
     public String saveOrder(@RequestBody OrderDto orderDto) {
         orderService.saveOrder(orderDto);
-        return "등록 성공";
+        return "수주를 정상적으로 등록했습니다.";
     }
 
 

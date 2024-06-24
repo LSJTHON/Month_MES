@@ -65,15 +65,17 @@ public class ShippingService {
     }
     // PendingShipment, SHIPPED 상태인 수주 정보만 조회
     public List<ShippingDto> findPendingAndShippedOrders() {
-        List<Shipping> shippings = shippingRepository.findAllByOrderNumber_StatusIn(List.of(Status.PendingShipment, Status.SHIPPED));
-//        System.out.println(shippings.size() + "개의 출하 정보가 있습니다."); // 디버깅용 출력
-        return shippings.stream().map(shipping -> {
+        List<Shipping> shippingItem = shippingRepository.findAllByOrderNumber_StatusIn(List.of(Status.PendingShipment, Status.SHIPPED));
+//        System.out.println(shippingItem.size() + "개의 출하 정보가 있습니다."); // 디버깅용 출력
+        return shippingItem.stream().map(shipping -> {
             ShippingDto dto = new ShippingDto();
             dto.setOrderNumber(shipping.getOrderNumber().getOrderNumber()); //get을 두번 사용하는 이유는 수주번호는 shipping안에 있는 order 필드이기 때문
-            dto.setShippingCompany(shipping.getShippingCompany());
-            dto.setShippingDate(shipping.getShippingDate().toString());
-            dto.setShippingStatus(shipping.getOrderNumber().getStatus().toString());
-            dto.setShippingClient(shipping.getOrderNumber().getClient());
+            dto.setShippingCompany(shipping.getShippingCompany()); //운송업체 데이터
+            dto.setShippingDate(shipping.getShippingDate().toString()); //출하일 데이터
+            dto.setShippingStatus(shipping.getOrderNumber().getStatus().toString()); //출하 상태 데이터(조인한거)
+            dto.setShippingClient(shipping.getOrderNumber().getClient()); //수주번호에 대한 수주처 데이터(조인한거)
+            dto.setPhoneNumber(shipping.getOrderNumber().getPhoneNumber()); //수주번호에 대한 수주처 전화번호 데이터(조인한거)
+
             return dto;
         }).collect(Collectors.toList());
     }

@@ -35,7 +35,6 @@
             position: absolute;
             left: 0;
             top: 100%;
-            white-space: nowrap;
         }
 
         .modal-custom {
@@ -87,10 +86,6 @@
 
         .delivery-date-group input {
             margin-right: 10px;
-        }
-
-        .delivery-date-group button {
-            white-space: nowrap; /* 버튼 글자 줄넘김 생기면 이걸로 해결 가능함 */
         }
 
         .order-search-table th{
@@ -354,7 +349,9 @@
                 data: JSON.stringify(orderData),
                 success: function (response) {
                     alert(response);
-                    location.reload();
+                    // location.reload(); //페이지 리로드 기능
+                    $('#addOrderModal').modal('hide'); // 모달 닫기
+                    $('#table').DataTable().ajax.reload(null, false); // 테이블 비동기 갱신가능하도록 설정
                 },
                 error: function (xhr, status, error) {
                     alert('Error: ' + error);

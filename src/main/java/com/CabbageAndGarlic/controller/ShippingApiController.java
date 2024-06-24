@@ -26,7 +26,6 @@ public class ShippingApiController {
 
     private final OrderService orderService;
     private final ShippingService shippingService;
-    private final OrderItemRepository orderItemRepository;
 
 
     //수주 정보를 전부 가져감 스크립트에서 완료된 항목만 보이게할 예정

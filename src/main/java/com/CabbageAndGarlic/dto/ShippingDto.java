@@ -12,4 +12,5 @@ public class ShippingDto { //출하 요청 시 사용할 DTO
     private String shippingDate;
     private String shippingStatus;
     private String shippingClient;
+    private String phoneNumber;
 }

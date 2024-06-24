@@ -9,6 +9,6 @@ public class ShippingViewController {
     @GetMapping("/Shipping")
     public String orderView(){
 
-        return "/Shipping";
+        return "order/Shipping";
     }
 }
