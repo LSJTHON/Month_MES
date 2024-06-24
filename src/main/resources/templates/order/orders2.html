@@ -5,7 +5,6 @@
 
 <th:block layout:fragment="style">
     <style>
-
         .dt-search {
             display: flex;
             margin-top: 10px;
@@ -140,9 +139,10 @@
         let productCount = 1; // input 태그 갯수 초기값
         const maxProducts = 5; // input 태그 최대갯수 설정값 ( 추가폼 포함 5개까지 가능함 )
         var table = null;
+
         $(document).ready(function () {
             /*테이블 초기화 및 설정하는거 테이블 만들때 여기부터 시작함*/
-            var table = $('#table').DataTable({
+            table = $('#table').DataTable({
                 dom: 'Bfrtip',
                 buttons: [
                     {
@@ -245,8 +245,6 @@
                 ordering: true,
                 serverSide: false,
                 scrollX: true,
-
-
                 columns: [
                     {title: "상품명", data: 'productName'},
                     {
@@ -294,25 +292,25 @@
 
                     // 제품 추가 시 추가한 값 input으로 추가
                     $('#productFields').append(`
-                <div class="product-field-row" id="productField${productCount + 1}">
-                    <div class="col">
-                        <label for="productName${productCount + 1}">제품명</label>
-                        <select class="form-control" id="productName${productCount + 1}" name="productName[]" disabled>
-                            <option value="양배추즙"${productName === '양배추즙' ? ' selected' : ''}>양배추즙</option>
-                            <option value="흑마늘즙"${productName === '흑마늘즙' ? ' selected' : ''}>흑마늘즙</option>
-                            <option value="석류젤리스틱"${productName === '석류젤리스틱' ? ' selected' : ''}>석류젤리스틱</option>
-                            <option value="매실젤리스틱"${productName === '매실젤리스틱' ? ' selected' : ''}>매실젤리스틱</option>
-                        </select>
-                    </div>
-                    <div class="col">
-                        <label for="productQuantity${productCount + 1}">수량</label>
-                        <input type="number" class="form-control" id="productQuantity${productCount + 1}" name="productQuantity[]" value="${productQuantity}" min="20" max="1000" disabled>
-                    </div>
-                    <div class="col-auto">
-                        <button type="button" class="btn btn-danger removeProductButton" data-id="${productCount + 1}">삭제</button>
-                    </div>
-                </div>
-            `);
+                        <div class="product-field-row" id="productField${productCount + 1}">
+                            <div class="col">
+                                <label for="productName${productCount + 1}">제품명</label>
+                                <select class="form-control" id="productName${productCount + 1}" name="productName[]" disabled>
+                                    <option value="양배추즙"${productName === '양배추즙' ? ' selected' : ''}>양배추즙</option>
+                                    <option value="흑마늘즙"${productName === '흑마늘즙' ? ' selected' : ''}>흑마늘즙</option>
+                                    <option value="석류젤리스틱"${productName === '석류젤리스틱' ? ' selected' : ''}>석류젤리스틱</option>
+                                    <option value="매실젤리스틱"${productName === '매실젤리스틱' ? ' selected' : ''}>매실젤리스틱</option>
+                                </select>
+                            </div>
+                            <div class="col">
+                                <label for="productQuantity${productCount + 1}">수량</label>
+                                <input type="number" class="form-control" id="productQuantity${productCount + 1}" name="productQuantity[]" value="${productQuantity}" min="20" max="1000" disabled>
+                            </div>
+                            <div class="col-auto">
+                                <button type="button" class="btn btn-danger removeProductButton" data-id="${productCount + 1}">삭제</button>
+                            </div>
+                        </div>
+                    `);
                     productCount++;
                     // 초기 입력 필드 초기화
                     $('#productName1').val('양배추즙');
@@ -365,34 +363,31 @@
                 });
             });
 
-// 새로운 제품 필드를 추가하는 함수
+            // 새로운 제품 필드를 추가하는 함수
             function addProductField(name, quantity, index) {
                 document.getElementById('productFields').insertAdjacentHTML('beforeend', `
-        <div class="product-field-row" id="productField${index}">
-            <div class="col">
-                <label for="productName${index}">제품명</label>
-                <select class="form-control" id="productName${index}" name="productName[]" disabled>
-                    <option value="양배추즙"${name === '양배추즙' ? ' selected' : ''}>양배추즙</option>
-                    <option value="흑마늘즙"${name === '흑마늘즙' ? ' selected' : ''}>흑마늘즙</option>
-                    <option value="석류젤리스틱"${name === '석류젤리스틱' ? ' selected' : ''}>석류젤리스틱</option>
-                    <option value="매실젤리스틱"${name === '매실젤리스틱' ? ' selected' : ''}>매실젤리스틱</option>
-                </select>
-            </div>
-            <div class="col">
-                <label for="productQuantity${index}">수량</label>
-                <input type="number" class="form-control" id="productQuantity${index}" name="productQuantity[]" value="${quantity}" min="20" max="1000" disabled>
-            </div>
-            <div class="col-auto">
-                <button type="button" class="btn btn-danger removeProductButton" data-id="${index}">삭제</button>
-            </div>
-        </div>
-    `);
+                    <div class="product-field-row" id="productField${index}">
+                        <div class="col">
+                            <label for="productName${index}">제품명</label>
+                            <select class="form-control" id="productName${index}" name="productName[]" disabled>
+                                <option value="양배추즙"${name === '양배추즙' ? ' selected' : ''}>양배추즙</option>
+                                <option value="흑마늘즙"${name === '흑마늘즙' ? ' selected' : ''}>흑마늘즙</option>
+                                <option value="석류젤리스틱"${name === '석류젤리스틱' ? ' selected' : ''}>석류젤리스틱</option>
+                                <option value="매실젤리스틱"${name === '매실젤리스틱' ? ' selected' : ''}>매실젤리스틱</option>
+                            </select>
+                        </div>
+                        <div class="col">
+                            <label for="productQuantity${index}">수량</label>
+                            <input type="number" class="form-control" id="productQuantity${index}" name="productQuantity[]" value="${quantity}" min="20" max="1000" disabled>
+                        </div>
+                        <div class="col-auto">
+                            <button type="button" class="btn btn-danger removeProductButton" data-id="${index}">삭제</button>
+                        </div>
+                    </div>
+                `);
             }
-
-            //엑셀 업로드 끝난는 구간
         });
 
-        // 기존 saveOrder 함수 수정 없이 추가된 코드
         function saveOrder() {
             const orderNumber = new Date().getTime();  // 예시로 현재 타임스탬프를 사용하여 수주번호 생성
             const client = $('#client').val();
@@ -437,6 +432,31 @@
             });
         }
 
+        function processSelectedRows(table) {
+            var selectedData = table.rows({selected: true}).data(); // 선택된 행의 데이터 가져오기
+            if (selectedData.length === 0) {
+                alert("선택된 행이 없습니다.");
+            } else {
+                selectedData.each(function (value, index) {
+                    var orderNumber = value.orderNumber; // 수주 번호 가져오기
+                    console.log("선택된 행의 수주 번호:", orderNumber);
+
+                    $.ajax({
+                        url: `/api/testComplete/${orderNumber}`, //컨트롤러 요청 url
+                        type: 'PUT',
+                        success: function (data) {  //요청이 성공적으로 보내졌을 시 실행
+                            alert('상품 정보를 임시 수정했습니다.');
+                            // 변경된 상태를 비동기로 즉시 반영해줌
+                            table.ajax.reload(null, false);
+                        },
+                        error: function () {
+                            alert('상품 정보를 불러오는 데 실패했습니다.');
+                        }
+                    });
+                });
+            }
+        }
+
         // 새로운 FullCalendar 스크립트
         document.addEventListener('DOMContentLoaded', function () {
             var calendarEl = document.getElementById('calendar');
@@ -470,6 +490,7 @@
                         url: '/api/orderCalendar',
                         type: 'GET',
                         success: function (data) {
+                            console.log(data); // 데이터 확인을 위해 로그 추가
                             var events = data.map(function (order) {
                                 var endDate = new Date(order.deliveryDate);
                                 var startDate = new Date(order.deliveryDate);
@@ -489,6 +510,7 @@
                                     backgroundColor: color // 이벤트의 리스트로 순서대로 생성함
                                 };
                             });
+                            console.log(events); // 생성된 이벤트 확인을 위해 로그 추가
                             successCallback(events);
                         },
                         error: function () {
@@ -506,48 +528,18 @@
                 $('#addCalendarModal').modal('show');
             });
         });
-
-
-        function processSelectedRows(table) {
-            var selectedData = table.rows({selected: true}).data(); // 선택된 행의 데이터 가져오기
-            if (selectedData.length === 0) {
-                alert("선택된 행이 없습니다.");
-            } else {
-                selectedData.each(function (value, index) {
-                    var orderNumber = value.orderNumber; // 수주 번호 가져오기
-                    console.log("선택된 행의 수주 번호:", orderNumber);
-
-                    $.ajax({
-                        url: `/api/testComplete/${orderNumber}`, //컨트롤러 요청 url
-                        type: 'PUT',
-                        //data 매개변수는 요청측에서 return 값이 있을 시 data 변수로 들어옴 현재 요청은 return 이 없음
-                        success: function (data) {  //요청이 성공적으로 보내졌을 시 실행
-                            alert('상품 정보를 임시 수정했습니다.');
-                            // 변경된 상태를 비동기로 즉시 반영해줌
-                            table.ajax.reload(null, false);
-                        },
-                        error: function () {
-                            alert('상품 정보를 불러오는 데 실패했습니다.');
-                        }
-                    });
-                });
-            }
-        }
     </script>
 </th:block>
 
 <div layout:fragment="content">
     <div class="main-panel">
         <div class="container-fluid">
-
             <h2 class="h2-header">수주 현황 관리</h2>
-
             <table id="table" class="table table-striped table-bordered order-search-table"></table>
             <table id="table2" class="table table-striped table-bordered order-search-table"></table>
 
             <!-- Start Order Modal1 -->
-            <div class="modal fade" id="addOrderModal" tabindex="-1" aria-labelledby="addOrderModalLabel"
-                 aria-hidden="true">
+            <div class="modal fade" id="addOrderModal" tabindex="-1" aria-labelledby="addOrderModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-custom">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -571,9 +563,7 @@
                                 <label for="deliveryDate" class="form-label">납품일</label>
                                 <div class="delivery-date-group">
                                     <input type="text" class="form-control" id="deliveryDate" name="deliveryDate">
-                                    <button class="btn btn-outline-secondary" type="button" id="selectDeliveryDate">작업
-                                        계획
-                                    </button>
+                                    <button class="btn btn-outline-secondary" type="button" id="selectDeliveryDate">작업 계획</button>
                                 </div>
                             </div>
                             <div class="product-field-row">
@@ -588,8 +578,7 @@
                                 </div>
                                 <div class="col">
                                     <label for="productQuantity1">수량</label>
-                                    <input type="number" class="form-control" id="productQuantity1"
-                                           name="productQuantity[]" min="20" max="1000" value="40">
+                                    <input type="number" class="form-control" id="productQuantity1" name="productQuantity[]" min="20" max="1000" value="40">
                                 </div>
                                 <div class="col-auto">
                                     <button type="button" class="btn btn-success" id="addProductButton">제품 추가</button>
@@ -612,8 +601,7 @@
             <!--End Order Modal1-->
 
             <!--Start Calendar Modal2-->
-            <div class="modal fade" id="addCalendarModal" tabindex="-1" aria-labelledby="addOrderModalLabel"
-                 aria-hidden="true">
+            <div class="modal fade" id="addCalendarModal" tabindex="-1" aria-labelledby="addOrderModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content">
                         <div class="modal-header">
