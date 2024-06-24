@@ -1,6 +1,8 @@
 package com.CabbageAndGarlic.controller;
 
 import com.CabbageAndGarlic.dto.RoutingListViewResponse;
+import com.CabbageAndGarlic.service.ProcessManageService;
+import com.CabbageAndGarlic.service.ProductService;
 import com.CabbageAndGarlic.service.RoutingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +18,10 @@ import java.util.Map;
 public class RoutingApiController {
 
     private final RoutingService routingService;
+    private final ProductService productService;
+
+    private final ProcessManageService processManageService;
+
 
     @GetMapping("/routings")
     public Map<String,Object> getAllRouting() {
@@ -26,6 +32,27 @@ public class RoutingApiController {
 
         return getAllRouting;
     }
+
+    @GetMapping("/routingProducts") // 완제품조회
+    public Map<String,Object> getAllProducts() {
+
+        Map<String,Object> getAllProducts = new HashMap<>();
+
+        getAllProducts.put("data",productService.findAll());
+
+        return getAllProducts;
+    }
+
+    @GetMapping("/routingProcess") // 공정 전체 조회
+    public Map<String,Object> getAllProcess() {
+
+        Map<String,Object> getAllProcess = new HashMap<>();
+
+        getAllProcess.put("data",processManageService.findAll());
+
+        return getAllProcess;
+    }
+
 
     @GetMapping("/routingNumber/{routingNumber}")
     public ResponseEntity<List<RoutingListViewResponse>> getAllRouting(@PathVariable int routingNumber) {

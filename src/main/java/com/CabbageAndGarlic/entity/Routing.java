@@ -16,7 +16,7 @@ public class Routing {
 
     @ManyToOne
     @JoinColumn(name = "process_number")
-    private ProcessManagement routingNumber;  // 라우팅 번호
+    private ProcessManagement routingNumber;  // 공정 번호
 
     @ManyToOne
     @JoinColumn(name = "process_name", nullable = false)

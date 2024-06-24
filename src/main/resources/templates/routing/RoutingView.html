@@ -139,6 +139,9 @@
                         text: '라우팅 추가',
                         action: function (e, dt, node, config) {
                             $('#addRoutingModal').modal('show');
+                            loadProductOptions();  // 모달이 열릴 때 품목명 옵션을 로드
+                            loadProcessOptions(); // 공정명 옵션 로드
+
                         }
                     },
                     {
@@ -216,7 +219,6 @@
                 serverSide: false,
                 scrollX: true,
 
-
                 columns: [
                     {title: "공정번호", data: 'routingNumber.processNumber'},
                     {title: "공정명", data: 'routingProduct.processName'},
@@ -235,11 +237,11 @@
             // 테이블 행 클릭 이벤트임
             $('#table tbody').on('click', 'tr', function () {
                 var data = table.row(this).data();  //클릭한 행 this 로 인식하고 값 가져옴
-                loadOrderItems(data.number); // 클릭된 수주 번호에 대한 주문 품목 가져오기
+                loadRoutingNumber(data.number); // 클릭된 수주 번호에 대한 주문 품목 가져오기
             });
 
-            //특정 수주 번호에 대한 수주목록 가져오기
-            function loadOrderItems(routingNumber) {
+
+            function loadRoutingNumber(routingNumber) {
                 $.ajax({
                     url: `/api/routingNumber/${routingNumber}`, //컨트롤러 요청 url
                     type: 'GET',
@@ -253,58 +255,55 @@
             }
         });
 
+        let productCount = 1; // 입력 필드 갯수 초기값
 
-        let productCount = 1; // input 태그 갯수 초기값
-        const maxProducts = 5; // input 태그 최대갯수 설정값 ( 추가폼 포함 5개까지 가능함 )
-
-        //제품추가 클릭 시 최소 20개 최대 1000개 유효성 검사 기능
         $(document).ready(function () {
+            // 제품 추가 버튼 클릭 시 이벤트 리스너 추가
             $('#addProductButton').click(function () {
-                const productQuantity = parseInt($('#productQuantity1').val());  //제품 추가 눌렀을 시 해당 값 가져옴
-                if (productQuantity < 20 || productQuantity > 1000) {
-                    alert('수량은 20개부터 1000개까지 주문 가능합니다.');
+                // 드롭다운에서 선택한 공정명 가져오기
+                const processName = $('#productQuantity1').val();
+                let isDuplicate = false;
+                $('#productFields .product-field-row').each(function () {
+                    const existingProcessName = $(this).find('input[id^="productName"]').val();
+                    if (existingProcessName === processName) {
+                        isDuplicate = true;
+                        return false; // 중복 발견 시 루프 종료
+                    }
+                });
+
+                if (isDuplicate) {
+                    alert('같은 공정을 추가할 수 없습니다.');
                     return;
                 }
-
-                if (productCount < maxProducts) {  //최대갯수 넘었을 시 제품 추가 불가능
-                    const productName = $('#productName1').val(); //제품이름의 값을 가져옴
-
-                    // 제품 추가 시 추가한 값 input으로 추가
-                    $('#productFields').append(`
-                <div class="product-field-row" id="productField${productCount + 1}">
-                    <div class="col">
-                        <label for="productName${productCount + 1}">제품명</label>
-                        <select class="form-control" id="productName${productCount + 1}" name="productName[]" disabled>
-                            <option value="양배추즙"${productName === '양배추즙' ? ' selected' : ''}>양배추즙</option>
-                            <option value="흑마늘즙"${productName === '흑마늘즙' ? ' selected' : ''}>흑마늘즙</option>
-                            <option value="석류젤리스틱"${productName === '석류젤리스틱' ? ' selected' : ''}>석류젤리스틱</option>
-                            <option value="매실젤리스틱"${productName === '매실젤리스틱' ? ' selected' : ''}>매실젤리스틱</option>
-                        </select>
-                    </div>
-                    <div class="col">
-                        <label for="productQuantity${productCount + 1}">수량</label>
-                        <input type="number" class="form-control" id="productQuantity${productCount + 1}" name="productQuantity[]" value="${productQuantity}" min="20" max="1000" disabled>
-                    </div>
-                    <div class="col-auto">
-                        <button type="button" class="btn btn-danger removeProductButton" data-id="${productCount + 1}">삭제</button>
-                    </div>
+                // 선택한 공정명을 포함한 새로운 제품 필드 행 추가
+                $('#productFields').append(`
+            <div class="product-field-row" id="productField${productCount}">
+                <div class="col">
+                    <label for="productName${productCount}">공정명</label>
+                    <input type="text" class="form-control" id="productName${productCount}" value="${processName}" readonly>
                 </div>
-            `);
-                    productCount++;
-                    // 초기 입력 필드 초기화
-                    $('#productName1').val('양배추즙');
-                    $('#productQuantity1').val('40');
-                } else {
-                    alert('최대 4개의 제품만 추가할 수 있습니다.');
-                }
+                <div class="col-auto">
+                    <button type="button" class="btn btn-danger removeProductButton">삭제</button>
+                </div>
+            </div>
+        `);
+
+                // 추가된 제품 필드 행에 대해 삭제 버튼 클릭 이벤트 리스너 추가
+                $('.removeProductButton').click(function () {
+                    $(this).closest('.product-field-row').remove();
+                });
+
+                // productCount는 추가된 제품 필드 행 수를 추적하기 위한 변수입니다.
+                productCount++;
             });
 
+            // 제품 삭제 버튼 클릭 시 이벤트 리스너 추가
             $(document).on('click', '.removeProductButton', function () {
-                var id = $(this).data('id');
-                $('#productField' + id).remove();
-                productCount--;
+                $(this).closest('.product-field-row').remove();
+                productCount--; // 제품 필드 행 수 감소
             });
         });
+
 
         // 기존 saveOrder 함수 수정 없이 추가된 코드
         function saveOrder() {
@@ -366,6 +365,44 @@
         }
 
 
+        //품목명 select전체 조회
+        function loadProductOptions() {
+            $.ajax({
+                url: '/api/routingProducts',
+                type: 'GET',
+                success: function (response) {
+                    var options = '';
+                    response.data.forEach(function (product) {
+                        options += `<option value="${product.productName}">${product.productName}</option>`;
+                    });
+                    $('#productName2').html(options);
+                },
+                error: function () {
+                    alert('품목 데이터를 불러오는 데 실패했습니다.');
+                }
+            });
+        }
+
+        //공정명 select전체 조회
+        function loadProcessOptions() {
+            $.ajax({
+                url: '/api/routingProcess', // 공정 데이터를 조회하는 URL
+                type: 'GET',
+                success: function (response) {
+                    var options = '';
+                    response.data.forEach(function (process) {
+                        options += `<option value="${process.processName}">${process.processName}</option>`;
+                    });
+                    $('#productQuantity1').html(options); // 해당 select 요소에 옵션 추가
+                },
+                error: function () {
+                    alert('공정 데이터를 불러오는 데 실패했습니다.');
+                }
+            });
+        }
+
+
+
     </script>
 </th:block>
 
@@ -379,53 +416,31 @@
             <table id="table2" class="table table-striped table-bordered order-search-table"></table>
 
             <!-- Start Order Modal1 -->
-            <div class="modal fade" id="addRoutingModal" tabindex="-1" aria-labelledby="addRoutingModalLabel"
-                 aria-hidden="true">
+            <div class="modal fade" id="addRoutingModal" tabindex="-1" aria-labelledby="addRoutingModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-custom">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="addRoutingModalLabel">수주 추가</h5>
+                            <h5 class="modal-title" id="addRoutingModalLabel">라우팅 추가</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body modal-body-scrollable">
-                            <div class="mb-3">
-                                <label for="client" class="form-label">업체명</label>
-                                <input type="text" class="form-control" id="client" name="client">
-                            </div>
-                            <div class="mb-3">
-                                <label for="phoneNumber" class="form-label">전화번호</label>
-                                <input type="text" class="form-control" id="phoneNumber" name="phneNumber">
-                            </div>
-                            <div class="mb-3">
-                                <label for="manager" class="form-label">담당자</label>
-                                <input type="text" class="form-control" id="manager" name="manager">
-                            </div>
-                            <div class="mb-4">
-                                <label for="deliveryDate" class="form-label">납품일</label>
-                                <div class="delivery-date-group">
-                                    <input type="text" class="form-control" id="deliveryDate" name="deliveryDate">
-                                    <button class="btn btn-outline-secondary" type="button" id="selectDeliveryDate">작업
-                                        계획
-                                    </button>
+                            <div class="product-field-row">
+                                <div class="col">
+                                    <label for="productName2">품목명</label>
+                                    <select class="form-control" id="productName2" name="productName[]">
+                                        <!-- AJAX로 로드한 옵션이 여기에 추가됩니다. -->
+                                    </select>
                                 </div>
                             </div>
                             <div class="product-field-row">
                                 <div class="col">
-                                    <label for="productName1">제품명</label>
-                                    <select class="form-control" id="productName1" name="productName[]">
-                                        <option value="양배추즙">양배추즙</option>
-                                        <option value="흑마늘즙">흑마늘즙</option>
-                                        <option value="석류젤리스틱">석류젤리스틱</option>
-                                        <option value="매실젤리스틱">매실젤리스틱</option>
+                                    <label for="productQuantity1">공정명</label>
+                                    <select class="form-control" id="productQuantity1" name="productName[]">
+                                        <!-- AJAX로 로드한 옵션이 여기에 추가됩니다. -->
                                     </select>
                                 </div>
-                                <div class="col">
-                                    <label for="productQuantity1">수량</label>
-                                    <input type="number" class="form-control" id="productQuantity1"
-                                           name="productQuantity[]" min="20" max="1000" value="40">
-                                </div>
                                 <div class="col-auto">
-                                    <button type="button" class="btn btn-success" id="addProductButton">제품 추가</button>
+                                    <button type="button" class="btn btn-success" id="addProductButton">추가</button>
                                 </div>
                             </div>
                             <div id="productFields"></div>
@@ -438,25 +453,6 @@
                 </div>
             </div>
             <!--End Order Modal1-->
-
-            <!--Start Calendar Modal2-->
-            <div class="modal fade" id="addCalendarModal" tabindex="-1" aria-labelledby="addOrderModalLabel"
-                 aria-hidden="true">
-                <div class="modal-dialog modal-lg">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <div id="calendar"></div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!--End Calendar Modal2-->
         </div>
     </div>
 </div>
