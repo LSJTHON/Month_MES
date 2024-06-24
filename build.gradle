@@ -35,7 +35,14 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
+
+	//문자전송 전용 의존성
 	implementation 'net.nurigo:sdk:4.3.0'
+
+
+	//엑셀 업로드 관련 의존성
+	implementation 'org.apache.poi:poi:5.2.3'
+	implementation 'org.apache.poi:poi-ooxml:5.2.3'
 }
 
 tasks.named('test') {
