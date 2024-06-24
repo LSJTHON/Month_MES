@@ -95,8 +95,12 @@
                             }else
                                 return data+"KG";
                         }},
-                    { title: "생산 준비 시간", data: 'productionSetupTime' },
-                    { title: "사이클 시간", data: 'cycleHour' }
+                    { title: "생산 준비 시간", data: 'productionSetupTime' , render: function (data, type, row) {
+                            return data + 'H';
+                        }},
+                    { title: "사이클 시간", data: 'cycleHour' , render: function (data, type, row) {
+                            return data + 'H';
+                        }}
                 ],
                 language: {
                     search: "검색:"

@@ -199,7 +199,9 @@
                 columns: [
                     {title: "라우팅 번호", data: 'number'},
                     {title: "품목명", data: 'routingProductName.productName'},
-                    {title: "전체공정 시간", data: 'allCycleTime'},
+                    {title: "전체공정 시간", data: 'allCycleTime', render: function (data, type, row) {
+                            return data + 'H';
+                        }},
                 ],
                 language: {
                     search: "검색:",
@@ -224,7 +226,7 @@
                     {title: "공정명", data: 'routingProduct.processName'},
                     {
                         title: "작업시간", data: 'cycleHour.cycleHour', render: function (data, type, row) {
-                            return data + 'box';
+                            return data + 'H';
                         }
                     }
                 ],
@@ -424,6 +426,10 @@
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body modal-body-scrollable">
+                            <div class="mb-3">
+                                <label for="client" class="form-label">라우팅 번호</label>
+                                <input type="text" class="form-control" id="client" name="client" readonly>
+                            </div>
                             <div class="product-field-row">
                                 <div class="col">
                                     <label for="productName2">품목명</label>
