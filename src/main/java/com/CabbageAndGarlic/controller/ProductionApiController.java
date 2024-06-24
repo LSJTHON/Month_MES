@@ -80,9 +80,16 @@ public class ProductionApiController {
         Map<String, Object> response = new HashMap<>();
         LocalDate date = LocalDate.now();
         List<WorkOrder> workOrders = workOrderService.getWorkOrders(date);
-        System.out.println(workOrders);
         response.put("data", workOrders);
 
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping(value = "/workOrder/{date}")
+    public ResponseEntity<?> workOrders(@PathVariable String date) throws ParseException {
+        Map<String, Object> response = new HashMap<>();
+        List<WorkOrder> workOrders = workOrderService.getWorkOrders(date);
+        response.put("data", workOrders);
         return ResponseEntity.ok(response);
     }
 

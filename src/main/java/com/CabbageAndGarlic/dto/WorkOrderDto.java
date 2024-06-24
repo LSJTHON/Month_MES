@@ -17,7 +17,7 @@ public class WorkOrderDto {
     String productType;
     Integer workAmount;
     String worker;
-    LocalDateTime orderDate;
+    String orderDate;
 }
 
 

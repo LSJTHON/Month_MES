@@ -29,7 +29,9 @@ public class WorkOrderService {
         workOrder.setWorkAmount(workOrderDto.getWorkAmount());
         workOrder.setWorker(workOrderDto.getWorker());
         workOrder.setWorkStatus(Status.WAITING);
-        workOrder.setOrderDate(workOrderDto.getOrderDate().toLocalDate());
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy. M. d.");
+        LocalDate plandate = LocalDate.parse(workOrderDto.getOrderDate(), formatter);
+        workOrder.setOrderDate(plandate);
 
         workOrderRepository.save(workOrder);
     }
@@ -43,5 +45,15 @@ public class WorkOrderService {
             throw new EntityNotFoundException("Production plan not found");
         }
         return workOrders;
+    }
+
+    public List<WorkOrder> getWorkOrders(String date) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate orderDate = LocalDate.parse(date, formatter);
+        List<WorkOrder> workOrders = workOrderRepository.findByOrderDate(orderDate);
+        if(workOrders == null) {
+            throw new EntityNotFoundException("Production plan not found");
+        }
+            return workOrders;
     }
 }

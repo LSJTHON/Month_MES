@@ -221,7 +221,12 @@
                     {title: "작업량", data: 'workAmount'},
                     {title: "작업자", data: 'worker'},
                     {title: "상태", data: 'workStatus'},
-                ]
+                ],
+                language: {
+                    search: "검색:",
+                    emptyTable: "해당날짜에 작업지시가 없습니다", // 처음 페이지 로드 시 조회내용이 없을때 나오는거
+                    zeroRecords: "검색 결과가 없습니다" // 검색 결과가 없을 떄 나오는거
+                }
             })
 
             var calendarEl = document.getElementById('calendar');
@@ -250,9 +255,11 @@
 
                 dateClick: function (info) {
                     var selectedDate = info.dateStr;
+                    dayString = info.dateStr;
                     $('#deliveryDate').val(selectedDate);
                     $('#addCalendarModal').modal('hide');
                     fetchEventsForDate(selectedDate);
+                    fetchEventsForDate1(dayString);
                 },
 
             });
@@ -264,6 +271,20 @@
                     success: function (data) {
                         plan.clear();
                         plan.rows.add(data.data).draw();
+                    },
+                    error: function (xhr, status, error) {
+                        alert('데이터를 가져오는 중 오류가 발생했습니다: ' + error);
+                    }
+                });
+            }
+
+            function fetchEventsForDate1(date) {
+                $.ajax({
+                    url: `/production/workOrder/${date}`,
+                    type: 'GET',
+                    success: function (data) {
+                        workOrder.clear();
+                        workOrder.rows.add(data.data).draw();
                     },
                     error: function (xhr, status, error) {
                         alert('데이터를 가져오는 중 오류가 발생했습니다: ' + error);
@@ -324,16 +345,16 @@
         const maxProducts = 5; // input 태그 최대갯수 설정값 ( 추가폼 포함 5개까지 가능함 )
 
         var day = new Date();
+        var dayString = day.toLocaleDateString();
 
         function saveWorkOrder() {
-            console.log(day+" 찍히나?????");
 
             const workOrderNumber = new Date().getTime(); //번호는 어떻게 만들지 정하고 코드 다시 짜기
             const process = $('#process').val();
             const productType = $('#productType').val();
             const workAmount = $('#workAmount').val();
             const worker = $('#worker').val();
-            const orderDate = day;
+            const orderDate = dayString;
 
 
             const workOrderData = {
