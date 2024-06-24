@@ -60,8 +60,8 @@
                         text: "엑셀다운로드", // 버튼에 표시될 텍스트
                     },
                     {
-                        text:'출하',
-                        action: function (){
+                        text: '출하',
+                        action: function () {
                             shippingUpdateComplete();
                         }
                     }
@@ -110,9 +110,11 @@
                             return `<button class="item-info-btn btn btn-primary" data-order-number="${row.orderNumber}">품목 보기</button>`;
                         }
                     },
-                    {title: "상태", data: 'status',render: function(data,type,row){
+                    {
+                        title: "상태", data: 'status', render: function (data, type, row) {
                             return data === 'COMPLETED' ? '출하가능' : data;
-                        }}, // 상태 컬럼
+                        }
+                    }, // 상태 컬럼
                     {title: "담당자", data: 'manager'}, // 담당자 컬럼
                     {
                         title: "수주 확정일", data: 'updateTime', render: function (data, type, row) { // 수주 확정일 컬럼
@@ -133,10 +135,10 @@
                         render: function (data, type, row) { // 운송업체 셀 렌더링
                             return `
                                 <select class="shipping-company"> <!-- 운송업체 선택 -->
-                                    <option value="CJ 대한통운">CJ 대한통운</option>
-                                    <option value="로젠택배">로젠택배</option>
-                                    <option value="쿠팡">쿠팡</option>
-                                </select>
+                            <option value="CJ 대한통운">CJ 대한통운</option>
+                            <option value="로젠택배">로젠택배</option>
+                            <option value="쿠팡">쿠팡</option>
+                            </select>
                             `;
                         }
                     }
@@ -195,7 +197,7 @@
                 columns: [
                     {title: "수주번호", data: 'orderNumber'},
                     {
-                        title:"업체명" , data: "shippingClient"
+                        title: "업체명", data: "shippingClient"
                     },
                     {
                         title: "품목 정보",
@@ -206,7 +208,8 @@
                         }
                     },
                     {title: "출하일", data: 'shippingDate'},
-                    {title: "출하상태", data: 'shippingStatus',render: function (data,type,tow){
+                    {
+                        title: "출하상태", data: 'shippingStatus', render: function (data, type, tow) {
                             return data === 'PendingShipment' ? '배송중' :
                                 data === 'SHIPPED' ? '완료' : data;
                         }
@@ -286,7 +289,7 @@
             });
 
             // 상태 업데이트 버튼 클릭 이벤트
-            function shippingUpdateComplete(){
+            function shippingUpdateComplete() {
                 var selectedData = []; // 선택된 데이터 배열
                 table2.$('input[type="checkbox"]').each(function () {
                     if (this.checked) { // 체크박스가 체크되어 있으면

@@ -9,10 +9,10 @@ public class OrderViewController {
 
     @GetMapping("/orders")
     public String orderView(){
-        return "/orderList/orders2";
+        return "/order/orders2";
     }
 
-    @GetMapping("/productionStatus")
+    @GetMapping("/")
     public String productionStatus(){
         return "/production/productionStatus";
     }
