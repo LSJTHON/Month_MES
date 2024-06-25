@@ -65,9 +65,10 @@ public class RoutingApiController {
     //등록
     @PostMapping("/createRouting")
     public String saveRouting(@RequestBody AddRoutingRequest routingDto) {
-        routingService.saveRouting(routingDto);
+//        routingService.saveRouting(routingDto);
         return "정상적으로 등록했습니다.";
     }
+
 
 
     @DeleteMapping("/routings/{number}")//  삭제

@@ -57,6 +57,7 @@ public class ShippingApiController {
     //출하버튼 클릭 시 받는 요청
     @PostMapping("/updateAndCreate")
     public void updateStatusAndCreateShipping(@RequestBody List<ShippingDto> request) throws IOException {
+        System.out.println(request.size()+"드럼통");
         shippingService.createShippings(request);
         shippingService.updateOrderStatus(request.stream().map(ShippingDto::getOrderNumber).toList(), "PendingShipment");
     }

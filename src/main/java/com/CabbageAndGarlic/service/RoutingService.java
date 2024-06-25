@@ -38,20 +38,20 @@ public class RoutingService {
 //        return routingRepository.save(request.toEntity());
 //    }
 
-    @Transactional
-    public void saveRouting(AddRoutingRequest request) {
-        Routing routing = request.toEntity();
-        routingRepository.save(routing);
-
-        for (AddRoutingRequest addRoutingRequest : request.getRoutingNumber()) {
-            Routing routing1 = new Routing();
-            routing1.setAllCycleTime(addRoutingRequest.getAllCycleTime());
-            routing1.setRoutingProductName(addRoutingRequest.getRoutingProductName());
-            routing1.setRoutingNumber(addRoutingRequest.getRoutingNumber());
-
-            routingRepository.save(routing1);
-        }
-    }
+//    @Transactional
+//    public void saveRouting(AddRoutingRequest request) {
+//        Routing routing = request.toEntity();
+//        routingRepository.save(routing);
+//
+//        for (AddRoutingRequest addRoutingRequest : request.getRoutingNumber()) {
+//            Routing routing1 = new Routing();
+//            routing1.setAllCycleTime(addRoutingRequest.getAllCycleTime());
+//            routing1.setRoutingProductName(addRoutingRequest.getRoutingProductName());
+//            routing1.setRoutingNumber(addRoutingRequest.getRoutingNumber());
+//
+//            routingRepository.save(routing1);
+//        }
+//    }
 
 
     public void deleteRouting(int number) {
