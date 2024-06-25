@@ -54,13 +54,13 @@ public class ShippingService {
 
             String orderItemsInfo = "";
             for(int i=0;i<orderItems.size();i++){
-                orderItemsInfo += orderItems.get(i).getProductName() + " " +orderItems.get(i).getAmount()+"개\n";
+                orderItemsInfo += orderItems.get(i).getProductName() + " " +orderItems.get(i).getAmount()+" 박스\n";
             }
-            String body = "수주번호 " + order.getOrderNumber() + " \n운송업체 " + request.getShippingCompany()+"\n"+ orderItemsInfo +" 맞짱뜨자 시발!";
+            String body = "수주번호 " + order.getOrderNumber() + " \n운송업체 " + request.getShippingCompany()+"\n"+ orderItemsInfo;
             System.out.println(body);
 
             //문자전송은 반드시 꺼놓으세요
-//            smsService.messageSend(order.getPhoneNumber(), body);    //문자 최종 전송 기본 30원 길면 50원이상
+            //smsService.messageSend(order.getPhoneNumber(), body);    //문자 최종 전송 기본 30원 길면 50원이상
         }
     }
     // PendingShipment, SHIPPED 상태인 수주 정보만 조회
