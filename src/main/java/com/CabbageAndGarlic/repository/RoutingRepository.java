@@ -1,12 +1,19 @@
 package com.CabbageAndGarlic.repository;
 
-import com.CabbageAndGarlic.dto.RoutingListViewResponse;
-import com.CabbageAndGarlic.entity.OrderItem;
 import com.CabbageAndGarlic.entity.Routing;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
 public interface RoutingRepository extends JpaRepository<Routing, Integer> {
     List<Routing> findByNumber(int routingNumber);
+
+    @Query("SELECT r FROM Routing r WHERE r.routingProductName.productName = :productName")
+    List<Routing> findByProductName(String productName);
+
+    @Query("SELECT r.routingProductName.productName FROM Routing r WHERE r.routingNumber.processNumber = :processNumber")
+    String findProductNameByProcessNumber(@Param("processNumber") String processNumber);
+
 }
