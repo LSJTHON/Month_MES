@@ -11,11 +11,16 @@ import jakarta.persistence.*;
 public class Routing {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long routingNumber;  // 라우팅 번호
+    private Long number;
 
-    @Column(name = "routing_product", nullable = false)
-    private String routingProduct;  // 공정명
+    @ManyToOne
+    @JoinColumn(name = "process_number")
+    private ProcessManagement routingNumber;  // 라우팅 번호
 
-    @Column(name = "cycle_time", nullable = false)
-    private Integer cycleTime;  // 사이클 시간
+    @ManyToOne
+    @JoinColumn(name = "product_name", nullable = false)
+    private Product routingProductName;  // 품목명
+
+    @Column(name = "all_cycle_time", nullable = false)
+    private Integer allCycleTime;  // 전체공정 시간
 }

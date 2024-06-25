@@ -13,26 +13,6 @@
 
 <th:block layout:fragment="style">
     <style>
-        .dt-search {
-            display: flex;
-            margin-top: 10px;
-        }
-
-        .h2-header {
-            margin-top: 50px;
-        }
-
-        .align-items-center .form-group label {
-            margin-right: 10px;
-        }
-
-        .input-with-info small {
-            position: absolute;
-            left: 0;
-            top: 100%;
-            white-space: nowrap;
-        }
-
         .modal-custom {
             max-width: 50%;
         }
@@ -42,48 +22,39 @@
             overflow-y: auto;
         }
 
-        .product-field-row .col {
-            margin-right: 10px;
-            top: 10px;
-        }
-
-        .product-field-row .col-auto {
-            display: flex;
-            align-items: center;
-            margin-left: auto;
-            position: relative;
-            top: 10px;
-        }
-
         .modal-body {
             padding: 15px;
         }
 
-        .delivery-date-group input {
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .form-control {
+            width: 100%;
+        }
+
+        .form-inline .form-group {
+            display: flex;
+            align-items: center;
+        }
+
+        .form-inline .form-group label {
             margin-right: 10px;
         }
 
-        .delivery-date-group button {
-            white-space: nowrap;
+        .form-inline .form-group input,
+        .form-inline .form-group select {
+            flex: 1;
         }
 
-        .order-search-table th {
-            padding: 5px;
-            text-align: center;
-            vertical-align: middle;
-            width: 10%;
-        }
-
-        .order-search-table td {
-            padding: 5px;
-            text-align: center;
-            vertical-align: middle;
-            width: 10%;
-        }
-
-        .order-search-table input {
-            width: 50%;
-            box-sizing: border-box;
+        .form-inline .form-group .btn {
+            margin-left: 10px;
         }
     </style>
 </th:block>
@@ -94,6 +65,7 @@
     <script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
     <script src="https://cdn.datatables.net/2.0.8/js/dataTables.bootstrap5.min.js"></script>
     <script src="https://cdn.datatables.net/autofill/2.7.0/js/autoFill.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/autofill/2.7.0/js/dataTables.autoFill.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/3.0.2/js/dataTables.buttons.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.bootstrap5.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.colVis.min.js"></script>
@@ -115,8 +87,9 @@
                 addPurchaseOrder();
             });
 
-            $('#addSupplierManageButton').on('click', function () {
-                addSupplierManageField();
+            $('#materialName').on('change', function () {
+                var selectedMaterialCode = $(this).find(':selected').data('code');
+                $('#materialCode').val(selectedMaterialCode);
             });
 
             $('#purchaseOrderTable').DataTable({
@@ -190,11 +163,18 @@
                 url: '/api/supplier/manage',
                 method: 'GET',
                 success: function (data) {
-                    var supplierManageSelects = $('.supplierManageSelect');
-                    supplierManageSelects.empty();
+                    var materialSelect = $('#materialName');
+                    materialSelect.empty();
                     data.forEach(function (item) {
-                        var option = '<option value="' + item.id + '">' + item.supplierName + ' - ' + item.materialName + '</option>';
-                        supplierManageSelects.append(option);
+                        var option = '<option value="' + item.materialCode + '" data-code="' + item.materialCode + '">' + item.materialName + '</option>';
+                        materialSelect.append(option);
+                    });
+
+                    var supplierSelect = $('#supplierName');
+                    supplierSelect.empty();
+                    data.forEach(function (item) {
+                        var option = '<option value="' + item.supplierCode + '">' + item.supplierName + '</option>';
+                        supplierSelect.append(option);
                     });
                 },
                 error: function (error) {
@@ -203,49 +183,27 @@
             });
         }
 
-        function addSupplierManageField() {
-            var newField = `<div class="form-group supplierManageField">
-                                <label for="supplierManage">Supplier and Material</label>
-                                <select class="form-control supplierManageSelect" required>
-                                    <option th:each="order : ${orders}" th:value="${order.orderNumber}" th:text="${order.client} + ' - ' + ${order.manager}"></option>
-                                </select>
-                                <button type="button" class="btn btn-danger removeSupplierManageButton">Remove</button>
-                            </div>`;
-            $('#supplierManageFields').append(newField);
-        }
-
-        $(document).on('click', '.removeSupplierManageButton', function () {
-            $(this).parent().remove();
-        });
-
         function addPurchaseOrder() {
             var now = new Date();
             var receiptDate = new Date();
             receiptDate.setDate(now.getDate() + 3);
 
-            var purchaseOrders = [];
-            $('.supplierManageField').each(function () {
-                var supplierManageId = $(this).find('.supplierManageSelect').val();
-                var orderNumber = $('#orderNumber').val();
-                var amount = $('#amount').val();
-
-                var purchaseOrder = {
-                    purchaseOrderStatus: 'ORDERED',
-                    supplierManageId: supplierManageId,
-                    orderNumber: orderNumber,
-                    amount: amount,
-                    purchaseDate: now.toISOString(),
-                    receiptDate: receiptDate.toISOString(),
-                };
-
-                purchaseOrders.push(purchaseOrder);
-            });
+            var purchaseOrder = {
+                purchaseOrderStatus: 'ORDERED',
+                orderNumber: $('#orderNumber').val(),
+                materialCode: $('#materialName').val(),
+                supplierCode: $('#supplierName').val(),
+                amount: $('#amount').val(),
+                purchaseDate: now.toISOString(),
+                receiptDate: receiptDate.toISOString(),
+                manager: '류치호' // 담당자 고정
+            };
 
             $.ajax({
                 url: '/api/purchase/order',
                 method: 'POST',
                 contentType: 'application/json',
-                data: JSON.stringify(purchaseOrders),
+                data: JSON.stringify(purchaseOrder),
                 success: function () {
                     $('#addPurchaseOrderModal').modal('hide');
                     $('body').removeClass('modal-open');
@@ -301,10 +259,10 @@
         <!-- Add Purchase Order Modal -->
         <div class="modal fade" id="addPurchaseOrderModal" tabindex="-1" role="dialog" aria-labelledby="addPurchaseOrderModalLabel"
              aria-hidden="true">
-            <div class="modal-dialog" role="document">
+            <div class="modal-dialog modal-custom" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="addPurchaseOrderModalLabel">Add Purchase Order</h5>
+                        <h5 class="modal-title" id="addPurchaseOrderModalLabel">발주 추가</h5>
                         <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -312,28 +270,35 @@
                     <div class="modal-body">
                         <form id="addPurchaseOrderForm">
                             <div class="form-group">
-                                <label for="orderNumber">Order Number</label>
+                                <label for="orderNumber">수주번호</label>
                                 <select class="form-control" id="orderNumber" required>
                                     <option th:each="order : ${orders}" th:value="${order.orderNumber}" th:text="${order.orderNumber}"></option>
                                 </select>
                             </div>
-                            <div id="supplierManageFields">
-                                <div class="form-group supplierManageField">
-                                    <label for="supplierManage">Supplier and Material</label>
-                                    <select class="form-control supplierManageSelect" required>
-                                        <option th:each="order : ${orders}" th:value="${order.orderNumber}" th:text="${order.client} + ' - ' + ${order.manager}"></option>
-                                    </select>
+                            <div class="form-inline">
+                                <div class="form-group">
+                                    <label for="materialName">자재명</label>
+                                    <select class="form-control" id="materialName" required></select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="materialCode">품목코드</label>
+                                    <input type="text" class="form-control" id="materialCode" readonly>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <button type="button" id="addSupplierManageButton" class="btn btn-secondary">Add Supplier and Material</button>
+                                <label for="supplierName">발주처</label>
+                                <select class="form-control" id="supplierName" required></select>
                             </div>
                             <div class="form-group">
-                                <label for="amount">Amount</label>
+                                <label for="amount">수량</label>
                                 <input type="number" class="form-control" id="amount" required>
                             </div>
-                            <button type="submit" class="btn btn-primary">Register</button>
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <div class="form-group">
+                                <label for="manager">담당자</label>
+                                <input type="text" class="form-control" id="manager" value="류치호" readonly>
+                            </div>
+                            <button type="submit" class="btn btn-primary">등록</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
                         </form>
                     </div>
                 </div>

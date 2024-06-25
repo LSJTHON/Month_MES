@@ -23,6 +23,13 @@ public class PurchaseOrderService {
     private final SupplierManageRepository supplierManageRepository;
     private final OrderRepository orderRepository;
 
+    /**
+     * PurchaseOrderService 생성자.
+     *
+     * @param purchaseOrderRepository 발주를 관리하는 레포지토리.
+     * @param supplierManageRepository 공급자 관리를 위한 레포지토리.
+     * @param orderRepository 수주를 관리하는 레포지토리.
+     */
     @Autowired
     public PurchaseOrderService(PurchaseOrderRepository purchaseOrderRepository, SupplierManageRepository supplierManageRepository, OrderRepository orderRepository) {
         this.purchaseOrderRepository = purchaseOrderRepository;
@@ -30,11 +37,21 @@ public class PurchaseOrderService {
         this.orderRepository = orderRepository;
     }
 
+    /**
+     * 모든 발주를 조회합니다.
+     *
+     * @return 모든 발주를 나타내는 PurchaseOrderDto의 리스트.
+     */
     public List<PurchaseOrderDto> getAllPurchaseOrders() {
         List<PurchaseOrder> orders = purchaseOrderRepository.findAll();
         return orders.stream().map(this::convertToDto).collect(Collectors.toList());
     }
 
+    /**
+     * 새로운 발주를 추가합니다.
+     *
+     * @param purchaseOrderDto 추가할 발주 데이터.
+     */
     @Transactional
     public void addPurchaseOrder(PurchaseOrderDto purchaseOrderDto) {
         SupplierManage supplierManage = supplierManageRepository.findById(purchaseOrderDto.getSupplierManageId())
@@ -54,6 +71,9 @@ public class PurchaseOrderService {
         purchaseOrderRepository.save(purchaseOrder);
     }
 
+    /**
+     * 발주의 상태를 업데이트합니다.
+     */
     public void updateOrderStatus() {
         List<PurchaseOrder> orders = purchaseOrderRepository.findAll();
         LocalDateTime now = LocalDateTime.now();
@@ -66,6 +86,12 @@ public class PurchaseOrderService {
         }
     }
 
+    /**
+     * PurchaseOrder 엔티티를 PurchaseOrderDto로 변환합니다.
+     *
+     * @param order 변환할 발주 엔티티.
+     * @return 변환된 PurchaseOrderDto.
+     */
     private PurchaseOrderDto convertToDto(PurchaseOrder order) {
         PurchaseOrderDto dto = new PurchaseOrderDto();
         dto.setPurchaseNumber(order.getPurchaseNumber());
