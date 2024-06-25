@@ -67,7 +67,14 @@
             white-space: nowrap;
         }
 
-        .order-search-table th, .order-search-table td {
+        .order-search-table th {
+            padding: 5px;
+            text-align: center;
+            vertical-align: middle;
+            width: 10%;
+        }
+
+        .order-search-table td {
             padding: 5px;
             text-align: center;
             vertical-align: middle;
@@ -100,12 +107,12 @@
 
     <script>
         $(document).ready(function () {
-            loadPurchaseOrderData();
-            loadSupplierAndMaterialData();
+            loadOrderNumbers();
+            loadSupplierManageIds();
 
-            $('#addPurchaseOrderForm').on('submit', function (event) {
+            $('#createPurchaseOrderForm').on('submit', function (event) {
                 event.preventDefault();
-                addPurchaseOrder();
+                createPurchaseOrder();
             });
 
             $('#purchaseOrderTable').DataTable({
@@ -126,9 +133,70 @@
             });
         });
 
-        function loadPurchaseOrderData() {
+        function loadOrderNumbers() {
             $.ajax({
-                url: '/api/purchaseOrder/manage',
+                url: '/api/purchase-order/orders-not-in-purchase',
+                method: 'GET',
+                success: function (data) {
+                    var orderNumberSelect = $('#orderNumber');
+                    orderNumberSelect.empty();
+                    data.forEach(function (item) {
+                        var option = '<option value="' + item.orderNumber + '">' + item.orderNumber + '</option>';
+                        orderNumberSelect.append(option);
+                    });
+                },
+                error: function (error) {
+                    console.error('Error fetching order numbers:', error);
+                }
+            });
+        }
+
+        function loadSupplierManageIds() {
+            $.ajax({
+                url: '/api/supplier/manage',
+                method: 'GET',
+                success: function (data) {
+                    var supplierManageSelect = $('#supplierManageId');
+                    supplierManageSelect.empty();
+                    data.forEach(function (item) {
+                        var option = '<option value="' + item.id + '">' + item.supplierCode + ' - ' + item.materialCode + '</option>';
+                        supplierManageSelect.append(option);
+                    });
+                },
+                error: function (error) {
+                    console.error('Error fetching supplier manage ids:', error);
+                }
+            });
+        }
+
+        function createPurchaseOrder() {
+            var purchaseOrder = {
+                orderNumber: $('#orderNumber').val(),
+                supplierManageId: $('#supplierManageId').val(),
+                amount: $('#amount').val(),
+                receiptDate: $('#receiptDate').val(),
+                purchaseDate: $('#purchaseDate').val(),
+                manager: $('#manager').val()
+            };
+
+            $.ajax({
+                url: '/api/purchase-order',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(purchaseOrder),
+                success: function () {
+                    alert('발주 등록 성공');
+                    loadPurchaseOrders();
+                },
+                error: function (error) {
+                    console.error('Error creating purchase order:', error);
+                }
+            });
+        }
+
+        function loadPurchaseOrders() {
+            $.ajax({
+                url: '/api/purchase-order',
                 method: 'GET',
                 success: function (data) {
                     var table = $('#purchaseOrderTable').DataTable();
@@ -136,87 +204,18 @@
                     data.forEach(function (item) {
                         table.row.add([
                             item.purchaseNumber,
-                            item.productName,
-                            item.productCode,
-                            item.supplierCode,
-                            item.supplierName,
+                            item.purchaseOrderStatus,
+                            item.supplierManageId,
+                            item.orderNumber,
                             item.amount,
-                            item.purchaseDate,
                             item.receiptDate,
-                            item.status,
+                            item.purchaseDate,
                             item.manager
                         ]).draw();
                     });
                 },
                 error: function (error) {
-                    console.error('Error fetching data:', error);
-                }
-            });
-        }
-
-        function loadSupplierAndMaterialData() {
-            $.ajax({
-                url: '/api/supplier/suppliers',
-                method: 'GET',
-                success: function (data) {
-                    var supplierSelect = $('#supplierName');
-                    supplierSelect.empty();
-                    data.forEach(function (item) {
-                        var option = '<option value="' + item.supplierCode + '">' + item.supplierName + '</option>';
-                        supplierSelect.append(option);
-                    });
-
-                    supplierSelect.on('change', function () {
-                        var selectedSupplierCode = $(this).val();
-                        $('#supplierCode').val(selectedSupplierCode);
-                    });
-                },
-                error: function (error) {
-                    console.error('Error fetching supplier data:', error);
-                }
-            });
-
-            $.ajax({
-                url: '/api/supplier/materials',
-                method: 'GET',
-                success: function (data) {
-                    var materialSelect = $('#materialName');
-                    materialSelect.empty();
-                    data.forEach(function (item) {
-                        var option = '<option value="' + item.materialCode + '">' + item.materialName + '</option>';
-                        materialSelect.append(option);
-                    });
-                },
-                error: function (error) {
-                    console.error('Error fetching material data:', error);
-                }
-            });
-        }
-
-        function addPurchaseOrder() {
-            var purchaseOrder = {
-                supplierCode: $('#supplierCode').val(),
-                materialCode: $('#materialName').val(),
-                amount: $('#amount').val(),
-                purchaseDate: $('#purchaseDate').val(),
-                receiptDate: $('#receiptDate').val(),
-                status: $('#status').val(),
-                manager: $('#manager').val()
-            };
-
-            $.ajax({
-                url: '/api/purchaseOrder/manage',
-                method: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify(purchaseOrder),
-                success: function () {
-                    $('#addPurchaseOrderModal').modal('hide');
-                    $('body').removeClass('modal-open');
-                    $('.modal-backdrop').remove();
-                    loadPurchaseOrderData();
-                },
-                error: function (error) {
-                    console.error('Error adding purchase order:', error);
+                    console.error('Error fetching purchase orders:', error);
                 }
             });
         }
@@ -231,15 +230,13 @@
             <table class="table table-bordered" id="purchaseOrderTable">
                 <thead>
                 <tr>
-                    <th>발주번호</th>
-                    <th>제품명</th>
-                    <th>제품코드</th>
-                    <th>발주처코드</th>
-                    <th>발주처명</th>
-                    <th>수량</th>
-                    <th>발주일</th>
+                    <th>발주 번호</th>
+                    <th>발주 상태</th>
+                    <th>발주처-자재 연결 ID</th>
+                    <th>수주 번호</th>
+                    <th>발주 수량</th>
                     <th>입고일</th>
-                    <th>상태</th>
+                    <th>발주일</th>
                     <th>담당자</th>
                 </tr>
                 </thead>
@@ -260,34 +257,30 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <form id="addPurchaseOrderForm">
+                        <form id="createPurchaseOrderForm">
                             <div class="form-group">
-                                <label for="supplierName">발주처명</label>
-                                <select class="form-control" id="supplierName" required></select>
+                                <label for="orderNumber">수주 번호</label>
+                                <select class="form-control" id="orderNumber" required>
+                                    <!-- 수주번호 옵션이 여기에 추가됩니다. -->
+                                </select>
                             </div>
                             <div class="form-group">
-                                <label for="supplierCode">발주처코드</label>
-                                <input type="text" class="form-control" id="supplierCode" readonly>
+                                <label for="supplierManageId">발주처-자재 연결 ID</label>
+                                <select class="form-control" id="supplierManageId" required>
+                                    <!-- 발주처-자재 옵션이 여기에 추가됩니다. -->
+                                </select>
                             </div>
                             <div class="form-group">
-                                <label for="materialName">제품명</label>
-                                <select class="form-control" id="materialName" required></select>
-                            </div>
-                            <div class="form-group">
-                                <label for="amount">수량</label>
+                                <label for="amount">발주 수량</label>
                                 <input type="number" class="form-control" id="amount" required>
                             </div>
                             <div class="form-group">
-                                <label for="purchaseDate">발주일</label>
-                                <input type="date" class="form-control" id="purchaseDate" required>
-                            </div>
-                            <div class="form-group">
                                 <label for="receiptDate">입고일</label>
-                                <input type="date" class="form-control" id="receiptDate" required>
+                                <input type="datetime-local" class="form-control" id="receiptDate" required>
                             </div>
                             <div class="form-group">
-                                <label for="status">상태</label>
-                                <input type="text" class="form-control" id="status" required>
+                                <label for="purchaseDate">발주일</label>
+                                <input type="datetime-local" class="form-control" id="purchaseDate" required>
                             </div>
                             <div class="form-group">
                                 <label for="manager">담당자</label>

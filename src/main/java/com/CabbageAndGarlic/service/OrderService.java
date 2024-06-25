@@ -7,6 +7,7 @@ import com.CabbageAndGarlic.entity.Order;
 import com.CabbageAndGarlic.entity.OrderItem;
 import com.CabbageAndGarlic.repository.OrderItemRepository;
 import com.CabbageAndGarlic.repository.OrderRepository;
+import com.CabbageAndGarlic.repository.PurchaseOrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,6 +58,17 @@ public class OrderService {
         return orderItemRepository.findByOrderNumber(order);
     }
 
+    //---------------------------------------------------------------------------------------
+    private final PurchaseOrderRepository purchaseOrderRepository;
+
+    // 발주되지 않은 수주 조회
+    public List<Order> findOrdersNotInPurchaseOrder() {
+        List<Long> purchaseOrderNumbers = purchaseOrderRepository.findAll().stream()
+                .map(po -> po.getOrder().getOrderNumber())
+                .collect(Collectors.toList());
+
+        return orderRepository.findByOrderNumberNotIn(purchaseOrderNumbers);
+    }
 
 
 }
