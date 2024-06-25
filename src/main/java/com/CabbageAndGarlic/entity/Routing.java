@@ -26,8 +26,7 @@ public class Routing {
     private Integer allCycleTime;  // 전체공정 시간
 
     @Builder
-    public Routing(int number, ProcessManagement routingNumber, Product routingProductName, Integer allCycleTime) {
-        this.number = number;
+    public Routing(ProcessManagement routingNumber, Product routingProductName, Integer allCycleTime) {
         this.routingNumber = routingNumber;
         this.routingProductName = routingProductName;
         this.allCycleTime = allCycleTime;

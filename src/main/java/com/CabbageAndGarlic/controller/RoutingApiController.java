@@ -20,63 +20,59 @@ public class RoutingApiController {
 
     private final RoutingService routingService;
     private final ProductService productService;
-
     private final ProcessManageService processManageService;
 
+//    @GetMapping("/routings")
+//    public Map<String, Object> getAllRouting() {
+//        Map<String, Object> getAllRouting = new HashMap<>();
+//        getAllRouting.put("data", routingService.findAll());
+//        return getAllRouting;
+//    }
 
     @GetMapping("/routings")
-    public Map<String,Object> getAllRouting() {
-
-        Map<String,Object> getAllRouting = new HashMap<>();
-
-        getAllRouting.put("data",routingService.findAll());
-
+    public Map<String, Object> getAllRouting() {
+        Map<String, Object> getAllRouting = new HashMap<>();
+        getAllRouting.put("data", routingService.findAllDistinctByProductName());
         return getAllRouting;
     }
 
-    @GetMapping("/routingProducts") // 완제품조회
-    public Map<String,Object> getAllProducts() {
-
-        Map<String,Object> getAllProducts = new HashMap<>();
-
-        getAllProducts.put("data",productService.findAll());
-
+    @GetMapping("/routingProducts")
+    public Map<String, Object> getAllProducts() {
+        Map<String, Object> getAllProducts = new HashMap<>();
+        getAllProducts.put("data", productService.findAll());
         return getAllProducts;
     }
 
-    @GetMapping("/routingProcess") // 공정 전체 조회
-    public Map<String,Object> getAllProcess() {
-
-        Map<String,Object> getAllProcess = new HashMap<>();
-
-        getAllProcess.put("data",processManageService.findAll());
-
+    @GetMapping("/routingProcess")
+    public Map<String, Object> getAllProcess() {
+        Map<String, Object> getAllProcess = new HashMap<>();
+        getAllProcess.put("data", processManageService.findAll());
         return getAllProcess;
     }
 
+//    @GetMapping("/routingNumber/{routingNumber}")
+//    public ResponseEntity<List<RoutingListViewResponse>> getAllRouting(@PathVariable int routingNumber) {
+//        List<RoutingListViewResponse> items = routingService.findRoutingItemsByRoutingNumber(routingNumber);
+//        return ResponseEntity.ok(items);
+//    }
 
-    @GetMapping("/routingNumber/{routingNumber}")
-    public ResponseEntity<List<RoutingListViewResponse>> getAllRouting(@PathVariable int routingNumber) {
-        System.out.println("여기로 오나???" + routingNumber);
-        List<RoutingListViewResponse> items = routingService.findRoutingItemsByRoutingNumber(routingNumber);
+    @GetMapping("/routingNumber/{productName}")
+    public ResponseEntity<List<RoutingListViewResponse>> getAllRouting(@PathVariable String productName) {
+        System.out.println(productName+"dwidjiowjqiodjwqoidjioqwjdioq");
+        List<RoutingListViewResponse> items = routingService.findRoutingItemsByProductName(productName);
         return ResponseEntity.ok(items);
     }
 
-    //등록
     @PostMapping("/createRouting")
-    public String saveRouting(@RequestBody AddRoutingRequest routingDto) {
-//        routingService.saveRouting(routingDto);
+    public String saveRouting(@RequestBody AddRoutingRequest request) {
+        System.out.println("Received routingDto: " + request);
+        routingService.saveRouting(request);
         return "정상적으로 등록했습니다.";
     }
 
-
-
-    @DeleteMapping("/routings/{number}")//  삭제
+    @DeleteMapping("/routings/{number}")
     public ResponseEntity<Void> deleteMaterial(@PathVariable int number) {
-        System.out.println("bhhubhububhububhbhubbhubhubhu"+ number);
         routingService.deleteRouting(number);
-
-        return ResponseEntity.ok()
-                .build();
+        return ResponseEntity.ok().build();
     }
 }
