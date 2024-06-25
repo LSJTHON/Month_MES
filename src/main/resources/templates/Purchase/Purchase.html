@@ -3,14 +3,342 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/layout1}">
 
-<th:block layout:fragment="script">
-    <script>
+<!-- CSS files for DataTables -->
+<link rel="stylesheet" type="text/css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/css/bootstrap.css"/>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/2.0.8/css/dataTables.bootstrap5.min.css"/>
+<link rel="stylesheet" type="text/css"
+      href="https://cdn.datatables.net/autofill/2.7.0/css/autoFill.bootstrap5.min.css"/>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/3.0.2/css/buttons.bootstrap5.min.css"/>
 
+<th:block layout:fragment="style">
+    <style>
+        .dt-search {
+            display: flex;
+            margin-top: 10px;
+        }
+
+        .h2-header {
+            margin-top: 50px;
+        }
+
+        .align-items-center .form-group label {
+            margin-right: 10px;
+        }
+
+        .input-with-info small {
+            position: absolute;
+            left: 0;
+            top: 100%;
+            white-space: nowrap;
+        }
+
+        .modal-custom {
+            max-width: 50%;
+        }
+
+        .modal-body-scrollable {
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .product-field-row .col {
+            margin-right: 10px;
+            top: 10px;
+        }
+
+        .product-field-row .col-auto {
+            display: flex;
+            align-items: center;
+            margin-left: auto;
+            position: relative;
+            top: 10px;
+        }
+
+        .modal-body {
+            padding: 15px;
+        }
+
+        .delivery-date-group input {
+            margin-right: 10px;
+        }
+
+        .delivery-date-group button {
+            white-space: nowrap;
+        }
+
+        .order-search-table th {
+            padding: 5px;
+            text-align: center;
+            vertical-align: middle;
+            width: 10%;
+        }
+
+        .order-search-table td {
+            padding: 5px;
+            text-align: center;
+            vertical-align: middle;
+            width: 10%;
+        }
+
+        .order-search-table input {
+            width: 50%;
+            box-sizing: border-box;
+        }
+    </style>
+</th:block>
+
+<th:block layout:fragment="script">
+    <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
+    <script src="https://cdn.datatables.net/2.0.8/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/autofill/2.7.0/js/autoFill.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.0.2/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.colVis.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.print.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.html5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdn.datatables.net/select/2.0.3/js/dataTables.select.js"></script>
+    <script src="https://cdn.datatables.net/select/2.0.3/js/select.dataTables.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            loadPurchaseOrders();
+            loadOrders();
+            loadSupplierAndMaterialData();
+
+            $('#addPurchaseOrderForm').on('submit', function (event) {
+                event.preventDefault();
+                addPurchaseOrder();
+            });
+
+            $('#addSupplierManageButton').on('click', function () {
+                addSupplierManageField();
+            });
+
+            $('#purchaseOrderTable').DataTable({
+                dom: 'Bfrtip',
+                buttons: [
+                    'copy', 'excel', 'pdf'
+                ],
+                responsive: true,
+                destroy: true,
+                select: true,
+                ordering: true,
+                scrollX: true,
+                info: true,
+                paging: true,
+                language: {
+                    search: "검색:"
+                }
+            });
+
+            setInterval(updateOrderStatus, 60000); // 1분마다 상태 업데이트
+        });
+
+        function loadPurchaseOrders() {
+            $.ajax({
+                url: '/api/purchase/orders',
+                method: 'GET',
+                success: function (data) {
+                    var table = $('#purchaseOrderTable').DataTable();
+                    table.clear();
+                    data.forEach(function (item) {
+                        table.row.add([
+                            item.purchaseNumber,
+                            item.supplierManage.material.materialCode,
+                            item.supplierManage.material.materialName,
+                            item.supplierManage.supplier.supplierCode,
+                            item.supplierManage.supplier.supplierName,
+                            item.amount,
+                            item.purchaseDate,
+                            item.receiptDate,
+                            item.purchaseOrderStatus,
+                            item.supplierManage.supplier.manager
+                        ]).draw();
+                    });
+                },
+                error: function (error) {
+                    console.error('Error fetching data:', error);
+                }
+            });
+        }
+
+        function loadOrders() {
+            $.ajax({
+                url: '/api/orders',
+                method: 'GET',
+                success: function (data) {
+                    var orderSelect = $('#orderNumber');
+                    orderSelect.empty();
+                    data.forEach(function (item) {
+                        var option = '<option value="' + item.orderNumber + '">' + item.orderNumber + '</option>';
+                        orderSelect.append(option);
+                    });
+                },
+                error: function (error) {
+                    console.error('Error fetching data:', error);
+                }
+            });
+        }
+
+        function loadSupplierAndMaterialData() {
+            $.ajax({
+                url: '/api/supplier/manage',
+                method: 'GET',
+                success: function (data) {
+                    var supplierManageSelects = $('.supplierManageSelect');
+                    supplierManageSelects.empty();
+                    data.forEach(function (item) {
+                        var option = '<option value="' + item.id + '">' + item.supplierName + ' - ' + item.materialName + '</option>';
+                        supplierManageSelects.append(option);
+                    });
+                },
+                error: function (error) {
+                    console.error('Error fetching supplier data:', error);
+                }
+            });
+        }
+
+        function addSupplierManageField() {
+            var newField = `<div class="form-group supplierManageField">
+                                <label for="supplierManage">Supplier and Material</label>
+                                <select class="form-control supplierManageSelect" required>
+                                    <option th:each="order : ${orders}" th:value="${order.orderNumber}" th:text="${order.client} + ' - ' + ${order.manager}"></option>
+                                </select>
+                                <button type="button" class="btn btn-danger removeSupplierManageButton">Remove</button>
+                            </div>`;
+            $('#supplierManageFields').append(newField);
+        }
+
+        $(document).on('click', '.removeSupplierManageButton', function () {
+            $(this).parent().remove();
+        });
+
+        function addPurchaseOrder() {
+            var now = new Date();
+            var receiptDate = new Date();
+            receiptDate.setDate(now.getDate() + 3);
+
+            var purchaseOrders = [];
+            $('.supplierManageField').each(function () {
+                var supplierManageId = $(this).find('.supplierManageSelect').val();
+                var orderNumber = $('#orderNumber').val();
+                var amount = $('#amount').val();
+
+                var purchaseOrder = {
+                    purchaseOrderStatus: 'ORDERED',
+                    supplierManageId: supplierManageId,
+                    orderNumber: orderNumber,
+                    amount: amount,
+                    purchaseDate: now.toISOString(),
+                    receiptDate: receiptDate.toISOString(),
+                };
+
+                purchaseOrders.push(purchaseOrder);
+            });
+
+            $.ajax({
+                url: '/api/purchase/order',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(purchaseOrders),
+                success: function () {
+                    $('#addPurchaseOrderModal').modal('hide');
+                    $('body').removeClass('modal-open');
+                    $('.modal-backdrop').remove();
+                    loadPurchaseOrders();
+                },
+                error: function (error) {
+                    console.error('Error adding purchase order:', error);
+                }
+            });
+        }
+
+        function updateOrderStatus() {
+            $.ajax({
+                url: '/api/purchase/updateStatus',
+                method: 'POST',
+                success: function () {
+                    loadPurchaseOrders();
+                },
+                error: function (error) {
+                    console.error('Error updating order status:', error);
+                }
+            });
+        }
     </script>
 </th:block>
-<body>
-<div layout:fragment="content">
 
+<div layout:fragment="content">
+    <div class="main-panel">
+        <div class="container-fluid">
+            <h1 class="h2-header">Purchase Order Management</h1>
+            <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addPurchaseOrderModal">Add Purchase Order</button>
+            <table class="table table-bordered" id="purchaseOrderTable">
+                <thead>
+                <tr>
+                    <th>Purchase Number</th>
+                    <th>Material Code</th>
+                    <th>Material Name</th>
+                    <th>Supplier Code</th>
+                    <th>Supplier Name</th>
+                    <th>Amount</th>
+                    <th>Order Date</th>
+                    <th>Receipt Date</th>
+                    <th>Order Status</th>
+                    <th>Manager</th>
+                </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Add Purchase Order Modal -->
+        <div class="modal fade" id="addPurchaseOrderModal" tabindex="-1" role="dialog" aria-labelledby="addPurchaseOrderModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addPurchaseOrderModalLabel">Add Purchase Order</h5>
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="addPurchaseOrderForm">
+                            <div class="form-group">
+                                <label for="orderNumber">Order Number</label>
+                                <select class="form-control" id="orderNumber" required>
+                                    <option th:each="order : ${orders}" th:value="${order.orderNumber}" th:text="${order.orderNumber}"></option>
+                                </select>
+                            </div>
+                            <div id="supplierManageFields">
+                                <div class="form-group supplierManageField">
+                                    <label for="supplierManage">Supplier and Material</label>
+                                    <select class="form-control supplierManageSelect" required>
+                                        <option th:each="order : ${orders}" th:value="${order.orderNumber}" th:text="${order.client} + ' - ' + ${order.manager}"></option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <button type="button" id="addSupplierManageButton" class="btn btn-secondary">Add Supplier and Material</button>
+                            </div>
+                            <div class="form-group">
+                                <label for="amount">Amount</label>
+                                <input type="number" class="form-control" id="amount" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Register</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-</body>
 </html>
