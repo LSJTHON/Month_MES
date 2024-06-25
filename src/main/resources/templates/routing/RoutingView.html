@@ -223,9 +223,9 @@
 
                 columns: [
                     {title: "공정번호", data: 'routingNumber.processNumber'},
-                    {title: "공정명", data: 'routingProduct.processName'},
+                    {title: "공정명", data: 'routingNumber.processName'},
                     {
-                        title: "작업시간", data: 'cycleHour.cycleHour', render: function (data, type, row) {
+                        title: "작업시간", data: 'routingNumber.cycleHour', render: function (data, type, row) {
                             return data + 'H';
                         }
                     }
@@ -309,19 +309,18 @@
 
         // 기존 saveOrder 함수 수정 없이 추가된 코드
         function saveOrder() {
-            const orderNumber = new Date().getTime();  // 예시로 현재 타임스탬프를 사용하여 수주번호 생성
-            const client = $('#client').val();
-            const phoneNumber = $('#phoneNumber').val();
-            const manager = $('#manager').val();
-            const deliveryDate = $('#deliveryDate').val(); // 납품일 추가
+            const number = $('#number').val();
+            const routingProductName = $('#routingProductName.productName').val();
+            const allCycleTime = $('#allCycleTime').val();
+            const routingNumber = $('#routingNumber.processNumber').val();
+            const routingProduct = $('#routingProduct.processName').val(); // 납품일 추가
             const orderItems = [];
 
             $('#productFields').children().each(function () {
                 const productName = $(this).find('select').val();
                 const productQuantity = $(this).find('input').val();
                 orderItems.push({
-                    productName: productName,
-                    amount: productQuantity
+                    processName: routingProduct.processName
                 });
             });
 
@@ -426,10 +425,6 @@
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body modal-body-scrollable">
-                            <div class="mb-3">
-                                <label for="client" class="form-label">라우팅 번호</label>
-                                <input type="text" class="form-control" id="client" name="client" readonly>
-                            </div>
                             <div class="product-field-row">
                                 <div class="col">
                                     <label for="productName2">품목명</label>
