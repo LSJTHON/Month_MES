@@ -1,5 +1,6 @@
 package com.CabbageAndGarlic.controller;
 
+import com.CabbageAndGarlic.dto.AddRoutingRequest;
 import com.CabbageAndGarlic.dto.RoutingListViewResponse;
 import com.CabbageAndGarlic.service.ProcessManageService;
 import com.CabbageAndGarlic.service.ProductService;
@@ -60,6 +61,14 @@ public class RoutingApiController {
         List<RoutingListViewResponse> items = routingService.findRoutingItemsByRoutingNumber(routingNumber);
         return ResponseEntity.ok(items);
     }
+
+    //등록
+    @PostMapping("/createRouting")
+    public String saveRouting(@RequestBody AddRoutingRequest routingDto) {
+        routingService.saveRouting(routingDto);
+        return "정상적으로 등록했습니다.";
+    }
+
 
     @DeleteMapping("/routings/{number}")//  삭제
     public ResponseEntity<Void> deleteMaterial(@PathVariable int number) {

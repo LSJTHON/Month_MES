@@ -261,9 +261,9 @@
 
         $(document).ready(function () {
             // 제품 추가 버튼 클릭 시 이벤트 리스너 추가
-            $('#addProductButton').click(function () {
+            $('#addRoutingButton').click(function () {
                 // 드롭다운에서 선택한 공정명 가져오기
-                const processName = $('#productQuantity1').val();
+                const processName = $('#routingProductName').val();
                 let isDuplicate = false;
                 $('#productFields .product-field-row').each(function () {
                     const existingProcessName = $(this).find('input[id^="productName"]').val();
@@ -308,37 +308,40 @@
 
 
         // 기존 saveOrder 함수 수정 없이 추가된 코드
-        function saveOrder() {
-            const number = $('#number').val();
-            const routingProductName = $('#routingProductName.productName').val();
-            const allCycleTime = $('#allCycleTime').val();
-            const routingNumber = $('#routingNumber.processNumber').val();
-            const routingProduct = $('#routingProduct.processName').val(); // 납품일 추가
-            const orderItems = [];
+        function saveRouting() {
+
+            const routingProductName = $('#productName2').val();
+            const processNumber = $('#routingNumber.processNumber').val();
+            const processName = $('#routingProductName').val();
+            console.log(routingProductName);
+            console.log(processName);
+            console.log(processNumber);
+            //const cycleHour = $('#routingNumber.cycleHour').val();
+            const routingItems = [];
 
             $('#productFields').children().each(function () {
                 const productName = $(this).find('select').val();
-                const productQuantity = $(this).find('input').val();
-                orderItems.push({
-                    processName: routingProduct.processName
+                const processName = $(this).find('input').val();
+                routingItems.push({
+                    processName: processName
                 });
             });
 
-            const orderData = {
-                orderNumber: orderNumber,
-                client: client,
-                phoneNumber: phoneNumber,  //연락처
-                manager: manager,  //담당자
-                deliveryDate: deliveryDate, // 납품일 추가
-                orderItems: orderItems
+            const routingData = {
+                // number: number,
+                routingProductName: routingProductName,
+                // allCycleTime: allCycleTime,
+                processNumber: processNumber,
+                processName: processName,
+                // cycleHour: cycleHour
             };
-            console.log(orderData);
+            console.log(routingData);
 
             $.ajax({
-                url: '/api/createOrder',
+                url: '/api/createRouting',
                 type: 'POST',
                 contentType: 'application/json',
-                data: JSON.stringify(orderData),
+                data: JSON.stringify(routingData),
                 success: function (response) {
                     alert(response);
                     location.reload();
@@ -394,7 +397,7 @@
                     response.data.forEach(function (process) {
                         options += `<option value="${process.processName}">${process.processName}</option>`;
                     });
-                    $('#productQuantity1').html(options); // 해당 select 요소에 옵션 추가
+                    $('#routingProductName').html(options); // 해당 select 요소에 옵션 추가
                 },
                 error: function () {
                     alert('공정 데이터를 불러오는 데 실패했습니다.');
@@ -428,26 +431,26 @@
                             <div class="product-field-row">
                                 <div class="col">
                                     <label for="productName2">품목명</label>
-                                    <select class="form-control" id="productName2" name="productName[]">
+                                    <select class="form-control" id="productName2" name="routingItems[]">
                                         <!-- AJAX로 로드한 옵션이 여기에 추가됩니다. -->
                                     </select>
                                 </div>
                             </div>
                             <div class="product-field-row">
                                 <div class="col">
-                                    <label for="productQuantity1">공정명</label>
-                                    <select class="form-control" id="productQuantity1" name="productName[]">
+                                    <label for="routingProductName">공정명</label>
+                                    <select class="form-control" id="routingProductName" name="routingItems[]">
                                         <!-- AJAX로 로드한 옵션이 여기에 추가됩니다. -->
                                     </select>
                                 </div>
                                 <div class="col-auto">
-                                    <button type="button" class="btn btn-success" id="addProductButton">추가</button>
+                                    <button type="button" class="btn btn-success" id="addRoutingButton">추가</button>
                                 </div>
                             </div>
                             <div id="productFields"></div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-primary" onclick="saveOrder()">저장</button>
+                            <button type="button" class="btn btn-primary" onclick="saveRouting()">저장</button>
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
                         </div>
                     </div>
