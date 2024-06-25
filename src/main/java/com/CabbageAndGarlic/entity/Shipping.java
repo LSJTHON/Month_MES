@@ -24,7 +24,4 @@ public class Shipping {
     @ManyToOne
     @JoinColumn(name = "order_number", nullable = false)
     private Order orderNumber;  // 수주번호
-
-//    @Column(name = "product_code", nullable = false)
-//    private Long productCode;  // 품목코드         이거 왜있어야하지?
 }
