@@ -1,17 +1,17 @@
 package com.CabbageAndGarlic.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "process_management")
 public class ProcessManagement {
     @Id
     @Column(name = "process_number")
-    private Long processNumber;  // 공정번호
+    private String processNumber;  // 공정번호
     //공정번호는 알파벳을 섞을 것인가?
 
     @Column(name = "process_name", nullable = false)
@@ -21,8 +21,17 @@ public class ProcessManagement {
     private Integer productionCapacity;  // 생산 가능량
 
     @Column(name = "production_setup_time", nullable = false)
-    private Integer productionSetupTime;  // 생산 준비시간
+    private Integer productionSetupTime;  // 생산 가능량
 
     @Column(name = "cycle_hour", nullable = false)
-    private Integer cycleHour;  // 사이클 시간
+    private Integer cycleHour;  // 작업 시간
+
+    @Builder
+    public ProcessManagement(String processNumber, String processName, int productionCapacity, int productionSetupTime, int cycleHour) {
+        this.processNumber = processNumber;
+        this.processName = processName;
+        this.productionCapacity = productionCapacity;
+        this.productionSetupTime = productionSetupTime;
+        this.cycleHour = cycleHour;
+    }
 }

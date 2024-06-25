@@ -22,10 +22,14 @@ public class Material {
     @Column(name = "material_name")
     private String materialName;
 
+    //자재양
+    @Column(name = "material_amount")
+    private int materialAmount;
 
     @Builder
-    public Material(String materialCode, String materialName) {
+    public Material(String materialCode, String materialName,int materialAmount) {
         this.materialCode = materialCode;
         this.materialName = materialName;
+        this.materialAmount = materialAmount;
     }
 }
