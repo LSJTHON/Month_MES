@@ -453,10 +453,13 @@
                 }
             });
             $('#addCalendarModal').on('shown.bs.modal', function () {
+                calendar.refetchEvents(); // 이벤트 데이터 새로고침
                 calendar.render();
             });
 
             $('#selectDeliveryDate').click(function () { //수주추가에서 버튼 클릭 시 달력 모달 생기게 해줌
+                calendar.refetchEvents(); // 이벤트 데이터 새로고침
+                calendar.render();
                 $('#addCalendarModal').modal('show');
             });
         });
