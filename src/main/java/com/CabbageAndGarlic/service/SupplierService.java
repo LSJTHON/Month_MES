@@ -17,16 +17,16 @@ public class SupplierService {
     public List<Supplier> getAllSuppliers() {
         return supplierRepository.findAll();
     }
-
-    public Optional<Supplier> getSupplierById(String id) {
-        return supplierRepository.findById(id);
-    }
-
-    public Supplier saveSupplier(Supplier supplier) {
-        return supplierRepository.save(supplier);
-    }
-
-    public void deleteSupplier(String id) {
-        supplierRepository.deleteById(id);
-    }
+//
+//    public Optional<Supplier> getSupplierById(String id) {
+//        return supplierRepository.findById(id);
+//    }
+//
+//    public Supplier saveSupplier(Supplier supplier) {
+//        return supplierRepository.save(supplier);
+//    }
+//
+//    public void deleteSupplier(String id) {
+//        supplierRepository.deleteById(id);
+//    }
 }

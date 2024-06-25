@@ -36,5 +36,5 @@ public class PurchaseOrder extends BaseTimeEntity {
     private LocalDateTime receiptDate;  // 입고일 / regTime+leadTime
 
     @Column(name = "purchase_date", nullable = false)
-    private LocalDateTime purchaseDate; //발주일 / 당일
+    private LocalDateTime purchaseDate; //발주일 / 당일 / 납품일 -4일 : 달력으로 표시
 }

@@ -25,6 +25,11 @@ public class SupplierManageService {
     @Autowired
     private MaterialRepository materialRepository;
 
+    /**
+     * 모든 발주처와 자재 연결 정보를 조회합니다.
+     *
+     * @return SupplierManageDto 리스트.
+     */
     public List<SupplierManageDto> getSupplierManageList() {
         List<SupplierManage> supplierManages = supplierManageRepository.findAll();
         return supplierManages.stream().map(supplierManage -> SupplierManageDto.builder()
@@ -38,6 +43,11 @@ public class SupplierManageService {
                 .build()).collect(Collectors.toList());
     }
 
+    /**
+     * 새로운 발주처와 자재 연결 정보를 추가합니다.
+     *
+     * @param supplierManageDto 추가할 발주처와 자재 연결 데이터.
+     */
     public void addSupplierManage(SupplierManageDto supplierManageDto) {
         Supplier supplier = supplierRepository.findById(supplierManageDto.getSupplierCode()).orElseThrow(() -> new RuntimeException("Supplier not found"));
         Material material = materialRepository.findById(supplierManageDto.getMaterialCode()).orElseThrow(() -> new RuntimeException("Material not found"));
