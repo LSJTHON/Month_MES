@@ -9,4 +9,7 @@ import java.util.Optional;
 
 public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
     List<OrderItem> findByOrderNumber(Order orderNumber);
+
+    List<OrderItem> findByOrderNumberIn(List<Order> orderNumbers);
+
 }
