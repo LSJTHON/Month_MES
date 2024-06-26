@@ -5,9 +5,14 @@
 
 <th:block layout:fragment="style">
     <style>
-        .align-items-center .form-group {
+
+        .dt-search{
             display: flex;
-            align-items: center;
+            margin-top: 10px;
+        }
+
+        .h2-header{
+            margin-top: 50px;
         }
 
         .align-items-center .form-group label {
@@ -30,7 +35,6 @@
             position: absolute;
             left: 0;
             top: 100%;
-            white-space: nowrap;
         }
 
         .modal-custom {
@@ -84,23 +88,21 @@
             margin-right: 10px;
         }
 
-        .delivery-date-group button {
-            white-space: nowrap; /* 버튼 글자 줄넘김 생기면 이걸로 해결 가능함 */
-        }
-
         .order-search-table th{
             padding: 5px;
             text-align: center;
             vertical-align: middle;
-            width: 5%;
+            width: 10%;
         }
-        .order-search-table td {
+
+        .order-search-table td{
             padding: 5px;
             text-align: center;
             vertical-align: middle;
-            width: 5.5%;
+            width: 10%;
         }
-        .order-search-table input {
+
+        .order-search-table input{
             width: 50%;
             box-sizing: border-box;
         }
@@ -109,6 +111,7 @@
 </th:block>
 
 <th:block layout:fragment="script">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         var table = null;
         $(document).ready(function () {
@@ -140,6 +143,12 @@
                             $('#addCalendarModal').modal('show');
                         }
                     },
+                    {
+                        text:'완료처리',
+                        action: function (e,dt,node,config){
+                            processSelectedRows(table);
+                        }
+                    },
                 ],
                 // responsive: true,
                 // destroy: true,
@@ -156,7 +165,6 @@
                 serverSide: false,
                 ordering: true,
                 scrollX: true,
-                info: false,
                 ajax: {
                     url: 'http://localhost:8080/api/orders',
                     type: 'GET',
@@ -175,7 +183,14 @@
                 columns: [
                     {title: "수주번호", data: 'orderNumber'},
                     {title: "업체명", data: 'client'},
-                    {title: "상태", data: 'status'},
+                    {title: "상태", data: 'status',render: function (data,type,row){
+                            return data === 'WAITING' ? '작업대기' :
+                                data === 'IN_PROGRESS' ? '진행중' :
+                                    data === 'CANCELED' ? '취소' :
+                                        data === 'COMPLETED' ? '출하 가능' :
+                                            data === 'SHIPPED' ? '배송 완료' :
+                                                data === 'PendingShipment' ? '배송중' : data;
+                        }},
                     {title: "담당자", data: 'manager'},
                     {
                         title: "수주 확정일", data: 'regTime', render: function (data, type, row) {
@@ -213,14 +228,17 @@
 
                 columns: [
                     {title: "상품명", data: 'productName'},
-                    {title: "수량", data: 'amount'}
+                    {
+                        title: "수량", data: 'amount', render: function (data, type, row) {
+                            return data + 'box';
+                        }
+                    }
                 ],
                 language: {
                     search: "검색:",
                     emptyTable: "선택된 상품 정보가 없습니다"
                 }
             });
-
 
             // 테이블 행 클릭 이벤트임
             $('#table tbody').on('click', 'tr', function () {
@@ -331,14 +349,15 @@
                 data: JSON.stringify(orderData),
                 success: function (response) {
                     alert(response);
-                    location.reload();
+                    // location.reload(); //페이지 리로드 기능
+                    $('#addOrderModal').modal('hide'); // 모달 닫기
+                    $('#table').DataTable().ajax.reload(null, false); // 테이블 비동기 갱신가능하도록 설정
                 },
                 error: function (xhr, status, error) {
                     alert('Error: ' + error);
                 }
             });
         }
-
         // 새로운 FullCalendar 스크립트
         document.addEventListener('DOMContentLoaded', function () {
             var calendarEl = document.getElementById('calendar');
@@ -363,10 +382,9 @@
                         });
                     });
                 },
-
-
                 dateClick: function (info) {
                     var selectedDate = info.dateStr;
+                    console.log(selectedDate);
                     $('#deliveryDate').val(selectedDate);
                     $('#addCalendarModal').modal('hide');
                 },
@@ -404,7 +422,6 @@
                     });
                 }
             });
-
             $('#addCalendarModal').on('shown.bs.modal', function () {
                 calendar.render();
             });
@@ -413,12 +430,41 @@
                 $('#addCalendarModal').modal('show');
             });
         });
+        function processSelectedRows(table) {
+            var selectedData = table.rows({ selected: true }).data(); // 선택된 행의 데이터 가져오기
+            if (selectedData.length === 0) {
+                alert("선택된 행이 없습니다.");
+            } else {
+                selectedData.each(function(value, index) {
+                    var orderNumber = value.orderNumber; // 수주 번호 가져오기
+                    console.log("선택된 행의 수주 번호:", orderNumber);
+
+                    $.ajax({
+                        url: `/api/testComplete/${orderNumber}`, //컨트롤러 요청 url
+                        type: 'PUT',
+                        //data 매개변수는 요청측에서 return 값이 있을 시 data 변수로 들어옴 현재 요청은 return 이 없음
+                        success: function (data) {  //요청이 성공적으로 보내졌을 시 실행
+                            alert('상품 정보를 임시 수정했습니다.');
+                            // 변경된 상태를 비동기로 즉시 반영해줌
+                            table.ajax.reload(null, false);
+                        },
+                        error: function () {
+                            alert('상품 정보를 불러오는 데 실패했습니다.');
+                        }
+                    });
+                });
+            }
+        }
+
     </script>
 </th:block>
 
 <div layout:fragment="content">
     <div class="main-panel">
         <div class="container-fluid">
+
+            <h2 class="h2-header">수주 현황 관리</h2>
+
             <table id="table" class="table table-striped table-bordered order-search-table"></table>
             <table id="table2" class="table table-striped table-bordered order-search-table"></table>
 
@@ -504,4 +550,5 @@
         </div>
     </div>
 </div>
+
 </html>

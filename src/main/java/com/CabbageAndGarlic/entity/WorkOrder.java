@@ -26,9 +26,6 @@ public class WorkOrder {
     @Column(name = "start_time_of_operation")
     private LocalDateTime startTimeOfOperation;  // 공정시작시간
 
-    @Column(name = "productType", nullable = false)
-    private String productType;  //작업품목
-
     @Column(name = "work_amount", nullable = false)
     private Integer workAmount;  // 작업량
 
@@ -41,4 +38,11 @@ public class WorkOrder {
 
     @Column(name = "orderDate", nullable = false)
     private LocalDate orderDate; //지시날짜
+
+    @Column(name = "product_name", nullable = false)
+    private String productName;
+
+    @ManyToOne
+    @JoinColumn(name = "order_number", nullable = false)
+    private Order orderNumber;  // 수주번호
 }

@@ -34,6 +34,7 @@ public class OrderService {
         order.setStatus(Status.WAITING);
         order.setDeliveryDate(orderDto.getDeliveryDate());
         order.setPhoneNumber(orderDto.getPhoneNumber());
+
         order.setManager(orderDto.getManager());
 
         orderRepository.save(order);
@@ -48,17 +49,15 @@ public class OrderService {
         }
     }
 
+    //클릭된 수주행의 상세 품목정보 조회 서비스
     public List<OrderItem> findOrderItemsByOrderNumber(Long orderNumber) {
         Order order = orderRepository.findById(orderNumber)
                 .orElseThrow(() -> new IllegalStateException("수주 번호를 찾을 수 없습니다.: " + orderNumber));
         return orderItemRepository.findByOrderNumber(order);
     }
 
-    public Order getOrder(ProductionPlan productionPlan) {
-        Order order = orderRepository.findById(productionPlan.getOrderNumber().getOrderNumber())
-                .orElseThrow(() -> new IllegalStateException("수주 번호를 찾을 수 없습니다.: " + productionPlan.getOrderNumber().getOrderNumber()));
-
-        return order;
+    //임시 작업완료처리 서비스
+    public void testComplete(Long orderNumber) {
+        orderRepository.updateOrderStatusToCompleted(orderNumber);
     }
-
 }

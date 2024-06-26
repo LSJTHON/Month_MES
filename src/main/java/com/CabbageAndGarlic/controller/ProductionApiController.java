@@ -6,6 +6,7 @@ import com.CabbageAndGarlic.entity.Order;
 import com.CabbageAndGarlic.entity.OrderItem;
 import com.CabbageAndGarlic.entity.ProductionPlan;
 import com.CabbageAndGarlic.entity.WorkOrder;
+import com.CabbageAndGarlic.repository.OrderItemRepository;
 import com.CabbageAndGarlic.repository.WorkOrderRepository;
 import com.CabbageAndGarlic.service.*;
 import jakarta.servlet.http.HttpSession;
@@ -28,6 +29,7 @@ public class ProductionApiController {
     private final ProductionPlanService productionPlanService;
     private final OrderService orderService;
     private final WorkOrderService workOrderService;
+    private final OrderItemRepository orderItemRepository;
 
 
     @GetMapping(value = "/today")
@@ -91,6 +93,36 @@ public class ProductionApiController {
         List<WorkOrder> workOrders = workOrderService.getWorkOrders(date);
         response.put("data", workOrders);
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping(value = "/workStart")
+    public String startWork(@RequestBody Long workOrderNumber) throws ParseException {
+        WorkOrder workOrder = workOrderService.startWorkOrder(workOrderNumber);
+        List<OrderItem> orderItems = orderItemRepository.findByOrderNumber(workOrder.getOrderNumber());
+        for(OrderItem orderItem : orderItems) {
+            if(orderItem.getProductName().equals(workOrder.getProductName())){
+                if(workOrder.getProcess().equals("전처리")||workOrder.getProcess().equals("혼합")){
+                    orderItem.setStartDate(LocalDateTime.now());
+                    orderItemRepository.save(orderItem);
+                }
+            }
+        }
+        return "작업시작";
+    }
+
+    @PostMapping(value = "/workEnd")
+    public String endWork(@RequestBody Long workOrderNumber) throws ParseException {
+        WorkOrder workOrder = workOrderService.endWorkOrder(workOrderNumber);
+        List<OrderItem> orderItems = orderItemRepository.findByOrderNumber(workOrder.getOrderNumber());
+        for(OrderItem orderItem : orderItems) {
+            if(orderItem.getProductName().equals(workOrder.getProductName())){
+                if(workOrder.getProcess().equals("포장")){
+                    orderItem.setEndDate(LocalDateTime.now());
+                    orderItemRepository.save(orderItem);
+                }
+            }
+        }
+        return "작업종료";
     }
 
 }

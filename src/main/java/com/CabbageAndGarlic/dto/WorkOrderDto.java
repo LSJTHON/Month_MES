@@ -14,10 +14,11 @@ import java.time.LocalDateTime;
 public class WorkOrderDto {
     Long workOrderNumber;
     String process;
-    String productType;
     Integer workAmount;
     String worker;
     String orderDate;
+    String productName;
+    Long orderNumber;
 }
 
 

@@ -4,6 +4,8 @@ import com.CabbageAndGarlic.constant.Status;
 import com.CabbageAndGarlic.dto.WorkOrderDto;
 import com.CabbageAndGarlic.entity.ProductionPlan;
 import com.CabbageAndGarlic.entity.WorkOrder;
+import com.CabbageAndGarlic.repository.OrderRepository;
+import com.CabbageAndGarlic.repository.ProductionPlanRepository;
 import com.CabbageAndGarlic.repository.WorkOrderRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -20,18 +22,20 @@ import java.util.List;
 @RequiredArgsConstructor
 public class WorkOrderService {
     private final WorkOrderRepository workOrderRepository;
+    private final OrderRepository orderRepository;
 
     public void saveWorkOrder(WorkOrderDto workOrderDto) {
         WorkOrder workOrder = new WorkOrder();
         workOrder.setWorkOrderNumber(workOrderDto.getWorkOrderNumber());
         workOrder.setProcess(workOrderDto.getProcess());
-        workOrder.setProductType(workOrderDto.getProductType());
         workOrder.setWorkAmount(workOrderDto.getWorkAmount());
         workOrder.setWorker(workOrderDto.getWorker());
         workOrder.setWorkStatus(Status.WAITING);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy. M. d.");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate plandate = LocalDate.parse(workOrderDto.getOrderDate(), formatter);
         workOrder.setOrderDate(plandate);
+        workOrder.setProductName(workOrderDto.getProductName());
+        workOrder.setOrderNumber(orderRepository.findByOrderNumber(workOrderDto.getOrderNumber()));
 
         workOrderRepository.save(workOrder);
     }
@@ -55,5 +59,20 @@ public class WorkOrderService {
             throw new EntityNotFoundException("Production plan not found");
         }
             return workOrders;
+    }
+
+    public WorkOrder startWorkOrder(Long workOrderNumber) {
+        WorkOrder workOrder = workOrderRepository.findByWorkOrderNumber(workOrderNumber);
+        workOrder.setStartTimeOfOperation(LocalDateTime.now());
+        workOrder.setWorkStatus(Status.IN_PROGRESS);
+        workOrderRepository.save(workOrder);
+        return workOrder;
+    }
+
+    public WorkOrder endWorkOrder(Long workOrderNumber) {
+        WorkOrder workOrder = workOrderRepository.findByWorkOrderNumber(workOrderNumber);
+        workOrder.setWorkStatus(Status.COMPLETED);
+        workOrderRepository.save(workOrder);
+        return workOrder;
     }
 }

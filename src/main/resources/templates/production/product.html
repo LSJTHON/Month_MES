@@ -111,9 +111,11 @@
 <th:block layout:fragment="script">
     <script>
         var plan = null;
+        var workOrder = null;
+        var plandata;
         $(document).ready(function () {
             /*테이블 초기화 및 설정하는거 테이블 만들때 여기부터 시작함*/
-            var plan = $('#plan').DataTable({
+             plan = $('#plan').DataTable({
                 dom: 'Bfrtip',
                 buttons: [
                     {
@@ -125,12 +127,19 @@
                         action: function (e, dt, node, config) {
                             $('#addCalendarModal').modal('show');
                         }
+                    },
+                    {
+                        text: '지시추가',
+                        action: function (e, dt, node, config) {
+                            $('#addWorkOrder').modal('show');
+                            filterOptions(workProduct);
+                        }
                     }
                 ],
                 paging:false,
                 // responsive: true,
                 // destroy: true,
-                select: false,  //행 선택 기능
+                select: true,  //행 선택 기능
                 // processing: true,
                 // serverSide: false,
                 // ordering: true,
@@ -175,7 +184,14 @@
                 }
             });
 
-            var workOrder = $('#workOrder').DataTable({
+            var workProduct = "";
+            $('#plan tbody').on('click', 'tr', function () {
+                plandata = plan.row(this).data();  //클릭한 행 this 로 인식하고 값 가져옴
+                console.log(plandata);
+                workProduct = plandata.productName;
+            });
+
+            workOrder = $('#workOrder').DataTable({
                 dom: 'Bfrtip',
                 buttons: [
                     {
@@ -183,13 +199,19 @@
                         text: "선택", /*컬럼 선택한것만 보이도록 만들어줌*/
                     },
                     {
-                        text: '지시추가',
+                        text: '작업시작',
                         action: function (e, dt, node, config) {
-                            $('#addWorkOrder').modal('show');
-                        }
+                            StartWork();
+                        },
+                    },
+                    {
+                        text: '작업종료',
+                        action: function (e, dt, node, config) {
+                            EndWork();
+                        },
                     }
-
                 ],
+                select: true,
                 paging: false, // 페이징 기능 비활성화
                 searching: false, // 검색 기능 비활성화
                 info: false, // 정보 메시지 비활성화
@@ -217,7 +239,23 @@
                 columns: [
                     {title: "작업지시번호", data: 'workOrderNumber'},
                     {title: "공정", data: 'process'},
-                    {title: "작업시간", data: 'startTimeOfOperation'},
+                    {
+                        title: "작업시작시간", data: 'startTimeOfOperation', render: function (data, type, row) {
+                            if (data === null) {
+                                // 데이터가 null인 경우 빈 문자열 또는 다른 기본값 반환
+                                return "";
+                            }else {
+                                    // 데이터가 null이 아닌 경우 LocalDateTime을 년월일시간으로 변경
+                                    var date = new Date(data);
+                                    var year = date.getFullYear();
+                                    var month = ('0' + (date.getMonth() + 1)).slice(-2);
+                                    var day = ('0' + date.getDate()).slice(-2);
+                                    var hours = ('0' + date.getHours()).slice(-2);
+                                    var minutes = ('0' + date.getMinutes()).slice(-2);
+                                    return `${year}-${month}-${day} ${hours}:${minutes}`;
+                                }
+                        }
+                    },
                     {title: "작업량", data: 'workAmount'},
                     {title: "작업자", data: 'worker'},
                     {title: "상태", data: 'workStatus'},
@@ -228,6 +266,50 @@
                     zeroRecords: "검색 결과가 없습니다" // 검색 결과가 없을 떄 나오는거
                 }
             })
+
+
+            var workOrderNum = 0;
+            $('#workOrder tbody').on('click', 'tr', function () {
+                var data = workOrder.row(this).data();  //클릭한 행 this 로 인식하고 값 가져옴
+                if(data.workStatus=='WAITING'||data.workStatus=='IN_PROGRESS'){
+                    workOrderNum = data.workOrderNumber;
+                    console.log(workOrderNum);
+                };
+            });
+
+            function StartWork() {
+                $.ajax({
+                    url: '/production/workStart',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(workOrderNum),
+                    success: function (response) {
+                        alert(response);
+                        fetchEventsForDate(dayString);
+                        fetchEventsForDate1(dayString);
+                    },
+                    error: function (xhr, status, error) {
+                        alert('Error: ' + error);
+                    }
+                });
+            }
+
+            function EndWork() {
+                $.ajax({
+                    url: '/production/workEnd',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(workOrderNum),
+                    success: function (response) {
+                        alert(response);
+                        fetchEventsForDate(dayString);
+                        fetchEventsForDate1(dayString);
+                    },
+                    error: function (xhr, status, error) {
+                        alert('Error: ' + error);
+                    }
+                });
+            }
 
             var calendarEl = document.getElementById('calendar');
             var colors = ['#2e4053', '#1c2833', '#6c3483', '#1f618d',]; // 사용할 어두운 색상 배열
@@ -300,70 +382,98 @@
             const productTypeSelect = document.getElementById('productType');
 
             const allOptions = {
-                '매실': '매실',
-                '석류': '석류',
-                '양배추': '양배추',
-                '마늘': '마늘'
+                '전처리': '전처리',
+                '착즙': '착즙',
+                '여과': '여과',
+                '혼합': '혼합',
+                '살균': '살균',
+                '충진': '충진',
+                '냉각': '냉각',
+                '검사': '검사',
+                '포장': '포장'
             };
 
-            const filterOptions = (process) => {
-                productTypeSelect.innerHTML = '';
+            const filterOptions = (product) => {
+                processSelect.innerHTML = '';
 
-                if (process === '전처리' ||process === '착즙'||process === '여과') {
-                    delete allOptions['매실'];
-                    delete allOptions['석류'];
-                    allOptions['양배추'] = '양배추';
-                    allOptions['마늘'] = '마늘';
-                } else if(process === '혼합'||process === '냉각') {
-                    delete allOptions['양배추'];
-                    delete allOptions['마늘'];
-                    allOptions['매실'] = '매실';
-                    allOptions['석류'] = '석류';
+                if (product === '매실젤리스틱'||product === '석류젤리스틱') {
+                    delete allOptions['전처리'];
+                    delete allOptions['착즙'];
+                    delete allOptions['여과'];
+                    delete allOptions['혼합'];
+                    delete allOptions['살균'];
+                    delete allOptions['충진'];
+                    delete allOptions['냉각'];
+                    delete allOptions['검사'];
+                    delete allOptions['포장'];
+                    allOptions['혼합'] = '혼합';
+                    allOptions['살균'] = '살균';
+                    allOptions['충진'] = '충진';
+                    allOptions['냉각'] = '냉각';
+                    allOptions['검사'] = '검사';
+                    allOptions['포장'] = '포장';
+
                 } else {
-                    allOptions['양배추'] = '양배추';
-                    allOptions['마늘'] = '마늘';
-                    allOptions['매실'] = '매실';
-                    allOptions['석류'] = '석류';
+                    delete allOptions['전처리'];
+                    delete allOptions['착즙'];
+                    delete allOptions['여과'];
+                    delete allOptions['혼합'];
+                    delete allOptions['살균'];
+                    delete allOptions['충진'];
+                    delete allOptions['냉각'];
+                    delete allOptions['검사'];
+                    delete allOptions['포장'];
+                    allOptions['전처리'] = '전처리';
+                    allOptions['착즙'] = '착즙';
+                    allOptions['여과'] = '여과';
+                    allOptions['살균'] = '살균';
+                    allOptions['충진'] = '충진';
+                    allOptions['검사'] = '검사';
+                    allOptions['포장'] = '포장';
                 }
 
                 for (const key in allOptions) {
                     const option = document.createElement('option');
                     option.value = key;
                     option.text = allOptions[key];
-                    productTypeSelect.add(option);
+                    processSelect.add(option);
                 }
             };
 
-            processSelect.addEventListener('change', (e) => {
-                filterOptions(e.target.value);
-            });
 
-            filterOptions(processSelect.value);  // 초기화할 때 호출
         });
 
         let productCount = 1; // input 태그 갯수 초기값
         const maxProducts = 5; // input 태그 최대갯수 설정값 ( 추가폼 포함 5개까지 가능함 )
 
         var day = new Date();
-        var dayString = day.toLocaleDateString();
+
+        // 연도, 월, 일을 추출하여 두 자리 수로 맞춤
+        var year = day.getFullYear();
+        var month = ('0' + (day.getMonth() + 1)).slice(-2);
+        var date = ('0' + day.getDate()).slice(-2);
+
+        // "yyyy-MM-dd" 형식의 문자열 생성
+        var dayString = `${year}-${month}-${date}`;
 
         function saveWorkOrder() {
 
             const workOrderNumber = new Date().getTime(); //번호는 어떻게 만들지 정하고 코드 다시 짜기
             const process = $('#process').val();
-            const productType = $('#productType').val();
-            const workAmount = $('#workAmount').val();
+            const workAmount = plandata.amount;
             const worker = $('#worker').val();
             const orderDate = dayString;
-
+            const productName = plandata.productName;
+            const orderNumber = plandata.orderNumber;
 
             const workOrderData = {
                 workOrderNumber: workOrderNumber,
                 process: process,
-                productType: productType,
                 workAmount: workAmount,
                 worker: worker,
-                orderDate: orderDate
+                orderDate: orderDate,
+                productName: productName,
+                orderNumber: orderNumber
             };
 
             $.ajax({
@@ -374,13 +484,28 @@
                 success: function (response) {
                     alert(response);
                     $('#addWorkOrder').modal('hide');
+                    fetchEventsForDate1(dayString);
                 },
                 error: function (xhr, status, error) {
-
+                    alert('Error: ' + error);
                 }
             });
         }
 
+
+        function fetchEventsForDate1(date) {
+            $.ajax({
+                url: `/production/workOrder/${date}`,
+                type: 'GET',
+                success: function (data) {
+                    workOrder.clear();
+                    workOrder.rows.add(data.data).draw();
+                },
+                error: function (xhr, status, error) {
+                    alert('데이터를 가져오는 중 오류가 발생했습니다: ' + error);
+                }
+            });
+        }
 
 
 
@@ -439,19 +564,6 @@
                                     <option value="검사">검사</option>
                                     <option value="포장">포장</option>
                                 </select>
-                            </div>
-                            <div class="mb-3">
-                                <label for="productType" class="form-label">작업품목</label>
-                                <select class="form-control" id="productType" name="productType[]">
-                                    <option value="양배추">양배추</option>
-                                    <option value="마늘">마늘</option>
-                                    <option value="매실">매실</option>
-                                    <option value="석류">석류</option>
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label for="workAmount" class="form-label">작업량</label>
-                                <input type="text" class="form-control" id="workAmount" name="workAmount">
                             </div>
                             <div class="mb-3">
                                 <label for="worker" class="form-label">작업자</label>

@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface WorkOrderRepository extends JpaRepository<WorkOrder, Long> {
     List<WorkOrder> findByOrderDate(LocalDate date);
+    WorkOrder findByWorkOrderNumber(Long workOrderId);
 }
