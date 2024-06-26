@@ -49,7 +49,6 @@ public class RoutingService {
 
 
     public void saveRouting(AddRoutingRequest routingDto) {
-        int allCycleTime = 0; // 필요에 따라 전체 공정 시간을 계산하는 로직 추가
         String productName = routingDto.getRoutingProductName();
         List<String> listRouting = routingDto.getProcessName();
 
@@ -63,6 +62,8 @@ public class RoutingService {
             }
         }
         for (ProcessManagement processManagement : processManagementList) {
+
+            int allCycleTime = 0; // 필요에 따라 전체 공정 시간을 계산하는 로직 추가
 
 
             for (ProcessManagement processManagement2 : processManagementList) {

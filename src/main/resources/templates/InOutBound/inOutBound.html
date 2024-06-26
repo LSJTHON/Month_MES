@@ -159,12 +159,6 @@
             return new Date(dateString).toLocaleDateString('ko-KR', options).replace(/\./g, '-').replace(' ', 'T');
         }
 
-        // function setTodayDate(dateSelector) {
-        //     var now = new Date();
-        //     var today = now.toISOString().slice(0, 16);
-        //     $(dateSelector).val(today);
-        // }
-
         function loadInOutBoundData() {
             $.ajax({
                 url: '/api/inoutbound/all',
