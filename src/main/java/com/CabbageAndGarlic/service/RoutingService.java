@@ -35,33 +35,23 @@ public class RoutingService {
                                 routing -> routing,
                                 (existing, replacement) -> existing
                         ),
-                        map -> map.values().stream().collect(Collectors.toList())
+                        map -> new ArrayList<>(map.values())
                 ));
     }
 
-    public List<RoutingListViewResponse> findRoutingItemsByProductName(String productName) {
+    public List<RoutingListViewResponse> findRoutingItemsByProductName(String product) {
 
-        System.out.println("서비스에 들어온 number" + productName);
-        String routingProduct = routingRepository.findProductNameByProcessNumber(productName);
 
-        System.out.println("그래서 " + productName +"의 제품명은? " + routingProduct );
-        List<Routing> routings = routingRepository.findByProductName(routingProduct);
+
+        List<Routing> routings = routingRepository.findByProductName(product);
         return routings.stream()
                 .map(RoutingListViewResponse::new)
                 .collect(Collectors.toList());
     }
 
 
-//    public List<RoutingListViewResponse> findRoutingItemsByRoutingNumber(int routingNumber) {
-//        List<Routing> routings = routingRepository.findByNumber(routingNumber);
-//        List<RoutingListViewResponse> resultList = new ArrayList<>();
-//        for (Routing routing : routings) {
-//            resultList.add(new RoutingListViewResponse(routing));
-//        }
-//        return resultList;
-//    }
-
     public void saveRouting(AddRoutingRequest routingDto) {
+        int allCycleTime = 0; // 필요에 따라 전체 공정 시간을 계산하는 로직 추가
         String productName = routingDto.getRoutingProductName();
         List<String> listRouting = routingDto.getProcessName();
 
@@ -74,9 +64,17 @@ public class RoutingService {
                 processManagementList.add(processManagement);
             }
         }
-
-        int allCycleTime = 0; // 필요에 따라 전체 공정 시간을 계산하는 로직 추가
         for (ProcessManagement processManagement : processManagementList) {
+
+
+            for (ProcessManagement processManagement2 : processManagementList) {
+                System.out.println(processManagement2.getCycleHour()+"이게 뭐가 들어오지");
+                allCycleTime += processManagement2.getCycleHour();
+                System.out.println(allCycleTime+"이게 사이클 타임이다 이말이야");
+
+            }
+
+
             Routing routing = Routing.builder()
                     .routingNumber(processManagement)
                     .routingProductName(product)

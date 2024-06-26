@@ -37,8 +37,6 @@ public class OrderApiController {
     //캘린더에서 수주정보 모두 보여주기
     @GetMapping("/orderCalendar")
     public List<Order> getCalendarOrder() {
-
-        System.out.println("마 여기로 들어오나");
         return orderService.findAll();
     }
 

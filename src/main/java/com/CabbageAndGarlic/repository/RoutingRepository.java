@@ -12,8 +12,4 @@ public interface RoutingRepository extends JpaRepository<Routing, Integer> {
 
     @Query("SELECT r FROM Routing r WHERE r.routingProductName.productName = :productName")
     List<Routing> findByProductName(String productName);
-
-    @Query("SELECT r.routingProductName.productName FROM Routing r WHERE r.routingNumber.processNumber = :processNumber")
-    String findProductNameByProcessNumber(@Param("processNumber") String processNumber);
-
 }

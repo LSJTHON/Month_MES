@@ -21,6 +21,7 @@ public class RoutingApiController {
     private final RoutingService routingService;
     private final ProductService productService;
     private final ProcessManageService processManageService;
+    private final ProductApiController productApiController;
 
 //    @GetMapping("/routings")
 //    public Map<String, Object> getAllRouting() {
@@ -56,10 +57,10 @@ public class RoutingApiController {
 //        return ResponseEntity.ok(items);
 //    }
 
-    @GetMapping("/routingNumber/{productName}")
-    public ResponseEntity<List<RoutingListViewResponse>> getAllRouting(@PathVariable String productName) {
-        System.out.println(productName+"dwidjiowjqiodjwqoidjioqwjdioq");
-        List<RoutingListViewResponse> items = routingService.findRoutingItemsByProductName(productName);
+    @GetMapping("/routingNumber/{product}")
+    public ResponseEntity<List<RoutingListViewResponse>> getAllRouting(@PathVariable String product) {
+        System.out.println(product+"dwidjiowjqiodjwqoidjioqwjdioq");
+        List<RoutingListViewResponse> items = routingService.findRoutingItemsByProductName(product);
         return ResponseEntity.ok(items);
     }
 

@@ -227,12 +227,14 @@
 
             $('#table tbody').on('click', 'tr', function () {
                 var data = table.row(this).data();
-                loadRoutingNumber(data.number);
+                loadRoutingNumber(data.number,data.routingProductName.productName);
             });
+            function loadRoutingNumber(routingNumber,productName) {
 
-            function loadRoutingNumber(routingNumber) {
+                console.log(routingNumber);
+                console.log(productName);
                 $.ajax({
-                    url: `/api/routingNumber/${routingNumber}`,
+                    url: `/api/routingNumber/${productName}`,
                     type: 'GET',
                     success: function (data) {
                         table2.clear().rows.add(data).draw();
