@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -15,6 +14,7 @@ public class SupplierService {
     private final SupplierRepository supplierRepository;
 
     public List<Supplier> getAllSuppliers() {
+        // 모든 공급자 정보를 조회
         return supplierRepository.findAll();
     }
 

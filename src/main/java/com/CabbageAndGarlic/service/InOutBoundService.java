@@ -22,33 +22,39 @@ public class InOutBoundService {
     private final ProductRepository productRepository;
 
     public List<InOutBoundDto> getAllInbounds() {
+        // 입고된 모든 트랜잭션 조회
         List<InOutBound> inbounds = inOutBoundRepository.findByTransactionType(InOutBound.TransactionType.IN);
         return inbounds.stream().map(this::toDto).collect(Collectors.toList());
     }
 
     public void addInbound(InOutBoundDto inOutBoundDto) {
+        // 입고 트랜잭션 추가
         InOutBound inbound = toEntity(inOutBoundDto);
         inbound.setTransactionType(InOutBound.TransactionType.IN);
         inOutBoundRepository.save(inbound);
     }
 
     public List<InOutBoundDto> getAllOutbounds() {
+        // 출고된 모든 트랜잭션 조회
         List<InOutBound> outbounds = inOutBoundRepository.findByTransactionType(InOutBound.TransactionType.OUT);
         return outbounds.stream().map(this::toDto).collect(Collectors.toList());
     }
 
     public void addOutbound(InOutBoundDto inOutBoundDto) {
+        // 출고 트랜잭션 추가
         InOutBound outbound = toEntity(inOutBoundDto);
         outbound.setTransactionType(InOutBound.TransactionType.OUT);
         inOutBoundRepository.save(outbound);
     }
 
     public List<InOutBoundDto> getAllTransactions() {
+        // 모든 트랜잭션 조회
         List<InOutBound> transactions = inOutBoundRepository.findAll();
         return transactions.stream().map(this::toDto).collect(Collectors.toList());
     }
 
     private InOutBoundDto toDto(InOutBound inOutBound) {
+        // 엔티티를 DTO로 변환
         return InOutBoundDto.builder()
                 .materialCode(inOutBound.getMaterialCode() != null ? inOutBound.getMaterialCode().getMaterialCode() : null)
                 .productCode(inOutBound.getProductCode() != null ? inOutBound.getProductCode().getProductCode() : null)
@@ -62,6 +68,7 @@ public class InOutBoundService {
     }
 
     private InOutBound toEntity(InOutBoundDto inOutBoundDto) {
+        // DTO를 엔티티로 변환
         Material material = null;
         if (inOutBoundDto.getMaterialCode() != null) {
             material = materialRepository.findById(inOutBoundDto.getMaterialCode())

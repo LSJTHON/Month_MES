@@ -12,30 +12,30 @@ import java.util.List;
 @RequiredArgsConstructor
 public class InOutBoundApiController {
 
-    private final InOutBoundService inOutBoundService;
+    private final InOutBoundService inOutBoundService; // 입출고 관련 서비스
 
-    @GetMapping("/inbound")
+    @GetMapping("/inbound") // 입고 목록 조회
     public List<InOutBoundDto> getAllInbound() {
-        return inOutBoundService.getAllInbounds();
+        return inOutBoundService.getAllInbounds(); // 모든 입고 정보를 조회하여 반환
     }
 
-    @PostMapping("/inbound")
+    @PostMapping("/inbound") // 입고 정보 추가
     public void addInbound(@RequestBody InOutBoundDto inOutBoundDto) {
-        inOutBoundService.addInbound(inOutBoundDto);
+        inOutBoundService.addInbound(inOutBoundDto); // 전달받은 입고 정보를 추가
     }
 
-    @GetMapping("/outbound")
+    @GetMapping("/outbound") // 출고 목록 조회
     public List<InOutBoundDto> getAllOutbound() {
-        return inOutBoundService.getAllOutbounds();
+        return inOutBoundService.getAllOutbounds(); // 모든 출고 정보를 조회하여 반환
     }
 
-    @PostMapping("/outbound")
+    @PostMapping("/outbound") // 출고 정보 추가
     public void addOutbound(@RequestBody InOutBoundDto inOutBoundDto) {
-        inOutBoundService.addOutbound(inOutBoundDto);
+        inOutBoundService.addOutbound(inOutBoundDto); // 전달받은 출고 정보를 추가
     }
 
-    @GetMapping("/all")
+    @GetMapping("/all") // 모든 입출고 목록 조회
     public List<InOutBoundDto> getAllTransactions() {
-        return inOutBoundService.getAllTransactions();
+        return inOutBoundService.getAllTransactions(); // 모든 입출고 정보를 조회하여 반환
     }
 }
