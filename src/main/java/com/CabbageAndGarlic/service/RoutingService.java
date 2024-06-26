@@ -26,7 +26,7 @@ public class RoutingService {
         return routingRepository.findAll();
     }
 
-    public List<Routing> findAllDistinctByProductName() {
+    public List<Routing> findAllDistinctByProductName() { // 원하는 정보 값 가져오는 로직
         return routingRepository.findAll().stream()
                 .filter(routing -> routing.getRoutingProductName() != null)
                 .collect(Collectors.collectingAndThen(
@@ -79,7 +79,7 @@ public class RoutingService {
                     .routingProductName(product)
                     .allCycleTime(allCycleTime)
                     .build();
-            routingRepository.save(routing);
+            routingRepository.save(routing);// 최종 세이브 라우팅 정보 저장 로직
         }
     }
 
