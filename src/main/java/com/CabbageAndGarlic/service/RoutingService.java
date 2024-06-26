@@ -83,7 +83,7 @@ public class RoutingService {
         }
     }
 
-    public void deleteRouting(int number) {
-        routingRepository.deleteById(number);
+    public void deleteRouting(String productName) {
+        routingRepository.deleteByRoutingNumberProductName(productName);
     }
 }

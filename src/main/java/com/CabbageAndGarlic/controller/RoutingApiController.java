@@ -71,9 +71,10 @@ public class RoutingApiController {
         return "정상적으로 등록했습니다.";
     }
 
-    @DeleteMapping("/routings/{number}")
-    public ResponseEntity<Void> deleteMaterial(@PathVariable int number) {
-        routingService.deleteRouting(number);
+    @DeleteMapping("/routings/{productName}")
+    public ResponseEntity<Void> deleteProduct(@PathVariable String productName) {
+        System.out.println("delete product 들어오니? : " + productName);
+        routingService.deleteRouting(productName);
         return ResponseEntity.ok().build();
     }
 }
