@@ -28,9 +28,6 @@ public class Order extends BaseTimeEntity {
     @Column(name = "phone_number")
     private String phoneNumber;  // 연락처
 
-//    @Column(name = "cancel_reason")
-//    private String cancelReason;  // 취소사유
-
     @Column(name = "manager")
     private String manager;  // 담당자
 
