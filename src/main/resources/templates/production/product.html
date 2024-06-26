@@ -133,6 +133,9 @@
                         action: function (e, dt, node, config) {
                             $('#addWorkOrder').modal('show');
                             filterOptions(workProduct);
+
+                            $('#process').val('');
+                            $('#worker').val('');
                         }
                     }
                 ],
@@ -379,7 +382,6 @@
             });
 
             const processSelect = document.getElementById('process');
-            const productTypeSelect = document.getElementById('productType');
 
             const allOptions = {
                 '전처리': '전처리',
@@ -484,6 +486,7 @@
                 success: function (response) {
                     alert(response);
                     $('#addWorkOrder').modal('hide');
+                    fetchEventsForDate(dayString);
                     fetchEventsForDate1(dayString);
                 },
                 error: function (xhr, status, error) {
@@ -492,6 +495,19 @@
             });
         }
 
+        function fetchEventsForDate(date) {
+            $.ajax({
+                url: `/production/${date}`,
+                type: 'GET',
+                success: function (data) {
+                    plan.clear();
+                    plan.rows.add(data.data).draw();
+                },
+                error: function (xhr, status, error) {
+                    alert('데이터를 가져오는 중 오류가 발생했습니다: ' + error);
+                }
+            });
+        }
 
         function fetchEventsForDate1(date) {
             $.ajax({
@@ -546,7 +562,7 @@
                  aria-hidden="true">
                 <div class="modal-dialog modal-custom">
                     <div class="modal-content">
-                        <div class="modal-header">
+                        <div class="modal-header" id="order">
                             <h5 class="modal-title" id="addWorkOrderModalLabel">지시 추가</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>

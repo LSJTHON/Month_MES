@@ -39,7 +39,7 @@ public class ProductionApiController {
         LocalDate date = LocalDate.now();
         List<ProductionPlan> productionPlans = productionPlanService.findProductionPlan(date);
         for (ProductionPlan productionPlan : productionPlans) {
-            Order order = orderService.getOrder(productionPlan);
+            Order order = productionPlan.getOrderNumber();
                 List<OrderItem> items = orderService.findOrderItemsByOrderNumber(order.getOrderNumber());
                 for(OrderItem item : items) {
                     ProductionDto productionDto = new ProductionDto(order.getOrderNumber(), item.getProductName(),
@@ -58,7 +58,7 @@ public class ProductionApiController {
         List<ProductionDto> productionDtos = new ArrayList<>();
         List<ProductionPlan> productionPlans = productionPlanService.findProductionPlan(date);
         for(ProductionPlan productionPlan : productionPlans) {
-            Order order = orderService.getOrder(productionPlan);
+            Order order = productionPlan.getOrderNumber();
                 List<OrderItem> items = orderService.findOrderItemsByOrderNumber(order.getOrderNumber());
                 for(OrderItem item : items) {
                     ProductionDto productionDto = new ProductionDto(order.getOrderNumber(), item.getProductName(),
