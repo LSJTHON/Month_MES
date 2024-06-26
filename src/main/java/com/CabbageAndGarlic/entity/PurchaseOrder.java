@@ -10,6 +10,9 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Table(name = "purchase_order") //발주
 public class PurchaseOrder extends BaseTimeEntity {
     @Id
@@ -23,7 +26,7 @@ public class PurchaseOrder extends BaseTimeEntity {
 
     @ManyToOne
     @JoinColumn(name = "id", nullable = false)
-    private SupplierManage supplierMaterial;  // 원자재발주처코드 /자재, 발주처, 담당자 알 수 있음
+    private SupplierManage supplierManage;  // 원자재발주처코드 /자재, 발주처, 담당자 알 수 있음
 
     @ManyToOne
     @JoinColumn(name = "order_number", nullable = false)
@@ -36,5 +39,8 @@ public class PurchaseOrder extends BaseTimeEntity {
     private LocalDateTime receiptDate;  // 입고일 / regTime+leadTime
 
     @Column(name = "purchase_date", nullable = false)
-    private LocalDateTime purchaseDate; //발주일 / 당일
+    private LocalDateTime purchaseDate; //발주일 / 당일 / 납품일 -4일 : 달력으로 표시
+
+    @Column(name = "manager", nullable = false)
+    private String manager; // 담당자
 }

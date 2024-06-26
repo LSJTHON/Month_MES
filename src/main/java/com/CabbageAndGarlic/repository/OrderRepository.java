@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 public interface OrderRepository extends JpaRepository<Order, Long> {
 
     @Modifying
@@ -14,4 +16,5 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     @Query(value = "UPDATE order_table SET order_status = 'COMPLETED' WHERE order_number = :orderNumber", nativeQuery = true)
     int updateOrderStatusToCompleted(@Param("orderNumber") Long orderNumber);
 
+    List<Order> findByOrderNumberNotIn(List<Long> orderNumbers);
 }

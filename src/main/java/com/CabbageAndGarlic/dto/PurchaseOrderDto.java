@@ -1,31 +1,23 @@
 package com.CabbageAndGarlic.dto;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
-@Getter @Setter
+@Builder
+@Getter
+@Setter
 public class PurchaseOrderDto {
-
-    private long purchaseNumber; //발주번호
-
-    private String materialCode; //자재코드
-
-    private String materialName; //자재명
-
-    private String supplierCode; //발주처코드
-
-    private String supplierName; //발주처명
-
-    private int amount; //발주수량
-
-    private LocalDateTime orderDate; // 발주일
-
+    private Long purchaseNumber; // 발주번호
+    private String purchaseOrderStatus; // 발주상태
+    private Long supplierManageId; // SupplierManage ID
+    private Long orderNumber; // 수주번호
+    private int amount; // 발주수량
     private LocalDateTime receiptDate; // 입고일
-
-    private String purchaseOrderStatus; //발주상태
-
-    private String manager; //담당자 : 고정?
-
+    private LocalDateTime purchaseDate; // 발주일
+    private String manager; // 담당자
+    private List<Long> orders; // 수주번호 리스트
 }
