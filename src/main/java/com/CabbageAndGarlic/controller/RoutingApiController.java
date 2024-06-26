@@ -59,7 +59,7 @@ public class RoutingApiController {
 
     @GetMapping("/routingNumber/{product}")
     public ResponseEntity<List<RoutingListViewResponse>> getAllRouting(@PathVariable String product) {
-        System.out.println(product+"dwidjiowjqiodjwqoidjioqwjdioq");
+//        System.out.println(product+"dwidjiowjqiodjwqoidjioqwjdioq");
         List<RoutingListViewResponse> items = routingService.findRoutingItemsByProductName(product);
         return ResponseEntity.ok(items);
     }

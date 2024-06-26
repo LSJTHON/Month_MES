@@ -41,8 +41,6 @@ public class RoutingService {
 
     public List<RoutingListViewResponse> findRoutingItemsByProductName(String product) {
 
-
-
         List<Routing> routings = routingRepository.findByProductName(product);
         return routings.stream()
                 .map(RoutingListViewResponse::new)
