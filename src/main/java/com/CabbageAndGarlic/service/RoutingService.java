@@ -67,10 +67,7 @@ public class RoutingService {
 
 
             for (ProcessManagement processManagement2 : processManagementList) {
-                System.out.println(processManagement2.getCycleHour()+"이게 뭐가 들어오지");
                 allCycleTime += processManagement2.getCycleHour();
-                System.out.println(allCycleTime+"이게 사이클 타임이다 이말이야");
-
             }
 
 
