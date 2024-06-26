@@ -46,13 +46,8 @@ public class OrderApiController {
     @PostMapping("/createOrder")
     public String saveOrder(@RequestBody OrderDto orderDto) {
         orderService.saveOrder(orderDto);
-<<<<<<< HEAD
         productionPlanService.savePlan(orderDto);
-
-        return "등록 성공";
-=======
         return "수주를 정상적으로 등록했습니다.";
->>>>>>> 8025c6c7d65d6da6a16b442faf6bf0dd7576510c
     }
 
 
