@@ -302,6 +302,28 @@
                 // console.log(routingItems);
             });
 
+            // 테이블이 초기화되지 않았으면 초기화
+            if (table === null) {
+                table = $('#table').DataTable();
+            }
+
+            // 테이블에 이미 존재하는지 확인
+            const tableData = table.rows().data();
+            let isDuplicate = false;
+
+            tableData.each(function (row) {
+                // console.log(row.routingProductName.productName+"이건가?");
+                if (row.routingProductName.productName === routingProductName) {
+                    isDuplicate = true;
+                    return false;
+                }
+            });
+
+            if (isDuplicate) {
+                alert('이미 존재하는 품목명입니다.');
+                return;
+            }
+
 
             const routingData = {
                 routingProductName: routingProductName,
