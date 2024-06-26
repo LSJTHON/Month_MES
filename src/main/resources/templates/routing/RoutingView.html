@@ -116,6 +116,8 @@
 
 <th:block layout:fragment="script">
     <script>
+        let routingDuplicate = [];
+
         var table = null;
         $(document).ready(function () {
             var table = $('#table').DataTable({
@@ -175,16 +177,21 @@
                 ajax: {
                     url: 'http://localhost:8080/api/routings',
                     type: 'GET',
-                    dataFilter: function (res) {
-                        var json = $.parseJSON(res);
-                        var data = {
-                            'draw': json.data.draw,
-                            'recordsTotal': json.data.recordsTotal,
-                            'recordsFiltered': json.data.recordsFiltered,
-                            'data': json.data,
-                        };
-                        return JSON.stringify(data);
+                    dataSrc: function (json) {
+                        routingDuplicate = json.data.map(routingduplicate => routingduplicate.routingProductName.productName);
+                        console.log(routingDuplicate+"adsfadfasdfsaf")
+                        return json.data;
                     }
+                    // dataFilter: function (res) {
+                    //     var json = $.parseJSON(res);
+                    //     var data = {
+                    //         'draw': json.data.draw,
+                    //         'recordsTotal': json.data.recordsTotal,
+                    //         'recordsFiltered': json.data.recordsFiltered,
+                    //         'data': json.data,
+                    //     };
+                    //     return JSON.stringify(data);
+                    // }
                 },
                 columns: [
                     {title: "라우팅 번호", data: 'number'},
@@ -294,6 +301,11 @@
         function saveRouting() {
             const routingProductName = $('#productName2').val();
             const routingItems = [];
+
+            if (routingDuplicate.includes(routingProductName)) {
+                alert('이미 존재하는 품목코드입니다.');
+                return;
+            }
 
             $('#productFields').children().each(function () {
                 const processName = $(this).find('input').val();
