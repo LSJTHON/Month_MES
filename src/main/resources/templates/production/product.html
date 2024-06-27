@@ -168,13 +168,12 @@
                             'recordsFiltered': json.data.recordsFiltered,
                             'data': json.data,
                         };
+                        console.log(data);
                         return JSON.stringify(data);
                     }
                 },
                 columns: [
-                    {title: "수주번호", data: 'orderNumber'},
                     {title: "제품명", data: 'productName'},
-                    {title: "업체명", data: 'client'},
                     {title: "생산시작", data: 'startDate'},
                     {title: "생산종료", data: 'endDate'},
                     {title: "계획수량", data: 'amount'},
@@ -466,7 +465,7 @@
             const worker = $('#worker').val();
             const orderDate = dayString;
             const productName = plandata.productName;
-            const orderNumber = plandata.orderNumber;
+
 
             const workOrderData = {
                 workOrderNumber: workOrderNumber,
@@ -474,8 +473,7 @@
                 workAmount: workAmount,
                 worker: worker,
                 orderDate: orderDate,
-                productName: productName,
-                orderNumber: orderNumber
+                productName: productName
             };
 
             $.ajax({

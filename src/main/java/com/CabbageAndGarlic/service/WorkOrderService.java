@@ -35,7 +35,6 @@ public class WorkOrderService {
         LocalDate plandate = LocalDate.parse(workOrderDto.getOrderDate(), formatter);
         workOrder.setOrderDate(plandate);
         workOrder.setProductName(workOrderDto.getProductName());
-        workOrder.setOrderNumber(orderRepository.findByOrderNumber(workOrderDto.getOrderNumber()));
 
         workOrderRepository.save(workOrder);
     }

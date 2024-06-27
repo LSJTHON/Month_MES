@@ -18,7 +18,6 @@ public class WorkOrderDto {
     String worker;
     String orderDate;
     String productName;
-    Long orderNumber;
 }
 
 

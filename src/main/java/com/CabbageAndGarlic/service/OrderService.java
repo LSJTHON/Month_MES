@@ -44,6 +44,7 @@ public class OrderService {
             orderItem.setProductName(itemDto.getProductName());
             orderItem.setAmount(itemDto.getAmount());
             orderItem.setOrderNumber(order);
+            orderItem.setStatus(Status.WAITING);  //생산계획의 상태때문에 추가함
 
             orderItemRepository.save(orderItem);
         }

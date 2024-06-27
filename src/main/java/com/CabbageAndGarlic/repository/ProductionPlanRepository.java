@@ -8,5 +8,5 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface ProductionPlanRepository extends JpaRepository<ProductionPlan, Long> {
-    List<ProductionPlan> findByPlanDate(LocalDate planDate);
+    ProductionPlan findByPlanDate(LocalDate planDate);
 }

@@ -1,5 +1,6 @@
 package com.CabbageAndGarlic.entity;
 
+import com.CabbageAndGarlic.constant.Status;
 import lombok.*;
 import jakarta.persistence.*;
 
@@ -32,4 +33,7 @@ public class OrderItem {
 
     @Column(name = "end_date")
     private LocalDateTime endDate;  // 종료일
+
+    @Column(name = "status")
+    private Status status; //상태
 }

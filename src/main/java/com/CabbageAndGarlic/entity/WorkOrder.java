@@ -42,7 +42,4 @@ public class WorkOrder {
     @Column(name = "product_name", nullable = false)
     private String productName;
 
-    @ManyToOne
-    @JoinColumn(name = "order_number", nullable = false)
-    private Order orderNumber;  // 수주번호
 }
