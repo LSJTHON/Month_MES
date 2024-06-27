@@ -21,14 +21,6 @@ public class RoutingApiController {
     private final RoutingService routingService;
     private final ProductService productService;
     private final ProcessManageService processManageService;
-    private final ProductApiController productApiController;
-
-//    @GetMapping("/routings")
-//    public Map<String, Object> getAllRouting() {
-//        Map<String, Object> getAllRouting = new HashMap<>();
-//        getAllRouting.put("data", routingService.findAll());
-//        return getAllRouting;
-//    }
 
     @GetMapping("/routings")
     public Map<String, Object> getAllRouting() {
@@ -51,29 +43,21 @@ public class RoutingApiController {
         return getAllProcess;
     }
 
-//    @GetMapping("/routingNumber/{routingNumber}")
-//    public ResponseEntity<List<RoutingListViewResponse>> getAllRouting(@PathVariable int routingNumber) {
-//        List<RoutingListViewResponse> items = routingService.findRoutingItemsByRoutingNumber(routingNumber);
-//        return ResponseEntity.ok(items);
-//    }
 
     @GetMapping("/routingNumber/{product}")
     public ResponseEntity<List<RoutingListViewResponse>> getAllRouting(@PathVariable String product) {
-//        System.out.println(product+"dwidjiowjqiodjwqoidjioqwjdioq");
         List<RoutingListViewResponse> items = routingService.findRoutingItemsByProductName(product);
         return ResponseEntity.ok(items);
     }
 
     @PostMapping("/createRouting")
     public String saveRouting(@RequestBody AddRoutingRequest request) {
-        System.out.println("Received routingDto: " + request);
         routingService.saveRouting(request);
         return "정상적으로 등록했습니다.";
     }
 
     @DeleteMapping("/routings/{productName}")
     public ResponseEntity<Void> deleteProduct(@PathVariable String productName) {
-        System.out.println("delete product 들어오니? : " + productName);
         routingService.deleteRouting(productName);
         return ResponseEntity.ok().build();
     }

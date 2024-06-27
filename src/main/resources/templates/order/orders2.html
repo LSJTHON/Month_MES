@@ -415,22 +415,18 @@
                     $('#addCalendarModal').modal('hide');
                 },
                 events: function (fetchInfo, successCallback, failureCallback) {
-                    console.log('Fetching events...'); // 디버그 로그 추가
                     $.ajax({
                         url: '/api/orderCalendar',
                         type: 'GET',
                         success: function (data) {
-                            console.log('Data fetched:', data); // 데이터 확인을 위해 로그 추가
                             var events = data.map(function (order) {
                                 var endDate = new Date(order.deliveryDate);
                                 var startDate = new Date(order.deliveryDate);
                                 startDate.setDate(startDate.getDate() - 2); // 3일 전부터 시작 숫자만 수정하면 1싸이클 수정 가능함
-                                console.log(startDate);
 
                                 // end날짜 포함 안되서 하루 추가해야함
                                 endDate.setDate(endDate.getDate() + 1);
 
-                                console.log(endDate);
 
                                 // 색깔 순서대로 들어가게 해주는놈
                                 var color = colors[colorIndex];
@@ -443,7 +439,6 @@
                                     backgroundColor: color // 이벤트의 리스트로 순서대로 생성함
                                 };
                             });
-                            console.log('Events created:', events); // 생성된 이벤트 확인을 위해 로그 추가
                             successCallback(events);
                         },
                         error: function (xhr, status, error) {
@@ -516,7 +511,6 @@
             } else {
                 selectedData.each(function (value, index) {
                     var orderNumber = value.orderNumber; // 수주 번호 가져오기
-                    // console.log("선택된 행의 수주 번호:", orderNumber);
 
                     $.ajax({
                         url: `/api/testComplete/${orderNumber}`, //컨트롤러 요청 url

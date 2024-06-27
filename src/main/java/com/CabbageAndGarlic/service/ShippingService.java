@@ -50,7 +50,6 @@ public class ShippingService {
             shipping.setOrderNumber(order);
             shipping.setShippingCompany(request.getShippingCompany());
             shipping.setShippingDate(LocalDate.parse(request.getShippingDate()));
-            System.out.println(shipping+"싯팔 여기?");
             shippingRepository.save(shipping);
 
             String orderItemsInfo = "";

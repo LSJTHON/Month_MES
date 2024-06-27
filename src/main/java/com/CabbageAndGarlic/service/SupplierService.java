@@ -11,6 +11,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SupplierService {
 
+
+    private String hello;
+
     private final SupplierRepository supplierRepository;
 
     public List<Supplier> getAllSuppliers() {

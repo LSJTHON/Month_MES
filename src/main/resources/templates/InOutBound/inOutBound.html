@@ -227,7 +227,6 @@
             var day = ('0' + date.getDate()).slice(-2);
             var hours = ('0' + date.getHours()).slice(-2);
             var minutes = ('0' + date.getMinutes()).slice(-2);
-            // console.log(year+'-'+month+'-'+day+'-'+hours+'-'+minutes);
 
             var inOutBound = {
                 materialCode: categoryValue === 'material' ? nameSelectValue : null,
@@ -239,7 +238,6 @@
                 transactionType: transactionType
             };
 
-            console.log(inOutBound); // 디버깅을 위해 데이터 출력
 
             $.ajax({
                 url: '/api/inoutbound/' + (transactionType === 'IN' ? 'inbound' : 'outbound'),
