@@ -116,8 +116,6 @@
 
 <th:block layout:fragment="script">
     <script>
-        let routingDuplicate = [];
-
         var table = null;
         $(document).ready(function () {
             var table = $('#table').DataTable({
@@ -177,21 +175,16 @@
                 ajax: {
                     url: 'http://localhost:8080/api/routings',
                     type: 'GET',
-                    dataSrc: function (json) {
-                        routingDuplicate = json.data.map(routingduplicate => routingduplicate.routingProductName.productName);
-                        console.log(routingDuplicate+"adsfadfasdfsaf")
-                        return json.data;
+                    dataFilter: function (res) {
+                        var json = $.parseJSON(res);
+                        var data = {
+                            'draw': json.data.draw,
+                            'recordsTotal': json.data.recordsTotal,
+                            'recordsFiltered': json.data.recordsFiltered,
+                            'data': json.data,
+                        };
+                        return JSON.stringify(data);
                     }
-                    // dataFilter: function (res) {
-                    //     var json = $.parseJSON(res);
-                    //     var data = {
-                    //         'draw': json.data.draw,
-                    //         'recordsTotal': json.data.recordsTotal,
-                    //         'recordsFiltered': json.data.recordsFiltered,
-                    //         'data': json.data,
-                    //     };
-                    //     return JSON.stringify(data);
-                    // }
                 },
                 columns: [
                     {title: "라우팅 번호", data: 'number'},
@@ -302,17 +295,39 @@
             const routingProductName = $('#productName2').val();
             const routingItems = [];
 
-            if (routingDuplicate.includes(routingProductName)) {
-                alert('이미 존재하는 품목코드입니다.');
-                return;
-            }
-
             $('#productFields').children().each(function () {
                 const processName = $(this).find('input').val();
                 // console.log(processName+"라우팅 순서");
                 routingItems.push(processName);
                 // console.log(routingItems);
             });
+
+            if (routingItems.length === 0) {
+                alert('공정을 추가해 주세요');
+                return;
+            }
+
+            // 테이블이 초기화되지 않았으면 초기화
+            if (table === null) {
+                table = $('#table').DataTable();
+            }
+
+            // 테이블에 이미 존재하는지 확인
+            const tableData = table.rows().data();
+            let isDuplicate = false;
+
+            tableData.each(function (row) {
+                // console.log(row.routingProductName.productName+"이건가?");
+                if (row.routingProductName.productName === routingProductName) {
+                    isDuplicate = true;
+                    return false;
+                }
+            });
+
+            if (isDuplicate) {
+                alert('이미 존재하는 품목명입니다.');
+                return;
+            }
 
 
             const routingData = {
