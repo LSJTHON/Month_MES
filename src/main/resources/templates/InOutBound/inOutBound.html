@@ -227,12 +227,13 @@
             var day = ('0' + date.getDate()).slice(-2);
             var hours = ('0' + date.getHours()).slice(-2);
             var minutes = ('0' + date.getMinutes()).slice(-2);
+            console.log(year+'-'+month+'-'+day+'-'+hours+'-'+minutes);
 
             var inOutBound = {
                 materialCode: categoryValue === 'material' ? nameSelectValue : null,
                 productCode: categoryValue === 'product' ? nameSelectValue : null,
                 // transactionDate: $(formId + ' input[id^="transactionDate"]').val(),
-                transactionDate: year+'-'+month+'-'+day+'-'+hours+'-'+minutes,
+                transactionDate: new Date(),
                 quantity: $(formId + ' input[id^="quantity"]').val(),
                 manager: $(formId + ' input[id^="manager"]').val(),
                 transactionType: transactionType
