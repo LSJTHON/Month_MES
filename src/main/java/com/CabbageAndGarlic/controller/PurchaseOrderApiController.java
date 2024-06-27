@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
 @RestController
 @RequestMapping("/api/purchase-order")
 @RequiredArgsConstructor
@@ -24,6 +23,16 @@ public class PurchaseOrderApiController {
     @GetMapping("/orderItems/{orderNumber}")
     public List<OrderItem> getOrderItems(@PathVariable Long orderNumber) {
         return purchaseOrderService.findOrderItemsByOrderNumber(orderNumber);
+    }
+
+    @PostMapping("/orderItemIds")
+    public List<Long> getOrderItemIdsByOrderNumbers(@RequestBody List<Long> orderNumbers) {
+        return purchaseOrderService.findOrderItemIdsByOrderNumbers(orderNumbers);
+    }
+
+    @PostMapping("/orderItemsByIds")
+    public List<OrderItem> getOrderItemsByIds(@RequestBody List<Long> orderItemIds) {
+        return purchaseOrderService.findOrderItemsByIds(orderItemIds);
     }
 
     @PostMapping("/calculateTotals")

@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+
 @Service
 @RequiredArgsConstructor
 public class PurchaseOrderService {
@@ -23,15 +24,10 @@ public class PurchaseOrderService {
     private final OrderItemRepository orderItemRepository;
 
     public List<Order> findOrdersNotInPurchaseOrder() {
-        // 모든 수주 목록 가져오기
         List<Order> allOrders = orderRepository.findAll();
-
-        // 발주 목록에 있는 수주 번호 가져오기
         List<Long> purchaseOrderNumbers = purchaseOrderRepository.findAll().stream()
                 .map(po -> po.getOrder().getOrderNumber())
                 .collect(Collectors.toList());
-
-        // 발주 목록에 없는 수주만 필터링
         return allOrders.stream()
                 .filter(order -> !purchaseOrderNumbers.contains(order.getOrderNumber()))
                 .collect(Collectors.toList());
@@ -45,16 +41,24 @@ public class PurchaseOrderService {
         return orderItemRepository.findByOrderNumber(order);
     }
 
+    public List<Long> findOrderItemIdsByOrderNumbers(List<Long> orderNumbers) {
+        List<Order> orders = orderRepository.findAllById(orderNumbers);
+        return orderItemRepository.findByOrderNumberIn(orders).stream()
+                .map(OrderItem::getOrderItemId)
+                .collect(Collectors.toList());
+    }
+
+    public List<OrderItem> findOrderItemsByIds(List<Long> orderItemIds) {
+        return orderItemRepository.findAllById(orderItemIds);
+    }
+
     public List<ProductTotalDto> calculateTotals(List<Long> orderNumbers) {
         List<Order> orders = orderRepository.findAllById(orderNumbers);
         List<OrderItem> orderItems = orderItemRepository.findByOrderNumberIn(orders);
-
         Map<String, Integer> productTotals = new HashMap<>();
-
         for (OrderItem item : orderItems) {
             productTotals.merge(item.getProductName(), item.getAmount(), Integer::sum);
         }
-
         return productTotals.entrySet().stream()
                 .map(entry -> new ProductTotalDto(entry.getKey(), entry.getValue()))
                 .collect(Collectors.toList());
