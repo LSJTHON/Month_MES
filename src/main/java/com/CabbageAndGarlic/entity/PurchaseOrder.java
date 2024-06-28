@@ -36,13 +36,18 @@ public class PurchaseOrder extends BaseTimeEntity {
     private int amount;     //발주수량
 
     @Column(name = "receipt_date", nullable = false)
-    private LocalDateTime receiptDate;  // 입고일 / regTime+leadTime
+    private LocalDateTime receiptDate;  // 입고일 / regTime+leadTime //-> 발주일 + 2?
 
     @Column(name = "purchase_date", nullable = false)
     private LocalDateTime purchaseDate; //발주일 / 당일 / 납품일 -4일 : 달력으로 표시
 
     @Column(name = "manager", nullable = false)
     private String manager; // 담당자
+
+    public enum PuchaseOrderStateType {
+        InProgress,
+        Completed
+    }
 
 
 }
