@@ -163,110 +163,266 @@ public class ProductionApiController {
         return ResponseEntity.ok(response);
     }
 
-//    @GetMapping(value = "/workOrderStatus")
-//    public ResponseEntity<?> workOrdersStatus() throws ParseException {
-//        Map<String, Object> response = new HashMap<>();
-//        LocalDate date = LocalDate.now();
-//        try {
-//            List<WorkOrder> workOrders = workOrderService.getWorkOrders(date);
-//
-//            // 집계된 WorkOrderStatusDto 리스트를 저장할 맵
-//            Map<String, WorkOrderStatusDto> aggregatedMap = new HashMap<>();
-//
-//            for (WorkOrder workOrder : workOrders) {
-////                String productName = productionDto.getProductName();
-//                String process = workOrder.getProcess();
-//
-//                if (aggregatedMap.containsKey(process)) {
-//                    // 기존 ProductionDto에 양을 추가
-//                    ProductionDto existingDto = aggregatedMap.get(productName);
-//                    existingDto.setAmount(existingDto.getAmount() + productionDto.getAmount());
-//                } else {
-//
-//                    WorkOrderStatusDto workOrderStatusDto = new WorkOrderStatusDto();
-//                    workOrderStatusDto.setProcess(process);
-//
-//                    if(workOrder.getWorkStatus().equals(Status.WAITING)){
-//
-//                        workOrderStatusDto.setStatus(Status.WAITING);
-//                        workOrderStatusDto.setWorkAmount(workOrder.getWorkAmount());
-//                        workOrderStatusDto.setQuantityLeft(workOrder.getWorkAmount());
-//
-//                    } else if (workOrder.getWorkStatus().equals(Status.IN_PROGRESS)) {
-//
-//                        workOrderStatusDto.setStatus(Status.IN_PROGRESS);
-//                        workOrderStatusDto.setWorkAmount(workOrder.getWorkAmount());
-//                        LocalDateTime now = LocalDateTime.now();
-//                        Duration duration = Duration.between(workOrder.getStartTimeOfOperation(), now);
-//                        Integer seconds = (int) duration.getSeconds();
-//
-//                        if(process.equals("착즙")){
-//
-//                            Integer timeInSeconds = 24 * 36;
-//                            if(seconds/timeInSeconds<1){
-//                                workOrderStatusDto.setQuantityLeft(workOrder.getWorkAmount()-workOrder.getWorkAmount()*(seconds/timeInSeconds));
-//                            }else {
-//                                workOrderStatusDto.setQuantityLeft(0);
-//                            }
-//
-//                        } else if (process.equals("여과")) {
-//
-//                            Integer timeInSeconds = 4 * 36;
-//                            if(seconds/timeInSeconds<1){
-//                                workOrderStatusDto.setQuantityLeft(workOrder.getWorkAmount()-workOrder.getWorkAmount()*(seconds/timeInSeconds));
-//                            }else {
-//                                workOrderStatusDto.setQuantityLeft(0);
-//                            }
-//
-//                        } else if (process.equals("살균")) {
-//
-//                            Integer timeInSeconds = 2 * 36;
-//                            if(seconds/timeInSeconds<1){
-//                                workOrderStatusDto.setQuantityLeft(workOrder.getWorkAmount()-workOrder.getWorkAmount()*(seconds/timeInSeconds));
-//                            }else {
-//                                workOrderStatusDto.setQuantityLeft(0);
-//                            }
-//
-//                        } else if (process.equals("충진")) {
-//
-//                            if(workOrder.getProductName().equals("석류젤리스틱")||workOrder.getProductName().equals("매실젤리스틱")) {
-//
-//                            }
-//
-//
-//                        } else if (process.equals("냉각")) {
-//
-//                        } else if (process.equals("검사")) {
-//
-//                        } else if (process.equals("포장")) {
-//
-//                        }
-//
-//                    } else {
-//
-//                        workOrderStatusDto.setStatus(Status.COMPLETED);
-//                        workOrderStatusDto.setWorkAmount(workOrder.getWorkAmount());
-//
-//                    }
-//                    // 새로운 제품명을 맵에 추가
-//                    aggregatedMap.put(process, );
-//                }
-//            }
-//
-//            // 집계된 결과를 리스트로 변환
-//            List<ProductionDto> aggregatedProductionDtos = new ArrayList<>(aggregatedMap.values());
-//
-//            response.put("data", aggregatedProductionDtos);
-//            return ResponseEntity.ok(response);
-//
-//        } catch (EntityNotFoundException e) {
-//            response.put("error", e.getMessage());
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
-//        } catch (Exception e) {
-//            response.put("error", "An error occurred while processing the request.");
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
-//        }
-//    }
+    @GetMapping(value = "/workOrderStatus")
+    public ResponseEntity<?> workOrdersStatus() throws ParseException {
+        Map<String, Object> response = new HashMap<>();
+        LocalDate date = LocalDate.now();
+        try {
+            List<WorkOrder> workOrders = workOrderService.getWorkOrders(date);
+
+            // 집계된 WorkOrderStatusDto 리스트를 저장할 맵
+            Map<String, WorkOrderStatusDto> aggregatedMap = new HashMap<>();
+
+            for (WorkOrder workOrder : workOrders) {
+                String process = workOrder.getProcess();
+
+                if (aggregatedMap.containsKey(process)) {
+                    // 기존 ProductionDto에 양을 추가
+                    if(workOrder.getProductName().equals("석류젤리스틱")||workOrder.getProductName().equals("매실젤리스틱")){
+                        process = "충진2";
+                    }
+                    WorkOrderStatusDto existingDto = aggregatedMap.get(process);
+                    existingDto.setWorkAmount(existingDto.getWorkAmount() + workOrder.getWorkAmount());
+
+                    if(workOrder.getWorkStatus().equals(Status.WAITING)){
+
+                        existingDto.setStatus(Status.WAITING);
+                        existingDto.setQuantityLeft(existingDto.getQuantityLeft() + workOrder.getWorkAmount());
+
+                    } else if (workOrder.getWorkStatus().equals(Status.IN_PROGRESS)) {
+
+                        existingDto.setStatus(Status.IN_PROGRESS);
+                        LocalDateTime now = LocalDateTime.now();
+                        Duration duration = Duration.between(workOrder.getStartTimeOfOperation(), now);
+                        Integer seconds = (int) duration.getSeconds();
+
+                        if(workOrder.getProcess().equals("착즙")){
+
+                            Integer timeInSeconds = 24 * 36;
+                            if(seconds/timeInSeconds<1){
+                                existingDto.setQuantityLeft(existingDto.getQuantityLeft() +(workOrder.getWorkAmount()-workOrder.getWorkAmount()*(seconds/timeInSeconds)));
+                            }
+
+                        } else if (workOrder.getProcess().equals("여과")) {
+
+                            Integer timeInSeconds = 4 * 36;
+                            if(seconds/timeInSeconds<1){
+                                existingDto.setQuantityLeft(existingDto.getQuantityLeft() +(workOrder.getWorkAmount()-workOrder.getWorkAmount()*(seconds/timeInSeconds)));
+                            }
+
+                        } else if (workOrder.getProcess().equals("살균")) {
+
+                            Integer timeInSeconds = 1 * 36;
+                            if(seconds/timeInSeconds<1){
+                                existingDto.setQuantityLeft(existingDto.getQuantityLeft() +(workOrder.getWorkAmount()-workOrder.getWorkAmount()*(seconds/timeInSeconds)));
+                            }
+
+                        } else if (workOrder.getProcess().equals("충진")) {
+
+                            if(workOrder.getProductName().equals("석류젤리스틱")||workOrder.getProductName().equals("매실젤리스틱")) {
+                                Integer timeInSeconds = 4 * 36;
+                                if (seconds / timeInSeconds < 1) {
+                                    existingDto.setQuantityLeft(existingDto.getQuantityLeft() +(workOrder.getWorkAmount() - workOrder.getWorkAmount() * (seconds / timeInSeconds)));
+                                }
+
+                            }else {
+
+                                Integer timeInSeconds = 1 * 36;
+                                if(seconds/timeInSeconds<1){
+                                    existingDto.setQuantityLeft(existingDto.getQuantityLeft() +(workOrder.getWorkAmount()-workOrder.getWorkAmount()*(seconds/timeInSeconds)));
+                                }
+                            }
+
+
+                        } else if (workOrder.getProcess().equals("냉각")) {
+
+                            Integer timeInSeconds = 8 * 36;
+                            if(seconds/timeInSeconds<1){
+                                existingDto.setQuantityLeft(existingDto.getQuantityLeft() +(workOrder.getWorkAmount()-workOrder.getWorkAmount()*(seconds/timeInSeconds)));
+                            }
+
+                        } else if (workOrder.getProcess().equals("검사")) {
+
+                            if(workOrder.getProductName().equals("석류젤리스틱")||workOrder.getProductName().equals("매실젤리스틱")) {
+                                Integer timeInSeconds = 1 * 36;
+                                if(seconds/timeInSeconds<1){
+                                    existingDto.setQuantityLeft(existingDto.getQuantityLeft() +(workOrder.getWorkAmount()-workOrder.getWorkAmount()*(seconds/timeInSeconds)));
+                                }
+                            }else {
+                                Integer timeInSeconds = 2 * 36;
+                                if(seconds/timeInSeconds<1){
+                                    existingDto.setQuantityLeft(existingDto.getQuantityLeft() +(workOrder.getWorkAmount()-workOrder.getWorkAmount()*(seconds/timeInSeconds)));
+                                }
+                            }
+
+                        } else if (workOrder.getProcess().equals("포장")) {
+
+                            if(workOrder.getProductName().equals("석류젤리스틱")||workOrder.getProductName().equals("매실젤리스틱")) {
+                                Integer timeInSeconds = 1 * 36;
+                                if(seconds/timeInSeconds<1){
+                                    existingDto.setQuantityLeft(existingDto.getQuantityLeft() +(workOrder.getWorkAmount()-workOrder.getWorkAmount()*(seconds/timeInSeconds)));
+                                }
+                            }else {
+                                Integer timeInSeconds = 2 * 36;
+                                if(seconds/timeInSeconds<1){
+                                    existingDto.setQuantityLeft(existingDto.getQuantityLeft() +(workOrder.getWorkAmount()-workOrder.getWorkAmount()*(seconds/timeInSeconds)));
+                                }
+                            }
+
+                        }
+
+                    }
+
+                } else {
+
+                    WorkOrderStatusDto workOrderStatusDto = new WorkOrderStatusDto();
+                    workOrderStatusDto.setProcess(process);
+                    workOrderStatusDto.setWorkAmount(workOrder.getWorkAmount());
+
+                    if(workOrder.getWorkStatus().equals(Status.WAITING)){
+
+                        workOrderStatusDto.setStatus(Status.WAITING);
+                        workOrderStatusDto.setQuantityLeft(workOrder.getWorkAmount());
+                        if (workOrder.getProcess().equals("충진")){
+                            if(workOrder.getProductName().equals("석류젤리스틱")||workOrder.getProductName().equals("매실젤리스틱")) {
+                                process="충진2";
+                                workOrderStatusDto.setProcess("충진2");
+                            }
+                        }
+
+                    } else if (workOrder.getWorkStatus().equals(Status.IN_PROGRESS)) {
+
+                        workOrderStatusDto.setStatus(Status.IN_PROGRESS);
+                        LocalDateTime now = LocalDateTime.now();
+                        Duration duration = Duration.between(workOrder.getStartTimeOfOperation(), now);
+                        Integer seconds = (int) duration.getSeconds();
+
+                        if(workOrder.getProcess().equals("착즙")){
+
+                            Integer timeInSeconds = 24 * 36;
+                            if(seconds/timeInSeconds<1){
+                                workOrderStatusDto.setQuantityLeft(workOrder.getWorkAmount()-workOrder.getWorkAmount()*(seconds/timeInSeconds));
+                            }else {
+                                workOrderStatusDto.setQuantityLeft(0);
+                            }
+
+                        } else if (workOrder.getProcess().equals("여과")) {
+
+                            Integer timeInSeconds = 4 * 36;
+                            if(seconds/timeInSeconds<1){
+                                workOrderStatusDto.setQuantityLeft(workOrder.getWorkAmount()-workOrder.getWorkAmount()*(seconds/timeInSeconds));
+                            }else {
+                                workOrderStatusDto.setQuantityLeft(0);
+                            }
+
+                        } else if (workOrder.getProcess().equals("살균")) {
+
+                            Integer timeInSeconds = 1 * 36;
+                            if(seconds/timeInSeconds<1){
+                                workOrderStatusDto.setQuantityLeft(workOrder.getWorkAmount()-workOrder.getWorkAmount()*(seconds/timeInSeconds));
+                            }else {
+                                workOrderStatusDto.setQuantityLeft(0);
+                            }
+
+                        } else if (workOrder.getProcess().equals("충진")) {
+
+                            if(workOrder.getProductName().equals("석류젤리스틱")||workOrder.getProductName().equals("매실젤리스틱")) {
+                                process="충진2";
+                                workOrderStatusDto.setProcess("충진2");
+                                Integer timeInSeconds = 4 * 36;
+                                if (seconds / timeInSeconds < 1) {
+                                    workOrderStatusDto.setQuantityLeft(workOrder.getWorkAmount() - workOrder.getWorkAmount() * (seconds / timeInSeconds));
+                                } else {
+                                    workOrderStatusDto.setQuantityLeft(0);
+                                }
+                            }else {
+                                Integer timeInSeconds = 1 * 36;
+                                if(seconds/timeInSeconds<1){
+                                    workOrderStatusDto.setQuantityLeft(workOrder.getWorkAmount()-workOrder.getWorkAmount()*(seconds/timeInSeconds));
+                                }else {
+                                    workOrderStatusDto.setQuantityLeft(0);
+                                }
+                            }
+
+
+                        } else if (workOrder.getProcess().equals("냉각")) {
+
+                            Integer timeInSeconds = 8 * 36;
+                            if(seconds/timeInSeconds<1){
+                                workOrderStatusDto.setQuantityLeft(workOrder.getWorkAmount()-workOrder.getWorkAmount()*(seconds/timeInSeconds));
+                            }else {
+                                workOrderStatusDto.setQuantityLeft(0);
+                            }
+
+                        } else if (workOrder.getProcess().equals("검사")) {
+
+                            if(workOrder.getProductName().equals("석류젤리스틱")||workOrder.getProductName().equals("매실젤리스틱")) {
+                                Integer timeInSeconds = 1 * 36;
+                                if(seconds/timeInSeconds<1){
+                                    workOrderStatusDto.setQuantityLeft(workOrder.getWorkAmount()-workOrder.getWorkAmount()*(seconds/timeInSeconds));
+                                }else {
+                                    workOrderStatusDto.setQuantityLeft(0);
+                                }
+                            }else {
+                                Integer timeInSeconds = 2 * 36;
+                                if(seconds/timeInSeconds<1){
+                                    workOrderStatusDto.setQuantityLeft(workOrder.getWorkAmount()-workOrder.getWorkAmount()*(seconds/timeInSeconds));
+                                }else {
+                                    workOrderStatusDto.setQuantityLeft(0);
+                                }
+                            }
+
+                        } else if (workOrder.getProcess().equals("포장")) {
+
+                            if(workOrder.getProductName().equals("석류젤리스틱")||workOrder.getProductName().equals("매실젤리스틱")) {
+                                Integer timeInSeconds = 1 * 36;
+                                if(seconds/timeInSeconds<1){
+                                    workOrderStatusDto.setQuantityLeft(workOrder.getWorkAmount()-workOrder.getWorkAmount()*(seconds/timeInSeconds));
+                                }else {
+                                    workOrderStatusDto.setQuantityLeft(0);
+                                }
+                            }else {
+                                Integer timeInSeconds = 2 * 36;
+                                if(seconds/timeInSeconds<1){
+                                    workOrderStatusDto.setQuantityLeft(workOrder.getWorkAmount()-workOrder.getWorkAmount()*(seconds/timeInSeconds));
+                                }else {
+                                    workOrderStatusDto.setQuantityLeft(0);
+                                }
+                            }
+
+                        }
+
+                    } else {
+
+                        workOrderStatusDto.setStatus(Status.COMPLETED);
+                        workOrderStatusDto.setQuantityLeft(0);
+                        if (workOrder.getProcess().equals("충진")){
+                            if(workOrder.getProductName().equals("석류젤리스틱")||workOrder.getProductName().equals("매실젤리스틱")) {
+                                process="충진2";
+                                workOrderStatusDto.setProcess("충진2");
+                            }
+                        }
+
+                    }
+                    // 새로운 제품명을 맵에 추가
+                    aggregatedMap.put(process,workOrderStatusDto);
+                }
+            }
+
+            // 집계된 결과를 리스트로 변환
+            List<WorkOrderStatusDto> aggregatedProductionDtos = new ArrayList<>(aggregatedMap.values());
+
+            response.put("data", aggregatedProductionDtos);
+            return ResponseEntity.ok(response);
+
+        } catch (EntityNotFoundException e) {
+            response.put("error", e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        } catch (Exception e) {
+            response.put("error", "An error occurred while processing the request.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
 
     @GetMapping(value = "/workOrder/{date}")
     public ResponseEntity<?> workOrders(@PathVariable String date) throws ParseException {

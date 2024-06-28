@@ -92,155 +92,254 @@
 </head>
 <th:block layout:fragment="script">
     <script>
-        var workdata;
+        var juiceWorkAmount;
+        var juiceQuantityLeft;
+        var filterWorkAmount;
+        var filterQuantityLeft;
+        var SterilizationWorkAmount;
+        var SterilizationQuantityLeft;
+        var fillingWorkAmount;
+        var fillingQuantityLeft;
+        var testWorkAmount;
+        var testQuantityLeft;
+        var packagingWorkAmount;
+        var packagingQuantityLeft;
+        var mixWorkAmount;
+        var mixQuantityLeft;
+        var filling2WorkAmount;
+        var filling2QuantityLeft;
+
         $(document).ready(function (ChartDataLabels) {
-            // 임시 데이터 설정
-            // 'equipment': 설비 이름, 'date': 날짜, 'achievement': 달성도, 'target': 목표치
-            var data = [
-                {
-                    equipment: '착즙기1',     //이런 형태로 요청에서 리턴 해주면됨
-                    date: '2023-06-01',
-                    achievement: 75,         //목표치는 시간으로 계산하기 때문에 작업시작시간을 가져온 다음 계산은 여기서
-                    target: 100
-                },
-                {equipment: '착즙기2', date: '2023-06-01', achievement: 50, target: 100},
-                {equipment: '살균기1', date: '2023-06-01', achievement: 90, target: 100},
-                {equipment: '살균기2', date: '2023-06-01', achievement: 80, target: 100},
-                {equipment: '혼합기', date: '2023-06-01', achievement: 60, target: 100},
-                {equipment: '즙포장기1', date: '2023-06-01', achievement: 85, target: 100},
-                {equipment: '즙포장기2', date: '2023-06-01', achievement: 70, target: 100},
-                {equipment: '스틱포장기1', date: '2023-06-01', achievement: 95, target: 100},
-                {equipment: '스틱포장기2', date: '2023-06-01', achievement: 65, target: 100},
-                {equipment: '여과기', date: '2023-06-01', achievement: 55, target: 100},
-                {equipment: '금속검출기', date: '2023-06-01', achievement: 85, target: 100},
-                {equipment: 'BOX 포장기', date: '2023-06-01', achievement: 45, target: 100}
-            ];
-
-
-            // 막대 차트와 도넛 차트를 표시할 캔버스 요소 가져오기
-            var ctx = document.getElementById('mixedChart').getContext('2d');
-            var ctxDonut = document.getElementById('donutChart').getContext('2d');
-
-            // 각 설비의 이름을 레이블로 사용
-            var labels = [...new Set(data.map(item => item.equipment))];
-            // 각 설비의 달성도 데이터
-            var achievementData = data.map(item => item.achievement);
-            // 각 설비의 목표치 데이터
-            var targetData = data.map(item => item.target);
-            // 평균 달성도 계산
-            var averageAchievement = achievementData.reduce((a, b) => a + b, 0) / achievementData.length;
-
-            // Mixed Chart 생성 (막대 차트 + 선형 차트)
-            var mixedChart = new Chart(ctx, {
-                type: 'bar', // 기본 차트 유형: 막대 차트
-                data: {
-                    labels: labels, // x축 레이블
-                    datasets: [{
-                        type: 'bar', // 데이터 유형: 막대 차트
-                        label: '목표 달성도 (%)', // 데이터 레이블
-                        data: achievementData, // 달성도 데이터
-                        backgroundColor: 'rgba(0, 123, 255, 0.6)', // 막대 배경색
-                        borderColor: 'rgba(0, 123, 255, 1)', // 막대 테두리색
-                        borderWidth: 1 // 막대 테두리 두께
-                    }, {
-                        type: 'line', // 데이터 유형: 선형 차트
-                        label: '평균 달성도', // 데이터 레이블
-                        data: new Array(labels.length).fill(averageAchievement), // 평균 달성도 데이터
-                        borderColor: 'rgba(255, 193, 7, 0.6)', // 선 색상
-                        borderWidth: 2, // 선 두께
-                        fill: false // 선 아래 영역 채우지 않음
-                    }, {
-                        type: 'line', // 데이터 유형: 선형 차트
-                        label: '목표치', // 데이터 레이블
-                        data: targetData, // 목표치 데이터
-                        borderColor: 'rgba(220, 53, 69, 0.6)', // 선 색상
-                        borderWidth: 2, // 선 두께
-                        fill: false, // 선 아래 영역 채우지 않음
-                        borderDash: [10, 5] // 선 스타일: 대쉬
-                    }]
-                },
-                options: {
-                    responsive: true, // 반응형 차트
-                    scales: {
-                        y: {
-                            beginAtZero: true, // y축 시작 값을 0으로 설정
-                            max: 100 // y축 최대 값을 100으로 설정
-                        }
-                    }
-                }
-            });
-
-            // 도넛 차트 생성
-            var totalAchievement = achievementData.reduce((a, b) => a + b, 0); // 총 달성도 계산
-            var totalTarget = targetData.reduce((a, b) => a + b, 0); // 총 목표치 계산
-            var percentage = ((totalAchievement / totalTarget) * 100).toFixed(2); // 퍼센트 계산
-
-            var donutChart = new Chart(ctxDonut, {
-                type: 'doughnut', // 차트 유형: 도넛 차트
-                data: {
-                    labels: ['금일 달성도', '금일 목표치'], // 도넛 차트 레이블
-                    datasets: [{
-                        data: [totalAchievement, totalTarget - totalAchievement], // 도넛 차트 데이터
-                        backgroundColor: ['rgba(0, 123, 255, 1)', 'rgba(220, 220, 220, 0.6)'], // 각 섹션 배경색
-                        borderColor: ['rgba(0, 123, 255, 1)', 'rgba(220, 220, 220, 1)'], // 각 섹션 테두리색
-                        borderWidth: 1 // 각 섹션 테두리 두께
-                    }]
-                },
-                options: {
-                    responsive: true, // 반응형 차트
-                    plugins: {
-                        legend: {
-                            position: 'top' // 범례 위치: 상단
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function (tooltipItem) {
-                                    return tooltipItem.label + ': ' + tooltipItem.raw + '%'; // 툴팁 표시 형식
-                                }
-                            }
-                        },
-                        datalabels: {
-                            display: function(context) {
-                                return context.dataIndex === 0; // 첫 번째 데이터만 표시
-                            },
-                            formatter: function(value, context) {
-                                if (context.dataIndex === 0) {
-                                    return percentage + '%';
-                                } else {
-                                    return '';
-                                }
-                            },
-                            color: 'black',
-                            font: {
-                                weight: 'bold',
-                                size: 24
-                            }
-                        }
-                    }
-                },
-                plugins: [ChartDataLabels]
-            });
-
-
-            // 중앙 텍스트 업데이트
-            document.querySelector('.center-text').textContent = percentage + '%';
+            todaystatus();
         });
 
         function todaystatus() {
             $.ajax({
-                url: '/production/workOrder/today',
+                url: '/production/workOrderStatus',
                 type: 'GET',
                 //이 데이터는 json 형식의 정보를 datatables의 형식에 맞게 필터링 해주는거 이거 안해주면 데이터 못받음
                 dataFilter: function (res) {
                     var json = $.parseJSON(res);
-                    workdata = {
+                    var workdata = {
                         'data': json.data,
                     };
-                    console.log(workdata);
-                    return JSON.stringify(data);
+                    console.log(workdata.data);
+
+                    var juiceProcess = workdata.data.find(function(item) {
+                        return item.process === '착즙';
+                    });
+                    if (juiceProcess) {
+                        juiceWorkAmount = juiceProcess.workAmount;
+                        juiceQuantityLeft = juiceProcess.quantityLeft;
+                    } else {
+                        console.log('착즙 process를 찾을 수 없습니다.');
+                    }
+
+                    var filterProcess = workdata.data.find(function(item) {
+                        return item.process === '여과';
+                    });
+                    if (filterProcess) {
+                        filterWorkAmount = filterProcess.workAmount;
+                        filterQuantityLeft = filterProcess.quantityLeft;
+                    } else {
+                        console.log('여과 process를 찾을 수 없습니다.');
+                    }
+
+                    var SterilizationProcess = workdata.data.find(function(item) {
+                        return item.process === '살균';
+                    });
+                    if (SterilizationProcess) {
+                        SterilizationWorkAmount = SterilizationProcess.workAmount;
+                        SterilizationQuantityLeft = SterilizationProcess.quantityLeft;
+                    } else {
+                        console.log('살균 process를 찾을 수 없습니다.');
+                    }
+
+                    var fillingProcess = workdata.data.find(function(item) {
+                        return item.process === '충진';
+                    });
+                    if (fillingProcess) {
+                        fillingWorkAmount = fillingProcess.workAmount;
+                        fillingQuantityLeft = fillingProcess.quantityLeft;
+                    } else {
+                        console.log('충진 process를 찾을 수 없습니다.');
+                    }
+
+                    var testProcess = workdata.data.find(function(item) {
+                        return item.process === '검사';
+                    });
+                    if (testProcess) {
+                        testWorkAmount = testProcess.workAmount;
+                        testQuantityLeft = testProcess.quantityLeft;
+                    } else {
+                        console.log('검사 process를 찾을 수 없습니다.');
+                    }
+
+                    var packagingProcess = workdata.data.find(function(item) {
+                        return item.process === '포장';
+                    });
+                    if (packagingProcess) {
+                        packagingWorkAmount = packagingProcess.workAmount;
+                        packagingQuantityLeft = packagingProcess.quantityLeft;
+                    } else {
+                        console.log('포장 process를 찾을 수 없습니다.');
+                    }
+
+                    var mixProcess = workdata.data.find(function(item) {
+                        return item.process === '혼합';
+                    });
+                    if (mixProcess) {
+                        mixWorkAmount = mixProcess.workAmount;
+                        mixQuantityLeft = mixProcess.quantityLeft;
+                    } else {
+                        console.log('혼합 process를 찾을 수 없습니다.');
+                    }
+
+                    var filling2Process = workdata.data.find(function(item) {
+                        return item.process === '충진2';
+                    });
+                    if (filling2Process) {
+                        filling2WorkAmount = filling2Process.workAmount;
+                        filling2QuantityLeft = filling2Process.quantityLeft;
+                    } else {
+                        console.log('충진2 process를 찾을 수 없습니다.');
+                    }
+
+                    // 임시 데이터 설정
+                    // 'equipment': 설비 이름, 'date': 날짜, 'achievement': 달성도, 'target': 목표치
+                    var data = [
+                        {
+                            equipment: '착즙기1',     //이런 형태로 요청에서 리턴 해주면됨
+                            date: '2023-06-01',
+                            achievement: juiceWorkAmount-juiceQuantityLeft,         //목표치는 시간으로 계산하기 때문에 작업시작시간을 가져온 다음 계산은 여기서
+                            target: juiceWorkAmount
+                        },
+                        {equipment: '착즙기2', date: '2023-06-01', achievement: juiceWorkAmount-juiceQuantityLeft, target: juiceWorkAmount},
+                        {equipment: '여과기', date: '2023-06-01', achievement: filterWorkAmount-filterQuantityLeft, target: filterWorkAmount},
+                        {equipment: '살균기1', date: '2023-06-01', achievement: SterilizationWorkAmount-SterilizationQuantityLeft, target: SterilizationWorkAmount},
+                        {equipment: '살균기2', date: '2023-06-01', achievement: SterilizationWorkAmount-SterilizationQuantityLeft, target: SterilizationWorkAmount},
+                        {equipment: '혼합기', date: '2023-06-01', achievement: mixWorkAmount-mixQuantityLeft, target: mixWorkAmount},
+                        {equipment: '즙포장기1', date: '2023-06-01', achievement: fillingWorkAmount-fillingQuantityLeft, target: fillingWorkAmount},
+                        {equipment: '즙포장기2', date: '2023-06-01', achievement: fillingWorkAmount-fillingQuantityLeft, target: fillingWorkAmount},
+                        {equipment: '스틱포장기1', date: '2023-06-01', achievement: filling2WorkAmount-filling2QuantityLeft, target: filling2WorkAmount},
+                        {equipment: '스틱포장기2', date: '2023-06-01', achievement: filling2WorkAmount-filling2QuantityLeft, target: filling2WorkAmount},
+                        {equipment: '금속검출기', date: '2023-06-01', achievement: testWorkAmount-testQuantityLeft, target: testWorkAmount},
+                        {equipment: 'BOX 포장기', date: '2023-06-01', achievement: packagingWorkAmount-packagingQuantityLeft, target: packagingWorkAmount}
+                    ];
+
+                    // 막대 차트와 도넛 차트를 표시할 캔버스 요소 가져오기
+                    var ctx = document.getElementById('mixedChart').getContext('2d');
+                    var ctxDonut = document.getElementById('donutChart').getContext('2d');
+
+                    // 각 설비의 이름을 레이블로 사용
+                    var labels = [...new Set(data.map(item => item.equipment))];
+                    // 각 설비의 달성도 데이터
+                    var achievementData = data.map(item => item.achievement);
+                    // 각 설비의 목표치 데이터
+                    var targetData = data.map(item => item.target);
+                    // 평균 달성도 계산
+                    var averageAchievement = achievementData.reduce((a, b) => a + b, 0) / achievementData.length;
+
+                    // Mixed Chart 생성 (막대 차트 + 선형 차트)
+                    var mixedChart = new Chart(ctx, {
+                        type: 'bar', // 기본 차트 유형: 막대 차트
+                        data: {
+                            labels: labels, // x축 레이블
+                            datasets: [{
+                                type: 'bar', // 데이터 유형: 막대 차트
+                                label: '목표 달성도 (%)', // 데이터 레이블
+                                data: achievementData, // 달성도 데이터
+                                backgroundColor: 'rgba(0, 123, 255, 0.6)', // 막대 배경색
+                                borderColor: 'rgba(0, 123, 255, 1)', // 막대 테두리색
+                                borderWidth: 1 // 막대 테두리 두께
+                            }, {
+                                type: 'line', // 데이터 유형: 선형 차트
+                                label: '평균 달성도', // 데이터 레이블
+                                data: new Array(labels.length).fill(averageAchievement), // 평균 달성도 데이터
+                                borderColor: 'rgba(255, 193, 7, 0.6)', // 선 색상
+                                borderWidth: 2, // 선 두께
+                                fill: false // 선 아래 영역 채우지 않음
+                            }, {
+                                type: 'line', // 데이터 유형: 선형 차트
+                                label: '목표치', // 데이터 레이블
+                                data: targetData, // 목표치 데이터
+                                borderColor: 'rgba(220, 53, 69, 0.6)', // 선 색상
+                                borderWidth: 2, // 선 두께
+                                fill: false, // 선 아래 영역 채우지 않음
+                                borderDash: [10, 5] // 선 스타일: 대쉬
+                            }]
+                        },
+                        options: {
+                            responsive: true, // 반응형 차트
+                            scales: {
+                                y: {
+                                    beginAtZero: true, // y축 시작 값을 0으로 설정
+                                    max: packagingWorkAmount // y축 최대 값을 100으로 설정
+                                }
+                            }
+                        }
+                    });
+
+                    // 도넛 차트 생성
+                    var totalAchievement = achievementData.reduce((a, b) => a + b, 0); // 총 달성도 계산
+                    var totalTarget = targetData.reduce((a, b) => a + b, 0); // 총 목표치 계산
+                    var percentage = ((totalAchievement / totalTarget) * 100).toFixed(2); // 퍼센트 계산
+
+                    var donutChart = new Chart(ctxDonut, {
+                        type: 'doughnut', // 차트 유형: 도넛 차트
+                        data: {
+                            labels: ['금일 달성도', '금일 목표치'], // 도넛 차트 레이블
+                            datasets: [{
+                                data: [totalAchievement, totalTarget - totalAchievement], // 도넛 차트 데이터
+                                backgroundColor: ['rgba(0, 123, 255, 1)', 'rgba(220, 220, 220, 0.6)'], // 각 섹션 배경색
+                                borderColor: ['rgba(0, 123, 255, 1)', 'rgba(220, 220, 220, 1)'], // 각 섹션 테두리색
+                                borderWidth: 1 // 각 섹션 테두리 두께
+                            }]
+                        },
+                        options: {
+                            responsive: true, // 반응형 차트
+                            plugins: {
+                                legend: {
+                                    position: 'top' // 범례 위치: 상단
+                                },
+                                tooltip: {
+                                    callbacks: {
+                                        label: function (tooltipItem) {
+                                            return tooltipItem.label + ': ' + tooltipItem.raw + '%'; // 툴팁 표시 형식
+                                        }
+                                    }
+                                },
+                                datalabels: {
+                                    display: function(context) {
+                                        return context.dataIndex === 0; // 첫 번째 데이터만 표시
+                                    },
+                                    formatter: function(value, context) {
+                                        if (context.dataIndex === 0) {
+                                            return percentage + '%';
+                                        } else {
+                                            return '';
+                                        }
+                                    },
+                                    color: 'black',
+                                    font: {
+                                        weight: 'bold',
+                                        size: 24
+                                    }
+                                }
+                            }
+                        },
+                        plugins: [ChartDataLabels]
+                    });
+
+
+                    // 중앙 텍스트 업데이트
+                    document.querySelector('.center-text').textContent = percentage + '%';
+
+                    return JSON.stringify(workdata);
                 }
             });
         }
+
     </script>
 </th:block>
 
