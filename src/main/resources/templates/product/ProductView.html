@@ -82,7 +82,10 @@
                     url: 'http://localhost:8080/api/products',
                     type: 'GET',
                     dataSrc: function (json) {
-                        productCodes = json.data.map(product => product.productCode);
+                        productCodes = json.data.map(product => ({
+                            code: product.productCode,
+                            name: product.productName
+                        }));
                         return json.data;
                     }
                 },
@@ -117,8 +120,15 @@
                 alert('모든 필드를 채워주세요.');
                 return;
             }
-            if (productCodes.includes(productCode)) {
+            // 품목코드 중복 확인
+            if (productCodes.some(product => product.code === productCode)) {
                 alert('이미 존재하는 품목코드입니다.');
+                return;
+            }
+
+            // 품목명 중복 확인
+            if (productCodes.some(product => product.name === productName)) {
+                alert('이미 존재하는 품목명입니다.');
                 return;
             }
 

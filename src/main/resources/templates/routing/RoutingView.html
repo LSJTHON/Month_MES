@@ -302,6 +302,11 @@
                 // console.log(routingItems);
             });
 
+            if (routingItems.length === 0) {
+                alert('공정을 추가해 주세요');
+                return;
+            }
+
             // 테이블이 초기화되지 않았으면 초기화
             if (table === null) {
                 table = $('#table').DataTable();
