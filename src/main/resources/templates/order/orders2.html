@@ -494,7 +494,7 @@
                 data: JSON.stringify(orderData),
                 success: function (response) {
                     alert(response);
-                    // location.reload(); //페이지 리로드 기능
+                    location.reload(); //페이지 리로드 기능
                     $('#addOrderModal').modal('hide'); // 모달 닫기
                     $('#table').DataTable().ajax.reload(null, false); // 테이블 비동기 갱신가능하도록 설정
                 },
