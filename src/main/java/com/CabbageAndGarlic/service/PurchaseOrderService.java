@@ -1,46 +1,66 @@
 package com.CabbageAndGarlic.service;
 
-import com.CabbageAndGarlic.dto.PurchaseOrderDto;
+import com.CabbageAndGarlic.dto.ProductTotalDto;
 import com.CabbageAndGarlic.entity.Order;
-import com.CabbageAndGarlic.entity.PurchaseOrder;
-import com.CabbageAndGarlic.entity.SupplierManage;
+import com.CabbageAndGarlic.entity.OrderItem;
+import com.CabbageAndGarlic.repository.OrderItemRepository;
 import com.CabbageAndGarlic.repository.OrderRepository;
 import com.CabbageAndGarlic.repository.PurchaseOrderRepository;
-import com.CabbageAndGarlic.repository.SupplierManageRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 
 @Service
 @RequiredArgsConstructor
 public class PurchaseOrderService {
 
     private final PurchaseOrderRepository purchaseOrderRepository;
-    private final SupplierManageRepository supplierManageRepository;
     private final OrderRepository orderRepository;
+    private final OrderItemRepository orderItemRepository;
 
-    public void createPurchaseOrder(PurchaseOrderDto purchaseOrderDto) {
-        // 구매 주문 생성
-        SupplierManage supplierManage = supplierManageRepository.findById(purchaseOrderDto.getSupplierManageId())
-                .orElseThrow(() -> new RuntimeException("SupplierManage not found")); // 공급자 관리 ID로 조회 실패 시 예외 발생
-        Order order = orderRepository.findById(purchaseOrderDto.getOrderNumber())
-                .orElseThrow(() -> new RuntimeException("Order not found")); // 주문 번호로 조회 실패 시 예외 발생
-
-        PurchaseOrder purchaseOrder = PurchaseOrder.builder()
-                .supplierManage(supplierManage) // 공급자 정보 설정
-                .order(order) // 주문 정보 설정
-                .amount(purchaseOrderDto.getAmount()) // 구매 금액 설정
-                .receiptDate(purchaseOrderDto.getReceiptDate()) // 수령 예정일 설정
-                .purchaseDate(purchaseOrderDto.getPurchaseDate()) // 구매일 설정
-                .manager(purchaseOrderDto.getManager()) // 담당자 설정
-                .build();
-
-        purchaseOrderRepository.save(purchaseOrder); // 구매 주문 저장
+    public List<Order> findOrdersNotInPurchaseOrder() {
+        List<Order> allOrders = orderRepository.findAll();
+        List<Long> purchaseOrderNumbers = purchaseOrderRepository.findAll().stream()
+                .map(po -> po.getOrder().getOrderNumber())
+                .collect(Collectors.toList());
+        return allOrders.stream()
+                .filter(order -> !purchaseOrderNumbers.contains(order.getOrderNumber()))
+                .collect(Collectors.toList());
     }
 
-    public List<PurchaseOrder> findAll() {
-        // 모든 구매 주문 정보 조회
-        return purchaseOrderRepository.findAll();
+    public List<OrderItem> findOrderItemsByOrderNumber(Long orderNumber) {
+        Order order = orderRepository.findById(orderNumber).orElse(null);
+        if (order == null) {
+            throw new RuntimeException("Order not found with id: " + orderNumber);
+        }
+        return orderItemRepository.findByOrderNumber(order);
+    }
+
+    public List<Long> findOrderItemIdsByOrderNumbers(List<Long> orderNumbers) {
+        List<Order> orders = orderRepository.findAllById(orderNumbers);
+        return orderItemRepository.findByOrderNumberIn(orders).stream()
+                .map(OrderItem::getOrderItemId)
+                .collect(Collectors.toList());
+    }
+
+    public List<OrderItem> findOrderItemsByIds(List<Long> orderItemIds) {
+        return orderItemRepository.findAllById(orderItemIds);
+    }
+
+    public List<ProductTotalDto> calculateTotals(List<Long> orderNumbers) {
+        List<Order> orders = orderRepository.findAllById(orderNumbers);
+        List<OrderItem> orderItems = orderItemRepository.findByOrderNumberIn(orders);
+        Map<String, Integer> productTotals = new HashMap<>();
+        for (OrderItem item : orderItems) {
+            productTotals.merge(item.getProductName(), item.getAmount(), Integer::sum);
+        }
+        return productTotals.entrySet().stream()
+                .map(entry -> new ProductTotalDto(entry.getKey(), entry.getValue()))
+                .collect(Collectors.toList());
     }
 }
