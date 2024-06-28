@@ -1,6 +1,7 @@
 package com.CabbageAndGarlic.controller;
 
 import com.CabbageAndGarlic.dto.ProductTotalDto;
+import com.CabbageAndGarlic.dto.PurchaseOrderDto;
 import com.CabbageAndGarlic.entity.Order;
 import com.CabbageAndGarlic.entity.OrderItem;
 import com.CabbageAndGarlic.service.PurchaseOrderService;
@@ -38,5 +39,11 @@ public class PurchaseOrderApiController {
     @PostMapping("/calculateTotals")
     public List<ProductTotalDto> calculateTotals(@RequestBody List<Long> orderNumbers) {
         return purchaseOrderService.calculateTotals(orderNumbers);
+    }
+
+    //발주내역 가져옴
+    @GetMapping("/history")
+    public List<PurchaseOrderDto> getPurchaseOrderHistory() {
+        return purchaseOrderService.getPurchaseOrderHistory();
     }
 }

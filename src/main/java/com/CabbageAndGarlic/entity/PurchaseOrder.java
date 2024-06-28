@@ -28,9 +28,9 @@ public class PurchaseOrder extends BaseTimeEntity {
     @JoinColumn(name = "id", nullable = false)
     private SupplierManage supplierManage;  // 원자재발주처코드 /자재, 발주처, 담당자 알 수 있음
 
-    @ManyToOne
-    @JoinColumn(name = "order_number", nullable = false)
-    private Order order;  //수주번호
+//    @ManyToOne
+//    @JoinColumn(name = "order_number", nullable = false)
+//    private Order order;  //수주번호
 
     @Column(name = "amount", nullable = false)
     private int amount;     //발주수량
@@ -43,4 +43,6 @@ public class PurchaseOrder extends BaseTimeEntity {
 
     @Column(name = "manager", nullable = false)
     private String manager; // 담당자
+
+
 }

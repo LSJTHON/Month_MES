@@ -1,8 +1,10 @@
 package com.CabbageAndGarlic.service;
 
 import com.CabbageAndGarlic.dto.ProductTotalDto;
+import com.CabbageAndGarlic.dto.PurchaseOrderDto;
 import com.CabbageAndGarlic.entity.Order;
 import com.CabbageAndGarlic.entity.OrderItem;
+import com.CabbageAndGarlic.entity.PurchaseOrder;
 import com.CabbageAndGarlic.repository.OrderItemRepository;
 import com.CabbageAndGarlic.repository.OrderRepository;
 import com.CabbageAndGarlic.repository.PurchaseOrderRepository;
@@ -14,7 +16,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-
 @Service
 @RequiredArgsConstructor
 public class PurchaseOrderService {
@@ -24,13 +25,7 @@ public class PurchaseOrderService {
     private final OrderItemRepository orderItemRepository;
 
     public List<Order> findOrdersNotInPurchaseOrder() {
-        List<Order> allOrders = orderRepository.findAll();
-        List<Long> purchaseOrderNumbers = purchaseOrderRepository.findAll().stream()
-                .map(po -> po.getOrder().getOrderNumber())
-                .collect(Collectors.toList());
-        return allOrders.stream()
-                .filter(order -> !purchaseOrderNumbers.contains(order.getOrderNumber()))
-                .collect(Collectors.toList());
+        return orderRepository.findAll();
     }
 
     public List<OrderItem> findOrderItemsByOrderNumber(Long orderNumber) {
@@ -61,6 +56,21 @@ public class PurchaseOrderService {
         }
         return productTotals.entrySet().stream()
                 .map(entry -> new ProductTotalDto(entry.getKey(), entry.getValue()))
+                .collect(Collectors.toList());
+    }
+
+    public List<PurchaseOrderDto> getPurchaseOrderHistory() {
+        return purchaseOrderRepository.findAll().stream()
+                .map(po -> PurchaseOrderDto.builder()
+                        .purchaseNumber(po.getPurchaseNumber())
+                        .purchaseOrderStatus(po.getPurchaseStatus().toString())
+                        .supplierName(po.getSupplierManage().getSupplierCode().getSupplierName()) // 발주처 이름
+                        .materialName(po.getSupplierManage().getMaterialCode().getMaterialName()) // 자재명
+                        .amount(po.getAmount())
+                        .receiptDate(po.getReceiptDate())
+                        .purchaseDate(po.getPurchaseDate())
+                        .manager(po.getManager())
+                        .build())
                 .collect(Collectors.toList());
     }
 }
