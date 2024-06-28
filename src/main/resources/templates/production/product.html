@@ -174,10 +174,19 @@
                 },
                 columns: [
                     {title: "제품명", data: 'productName'},
-                    {title: "생산시작", data: 'startDate'},
+                    {title: "생산시작", data: 'startDate', render: function (data, type, row) {
+                            return data === null ? "작업전" : data;
+                        }},
                     {title: "생산종료", data: 'endDate'},
                     {title: "계획수량", data: 'amount'},
-                    {title: "상태", data: 'status'},
+                    {title: "상태", data: 'status',render: function (data, type, row) {
+                            return data === 'WAITING' ? '작업대기' :
+                                data === 'IN_PROGRESS' ? '진행중' :
+                                    data === 'CANCELED' ? '취소' :
+                                        data === 'COMPLETED' ? '출하 가능' :
+                                            data === 'SHIPPED' ? '배송 완료' :
+                                                data === 'PendingShipment' ? '배송중' : data;
+                        }},
                 ],
                 language: {
                     search: "검색:",
