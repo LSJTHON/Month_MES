@@ -185,7 +185,6 @@
                     url: 'http://localhost:8080/Shipping/shippingStatus', // 데이터 요청 URL
                     type: 'GET', // HTTP 요청 타입
                     dataFilter: function (res) { // 데이터 필터링
-                        console.log("Received data: ", res);
                         var json = $.parseJSON(res); // JSON 파싱
                         return JSON.stringify({ // 필요한 데이터만 반환
                             'draw': json.draw,
@@ -234,13 +233,10 @@
             // 이벤트 위임을 사용하여 동적으로 생성된 버튼에 대한 클릭 이벤트 처리
             $('#table2 tbody, #table3 tbody').on('click', '.item-info-btn', function () {
                 var orderNumber = $(this).data('order-number');
-                // console.log("수주 번호 똑바로 가져옴? : " + orderNumber);
                 $.ajax({
                     url: 'http://localhost:8080/Shipping/orderItems/' + orderNumber,
                     type: 'GET',
                     success: function (data) {
-                        console.log("품목 이름: ", data.productName);
-                        console.log("품목 수량: ", data.amount);
                         var itemsHtml = data.map(item => `
                 <tr>
                     <td>${item.productName}</td>
@@ -268,7 +264,6 @@
             function shippingUpdateComplete() {
                 var selectedData = []; // 선택된 데이터 배열
                 table2.$('input[type="checkbox"]').each(function () {
-                    // console.log("럼통이");
                     if (this.checked) { // 체크박스가 체크되어 있으면
                         var row = $(this).closest('tr'); // 해당 행
                         var shippingCompany = row.find('.shipping-company').val(); // 운송업체 값
@@ -284,7 +279,6 @@
 
         // 상태 업데이트 및 출하 생성 함수
         function updateStatusAndCreateShipping(selectedData) {
-            // console.log(selectedData);
             var data = selectedData.map(function (row) { // 선택된 데이터를 맵핑하여 새로운 데이터 생성
                 return {
                     orderNumber: row.orderNumber, // 수주번호
@@ -293,7 +287,6 @@
                 };
             });
 
-            // console.log(data);
             // AJAX 요청으로 상태 업데이트 및 출하 생성
             $.ajax({
                 url: 'http://localhost:8080/Shipping/updateAndCreate', // 요청 URL

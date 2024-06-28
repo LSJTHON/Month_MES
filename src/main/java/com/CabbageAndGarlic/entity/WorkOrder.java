@@ -6,6 +6,8 @@ import com.CabbageAndGarlic.constant.Status;
 
 import lombok.*;
 import jakarta.persistence.*;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -21,7 +23,7 @@ public class WorkOrder {
     @Column(name = "process", nullable = false)
     private String process;  // 공정
 
-    @Column(name = "start_time_of_operation", nullable = false)
+    @Column(name = "start_time_of_operation")
     private LocalDateTime startTimeOfOperation;  // 공정시작시간
 
     @Column(name = "work_amount", nullable = false)
@@ -35,5 +37,9 @@ public class WorkOrder {
     private Status workStatus;  // 상태
 
     @Column(name = "orderDate", nullable = false)
-    private LocalDateTime orderDate; //지시날짜
+    private LocalDate orderDate; //지시날짜
+
+    @Column(name = "product_name", nullable = false)
+    private String productName;
+
 }

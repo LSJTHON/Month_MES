@@ -185,17 +185,6 @@
                 }
             });
 
-            var purchaseOrderTable = $('#purchaseOrderTable').DataTable({
-                columns: [
-                    {data: 'orderNumber'},
-                    {data: 'materialName'},
-                    {data: 'totalAmount'}
-                ],
-                language: {
-                    emptyTable: "발주 내역 정보가 없습니다"
-                }
-            });
-
             // 체크박스 선택 이벤트 처리
             $('#orderTable tbody').on('change', 'input[type="checkbox"]', function () {
                 updateOrderItemsTable();
@@ -347,23 +336,6 @@
                 });
             });
 
-            // 발주 내역 보기 버튼 클릭 시 처리
-            $('#viewOrdersButton').on('click', function () {
-                $.ajax({
-                    url: '/api/purchase-order/all',
-                    method: 'GET',
-                    success: function (data) {
-                        purchaseOrderTable.clear().rows.add(data).draw();
-                        // Bootstrap 5 방식으로 모달 열기
-                        var viewModal = new bootstrap.Modal(document.getElementById('viewOrdersModal'));
-                        viewModal.show();
-                    },
-                    error: function () {
-                        alert("발주 내역을 불러오는 데 실패했습니다.");
-                    }
-                });
-            });
-
             // Bootstrap 5 방식으로 모달 초기화
             var myModal = new bootstrap.Modal(document.getElementById('materialModal'), {
                 keyboard: false
@@ -377,7 +349,6 @@
         <div class="container-fluid">
             <h2 class="h2-header">자재 발주 페이지</h2>
             <button id="orderButton" class="btn btn-success mb-3">발주</button>
-            <button id="viewOrdersButton" class="btn btn-info mb-3">발주 내역</button>
             <table id="orderTable" class="table table-striped table-bordered order-search-table">
                 <thead>
                 <tr>
@@ -445,37 +416,6 @@
                 </div>
                 <div class="modal-footer">
                     <button id="confirmOrderButton" class="btn btn-primary">발주 확정</button>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- View Orders Modal -->
-    <div class="modal fade" id="viewOrdersModal" tabindex="-1" role="dialog" aria-labelledby="viewOrdersModalLabel"
-         aria-hidden="true">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="viewOrdersModalLabel">발주 내역</h5>
-                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <table id="purchaseOrderTable" class="table table-striped">
-                        <thead>
-                        <tr>
-                            <th>수주번호</th>
-                            <th>자재명</th>
-                            <th>총 수량</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
                 </div>
             </div>

@@ -150,13 +150,14 @@
                                 return;
                             }
 
-                            var deletedCount = 0;
                             selectedRows.each(function (value, index) {
-                                var routingNumber = value.number;
+                                var routingProductName = value.routingProductName.productName;
 
-                                if (confirm('라우팅 번호 ' + routingNumber + '를 정말로 삭제하시겠습니까?')) {
-                                    deleteRouting(routingNumber);
-                                    deletedCount++;
+                                // console.log로 선택된 품목명 출력
+                                console.log('선택된 품목명: ', routingProductName);
+
+                                if (confirm(routingProductName + '에 대한 라우팅을 정말로 삭제하시겠습니까?')) {
+                                    deleteRouting(routingProductName);
                                 }
                             });
                         }
@@ -301,6 +302,28 @@
                 // console.log(routingItems);
             });
 
+            // 테이블이 초기화되지 않았으면 초기화
+            if (table === null) {
+                table = $('#table').DataTable();
+            }
+
+            // 테이블에 이미 존재하는지 확인
+            const tableData = table.rows().data();
+            let isDuplicate = false;
+
+            tableData.each(function (row) {
+                // console.log(row.routingProductName.productName+"이건가?");
+                if (row.routingProductName.productName === routingProductName) {
+                    isDuplicate = true;
+                    return false;
+                }
+            });
+
+            if (isDuplicate) {
+                alert('이미 존재하는 품목명입니다.');
+                return;
+            }
+
 
             const routingData = {
                 routingProductName: routingProductName,
@@ -310,6 +333,7 @@
             console.log(routingData);
 
             $.ajax({
+
                 url: '/api/createRouting',
                 type: 'POST',
                 contentType: 'application/json',
@@ -325,17 +349,18 @@
             });
         }
 
-        function deleteRouting(routingNumber) {
+        function deleteRouting(productName) {
+            // console.log("함수 내부에서 품목명 들어오나?" + productName);
             $.ajax({
-                url: '/api/routings/' + routingNumber,
+                url: '/api/routings/' + productName,
                 type: 'DELETE',
                 success: function () {
-                    console.log('라우팅 번호 ' + routingNumber + ' 삭제 완료');
+                    console.log(productName + '에 대한 라우팅 삭제 완료');
                     location.reload();
                 },
                 error: function (xhr, status, error) {
                     console.error('Error: ' + error);
-                    alert('라우팅 번호 ' + routingNumber + ' 삭제에 실패했습니다. 다시 시도해주세요.');
+                    alert('라우팅 번호 ' + productName + ' 삭제에 실패했습니다. 다시 시도해주세요.');
                 }
             });
         }

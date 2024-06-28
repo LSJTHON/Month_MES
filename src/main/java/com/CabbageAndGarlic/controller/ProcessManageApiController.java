@@ -28,7 +28,6 @@ private final ProcessManageService processManageService;
 
     @PostMapping("/createProcess")// 공정 저장
     public String saveProduct(@RequestBody AddProcessManageRequest addProcessManageRequest) {
-        System.out.println(addProcessManageRequest.getProcessNumber()+"들어오니?");
         processManageService.saveProcess(addProcessManageRequest);
         return "등록 성공";
     }
