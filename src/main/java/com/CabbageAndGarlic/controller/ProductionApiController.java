@@ -3,6 +3,7 @@ package com.CabbageAndGarlic.controller;
 import com.CabbageAndGarlic.constant.Status;
 import com.CabbageAndGarlic.dto.ProductionDto;
 import com.CabbageAndGarlic.dto.WorkOrderDto;
+import com.CabbageAndGarlic.dto.WorkOrderStatusDto;
 import com.CabbageAndGarlic.entity.*;
 import com.CabbageAndGarlic.repository.*;
 import com.CabbageAndGarlic.service.*;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -43,9 +45,6 @@ public class ProductionApiController {
         LocalDate date = LocalDate.now();
         try {
             ProductionPlan productionPlan = productionPlanService.findProductionPlan(date);
-            if (productionPlan == null) {
-                throw new EntityNotFoundException("Production plan not found for date: " + date);
-            }
 
             List<OrderProductionPlan> orderProductionPlans = orderProductionPlanRepository.findByProductionPlan(productionPlan);
             for (OrderProductionPlan orderProductionPlan : orderProductionPlans) {
@@ -100,9 +99,6 @@ public class ProductionApiController {
         List<ProductionDto> productionDtos = new ArrayList<>();
         try {
             ProductionPlan productionPlan = productionPlanService.findProductionPlan(date);
-            if (productionPlan == null) {
-                throw new EntityNotFoundException("Production plan not found for date: " + date);
-            }
 
             List<OrderProductionPlan> orderProductionPlans = orderProductionPlanRepository.findByProductionPlan(productionPlan);
             for (OrderProductionPlan orderProductionPlan : orderProductionPlans) {
@@ -167,6 +163,111 @@ public class ProductionApiController {
         return ResponseEntity.ok(response);
     }
 
+//    @GetMapping(value = "/workOrderStatus")
+//    public ResponseEntity<?> workOrdersStatus() throws ParseException {
+//        Map<String, Object> response = new HashMap<>();
+//        LocalDate date = LocalDate.now();
+//        try {
+//            List<WorkOrder> workOrders = workOrderService.getWorkOrders(date);
+//
+//            // 집계된 WorkOrderStatusDto 리스트를 저장할 맵
+//            Map<String, WorkOrderStatusDto> aggregatedMap = new HashMap<>();
+//
+//            for (WorkOrder workOrder : workOrders) {
+////                String productName = productionDto.getProductName();
+//                String process = workOrder.getProcess();
+//
+//                if (aggregatedMap.containsKey(process)) {
+//                    // 기존 ProductionDto에 양을 추가
+//                    ProductionDto existingDto = aggregatedMap.get(productName);
+//                    existingDto.setAmount(existingDto.getAmount() + productionDto.getAmount());
+//                } else {
+//
+//                    WorkOrderStatusDto workOrderStatusDto = new WorkOrderStatusDto();
+//                    workOrderStatusDto.setProcess(process);
+//
+//                    if(workOrder.getWorkStatus().equals(Status.WAITING)){
+//
+//                        workOrderStatusDto.setStatus(Status.WAITING);
+//                        workOrderStatusDto.setWorkAmount(workOrder.getWorkAmount());
+//                        workOrderStatusDto.setQuantityLeft(workOrder.getWorkAmount());
+//
+//                    } else if (workOrder.getWorkStatus().equals(Status.IN_PROGRESS)) {
+//
+//                        workOrderStatusDto.setStatus(Status.IN_PROGRESS);
+//                        workOrderStatusDto.setWorkAmount(workOrder.getWorkAmount());
+//                        LocalDateTime now = LocalDateTime.now();
+//                        Duration duration = Duration.between(workOrder.getStartTimeOfOperation(), now);
+//                        Integer seconds = (int) duration.getSeconds();
+//
+//                        if(process.equals("착즙")){
+//
+//                            Integer timeInSeconds = 24 * 36;
+//                            if(seconds/timeInSeconds<1){
+//                                workOrderStatusDto.setQuantityLeft(workOrder.getWorkAmount()-workOrder.getWorkAmount()*(seconds/timeInSeconds));
+//                            }else {
+//                                workOrderStatusDto.setQuantityLeft(0);
+//                            }
+//
+//                        } else if (process.equals("여과")) {
+//
+//                            Integer timeInSeconds = 4 * 36;
+//                            if(seconds/timeInSeconds<1){
+//                                workOrderStatusDto.setQuantityLeft(workOrder.getWorkAmount()-workOrder.getWorkAmount()*(seconds/timeInSeconds));
+//                            }else {
+//                                workOrderStatusDto.setQuantityLeft(0);
+//                            }
+//
+//                        } else if (process.equals("살균")) {
+//
+//                            Integer timeInSeconds = 2 * 36;
+//                            if(seconds/timeInSeconds<1){
+//                                workOrderStatusDto.setQuantityLeft(workOrder.getWorkAmount()-workOrder.getWorkAmount()*(seconds/timeInSeconds));
+//                            }else {
+//                                workOrderStatusDto.setQuantityLeft(0);
+//                            }
+//
+//                        } else if (process.equals("충진")) {
+//
+//                            if(workOrder.getProductName().equals("석류젤리스틱")||workOrder.getProductName().equals("매실젤리스틱")) {
+//
+//                            }
+//
+//
+//                        } else if (process.equals("냉각")) {
+//
+//                        } else if (process.equals("검사")) {
+//
+//                        } else if (process.equals("포장")) {
+//
+//                        }
+//
+//                    } else {
+//
+//                        workOrderStatusDto.setStatus(Status.COMPLETED);
+//                        workOrderStatusDto.setWorkAmount(workOrder.getWorkAmount());
+//
+//                    }
+//                    // 새로운 제품명을 맵에 추가
+//                    aggregatedMap.put(process, );
+//                }
+//            }
+//
+//            // 집계된 결과를 리스트로 변환
+//            List<ProductionDto> aggregatedProductionDtos = new ArrayList<>(aggregatedMap.values());
+//
+//            response.put("data", aggregatedProductionDtos);
+//            return ResponseEntity.ok(response);
+//
+//        } catch (EntityNotFoundException e) {
+//            response.put("error", e.getMessage());
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+//        } catch (Exception e) {
+//            response.put("error", "An error occurred while processing the request.");
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+//        }
+//    }
+
     @GetMapping(value = "/workOrder/{date}")
     public ResponseEntity<?> workOrders(@PathVariable String date) throws ParseException {
         Map<String, Object> response = new HashMap<>();
@@ -200,11 +301,10 @@ public class ProductionApiController {
     @PostMapping(value = "/workEnd")
     public String endWork(@RequestBody Long workOrderNumber) throws ParseException {
         WorkOrder workOrder = workOrderService.endWorkOrder(workOrderNumber);
-        workOrder.setStartTimeOfOperation(LocalDateTime.now());
-        workOrderRepository.save(workOrder);
         List<OrderProductionPlan> orderProductionPlans = orderProductionPlanRepository.findByProductionPlan(productionPlanRepository.findByPlanDate(workOrder.getOrderDate()));
         for (OrderProductionPlan orderProductionPlan : orderProductionPlans) {
-            List<OrderItem> orderItems = orderItemRepository.findByOrderNumber(orderProductionPlan.getOrderNumber());
+            Order order = orderProductionPlan.getOrderNumber();
+            List<OrderItem> orderItems = orderItemRepository.findByOrderNumber(order);
             for(OrderItem orderItem : orderItems) {
                 if(orderItem.getProductName().equals(workOrder.getProductName())){
                     if(workOrder.getProcess().equals("포장")){
@@ -214,6 +314,7 @@ public class ProductionApiController {
                     }
                 }
             }
+            orderService.completeorder(order);
         }
         return "작업종료";
     }
