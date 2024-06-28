@@ -133,6 +133,7 @@
             });
 
             var orderItemsTable = $('#orderItemsTable').DataTable({
+                dom: 'Bfrtip',
                 columns: [
                     {data: 'orderNumber'},
                     {data: 'productName'},
@@ -144,6 +145,7 @@
             });
 
             var totalMaterialsTable = $('#totalMaterialsTable').DataTable({
+                dom: 'Bfrtip',
                 columns: [
                     {data: 'materialName'},
                     {data: 'totalAmount'}
