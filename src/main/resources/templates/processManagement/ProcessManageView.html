@@ -80,8 +80,10 @@
                     url: 'http://localhost:8080/api/process',
                     type: 'GET',
                     dataSrc: function (json) {
-                        processNumbers = json.data.map(process => process.processNumber);
-                        console.log('processNumbers:', processNumbers); // 로깅 추가
+                        processNumbers = json.data.map(process => ({
+                            number: process.processNumber,
+                            name: process.processName
+                        }));
                         return json.data;
                     }
                 },
@@ -126,12 +128,15 @@
                 return;
             }
 
-
-            console.log('Checking process number:', processNumber); // 로깅 추가
-            console.log('Current process numbers:', processNumbers); // 로깅 추가
-
-            if (processNumbers.includes(processNumber)) {
+            // 공정번호 중복 확인
+            if (processNumbers.some(process => process.number === processNumber)) {
                 alert('이미 존재하는 공정번호입니다.');
+                return;
+            }
+
+            // 공정명 중복 확인
+            if (processNumbers.some(process => process.name === processName)) {
+                alert('이미 존재하는 공정명입니다.');
                 return;
             }
 
