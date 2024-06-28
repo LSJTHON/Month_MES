@@ -203,13 +203,17 @@
                     {
                         text: '작업시작',
                         action: function (e, dt, node, config) {
-                            StartWork();
+                            if(workdata.workStatus=='WAITING'){
+                                StartWork();
+                            }
                         },
                     },
                     {
                         text: '작업종료',
                         action: function (e, dt, node, config) {
-                            EndWork();
+                           if(workdata.workStatus=='IN_PROGRESS'){
+                               EndWork();
+                           }
                         },
                     }
                 ],
@@ -271,12 +275,10 @@
 
 
             var workOrderNum = 0;
+            var workdata;
             $('#workOrder tbody').on('click', 'tr', function () {
-                var data = workOrder.row(this).data();  //클릭한 행 this 로 인식하고 값 가져옴
-                if(data.workStatus=='WAITING'||data.workStatus=='IN_PROGRESS'){
-                    workOrderNum = data.workOrderNumber;
-                    console.log(workOrderNum);
-                };
+                workdata = workOrder.row(this).data();  //클릭한 행 this 로 인식하고 값 가져옴
+                    workOrderNum = workdata.workOrderNumber;
             });
 
             function StartWork() {

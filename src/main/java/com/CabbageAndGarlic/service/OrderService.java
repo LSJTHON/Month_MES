@@ -65,5 +65,16 @@ public class OrderService {
 
     //---------------------------------------------------------------------------------------
 
+    public void completeorder(Order order) {
+        List<OrderItem> orderItems = orderItemRepository.findByOrderNumber(order);
+        for (OrderItem orderItem : orderItems) {
+            if(!orderItem.getStatus().equals(Status.COMPLETED)) {
+                return;
+            }
+        }
+        order.setStatus(Status.COMPLETED);
+        orderRepository.save(order);
+    }
+
 
 }
