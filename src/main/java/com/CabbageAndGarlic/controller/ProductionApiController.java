@@ -206,37 +206,47 @@ public class ProductionApiController {
                         if(workOrder.getProcess().equals("착즙")){
 
                             Integer timeInSeconds = 24 * 36;
-                            if(seconds/timeInSeconds<1){
-                                existingDto.setQuantityLeft(existingDto.getQuantityLeft() +(workOrder.getWorkAmount()-workOrder.getWorkAmount()*(seconds/timeInSeconds)));
+                            double ratio = (double) seconds / timeInSeconds;
+                            if(ratio<1){
+                                double quantityLeft = workOrder.getWorkAmount() - workOrder.getWorkAmount() * ratio;
+                                existingDto.setQuantityLeft(existingDto.getQuantityLeft()+(int) quantityLeft);
                             }
 
                         } else if (workOrder.getProcess().equals("여과")) {
 
                             Integer timeInSeconds = 4 * 36;
-                            if(seconds/timeInSeconds<1){
-                                existingDto.setQuantityLeft(existingDto.getQuantityLeft() +(workOrder.getWorkAmount()-workOrder.getWorkAmount()*(seconds/timeInSeconds)));
+                            double ratio = (double) seconds / timeInSeconds;
+                            if(ratio<1){
+                                double quantityLeft = workOrder.getWorkAmount() - workOrder.getWorkAmount() * ratio;
+                                existingDto.setQuantityLeft(existingDto.getQuantityLeft()+(int) quantityLeft);
                             }
 
                         } else if (workOrder.getProcess().equals("살균")) {
 
                             Integer timeInSeconds = 1 * 36;
-                            if(seconds/timeInSeconds<1){
-                                existingDto.setQuantityLeft(existingDto.getQuantityLeft() +(workOrder.getWorkAmount()-workOrder.getWorkAmount()*(seconds/timeInSeconds)));
+                            double ratio = (double) seconds / timeInSeconds;
+                            if(ratio<1){
+                                double quantityLeft = workOrder.getWorkAmount() - workOrder.getWorkAmount() * ratio;
+                                existingDto.setQuantityLeft(existingDto.getQuantityLeft()+(int) quantityLeft);
                             }
 
                         } else if (workOrder.getProcess().equals("충진")) {
 
                             if(workOrder.getProductName().equals("석류젤리스틱")||workOrder.getProductName().equals("매실젤리스틱")) {
                                 Integer timeInSeconds = 4 * 36;
-                                if (seconds / timeInSeconds < 1) {
-                                    existingDto.setQuantityLeft(existingDto.getQuantityLeft() +(workOrder.getWorkAmount() - workOrder.getWorkAmount() * (seconds / timeInSeconds)));
+                                double ratio = (double) seconds / timeInSeconds;
+                                if(ratio<1){
+                                    double quantityLeft = workOrder.getWorkAmount() - workOrder.getWorkAmount() * ratio;
+                                    existingDto.setQuantityLeft(existingDto.getQuantityLeft()+(int) quantityLeft);
                                 }
 
                             }else {
 
                                 Integer timeInSeconds = 1 * 36;
-                                if(seconds/timeInSeconds<1){
-                                    existingDto.setQuantityLeft(existingDto.getQuantityLeft() +(workOrder.getWorkAmount()-workOrder.getWorkAmount()*(seconds/timeInSeconds)));
+                                double ratio = (double) seconds / timeInSeconds;
+                                if(ratio<1){
+                                    double quantityLeft = workOrder.getWorkAmount() - workOrder.getWorkAmount() * ratio;
+                                    existingDto.setQuantityLeft(existingDto.getQuantityLeft()+(int) quantityLeft);
                                 }
                             }
 
@@ -244,21 +254,27 @@ public class ProductionApiController {
                         } else if (workOrder.getProcess().equals("냉각")) {
 
                             Integer timeInSeconds = 8 * 36;
-                            if(seconds/timeInSeconds<1){
-                                existingDto.setQuantityLeft(existingDto.getQuantityLeft() +(workOrder.getWorkAmount()-workOrder.getWorkAmount()*(seconds/timeInSeconds)));
+                            double ratio = (double) seconds / timeInSeconds;
+                            if(ratio<1){
+                                double quantityLeft = workOrder.getWorkAmount() - workOrder.getWorkAmount() * ratio;
+                                existingDto.setQuantityLeft(existingDto.getQuantityLeft()+(int) quantityLeft);
                             }
 
                         } else if (workOrder.getProcess().equals("검사")) {
 
                             if(workOrder.getProductName().equals("석류젤리스틱")||workOrder.getProductName().equals("매실젤리스틱")) {
                                 Integer timeInSeconds = 1 * 36;
-                                if(seconds/timeInSeconds<1){
-                                    existingDto.setQuantityLeft(existingDto.getQuantityLeft() +(workOrder.getWorkAmount()-workOrder.getWorkAmount()*(seconds/timeInSeconds)));
+                                double ratio = (double) seconds / timeInSeconds;
+                                if(ratio<1){
+                                    double quantityLeft = workOrder.getWorkAmount() - workOrder.getWorkAmount() * ratio;
+                                    existingDto.setQuantityLeft(existingDto.getQuantityLeft()+(int) quantityLeft);
                                 }
                             }else {
                                 Integer timeInSeconds = 2 * 36;
-                                if(seconds/timeInSeconds<1){
-                                    existingDto.setQuantityLeft(existingDto.getQuantityLeft() +(workOrder.getWorkAmount()-workOrder.getWorkAmount()*(seconds/timeInSeconds)));
+                                double ratio = (double) seconds / timeInSeconds;
+                                if(ratio<1){
+                                    double quantityLeft = workOrder.getWorkAmount() - workOrder.getWorkAmount() * ratio;
+                                    existingDto.setQuantityLeft(existingDto.getQuantityLeft()+(int) quantityLeft);
                                 }
                             }
 
@@ -266,13 +282,17 @@ public class ProductionApiController {
 
                             if(workOrder.getProductName().equals("석류젤리스틱")||workOrder.getProductName().equals("매실젤리스틱")) {
                                 Integer timeInSeconds = 1 * 36;
-                                if(seconds/timeInSeconds<1){
-                                    existingDto.setQuantityLeft(existingDto.getQuantityLeft() +(workOrder.getWorkAmount()-workOrder.getWorkAmount()*(seconds/timeInSeconds)));
+                                double ratio = (double) seconds / timeInSeconds;
+                                if(ratio<1){
+                                    double quantityLeft = workOrder.getWorkAmount() - workOrder.getWorkAmount() * ratio;
+                                    existingDto.setQuantityLeft(existingDto.getQuantityLeft()+(int) quantityLeft);
                                 }
                             }else {
                                 Integer timeInSeconds = 2 * 36;
-                                if(seconds/timeInSeconds<1){
-                                    existingDto.setQuantityLeft(existingDto.getQuantityLeft() +(workOrder.getWorkAmount()-workOrder.getWorkAmount()*(seconds/timeInSeconds)));
+                                double ratio = (double) seconds / timeInSeconds;
+                                if(ratio<1){
+                                    double quantityLeft = workOrder.getWorkAmount() - workOrder.getWorkAmount() * ratio;
+                                    existingDto.setQuantityLeft(existingDto.getQuantityLeft()+(int) quantityLeft);
                                 }
                             }
 
@@ -307,8 +327,10 @@ public class ProductionApiController {
                         if(workOrder.getProcess().equals("착즙")){
 
                             Integer timeInSeconds = 24 * 36;
-                            if(seconds/timeInSeconds<1){
-                                workOrderStatusDto.setQuantityLeft(workOrder.getWorkAmount()-workOrder.getWorkAmount()*(seconds/timeInSeconds));
+                            double ratio = (double) seconds / timeInSeconds;
+                            if(ratio<1){
+                                double quantityLeft = workOrder.getWorkAmount() - workOrder.getWorkAmount() * ratio;
+                                workOrderStatusDto.setQuantityLeft((int) quantityLeft);
                             }else {
                                 workOrderStatusDto.setQuantityLeft(0);
                             }
@@ -316,8 +338,10 @@ public class ProductionApiController {
                         } else if (workOrder.getProcess().equals("여과")) {
 
                             Integer timeInSeconds = 4 * 36;
-                            if(seconds/timeInSeconds<1){
-                                workOrderStatusDto.setQuantityLeft(workOrder.getWorkAmount()-workOrder.getWorkAmount()*(seconds/timeInSeconds));
+                            double ratio = (double) seconds / timeInSeconds;
+                            if(ratio<1){
+                                double quantityLeft = workOrder.getWorkAmount() - workOrder.getWorkAmount() * ratio;
+                                workOrderStatusDto.setQuantityLeft((int) quantityLeft);
                             }else {
                                 workOrderStatusDto.setQuantityLeft(0);
                             }
@@ -325,8 +349,10 @@ public class ProductionApiController {
                         } else if (workOrder.getProcess().equals("살균")) {
 
                             Integer timeInSeconds = 1 * 36;
-                            if(seconds/timeInSeconds<1){
-                                workOrderStatusDto.setQuantityLeft(workOrder.getWorkAmount()-workOrder.getWorkAmount()*(seconds/timeInSeconds));
+                            double ratio = (double) seconds / timeInSeconds;
+                            if(ratio<1){
+                                double quantityLeft = workOrder.getWorkAmount() - workOrder.getWorkAmount() * ratio;
+                                workOrderStatusDto.setQuantityLeft((int) quantityLeft);
                             }else {
                                 workOrderStatusDto.setQuantityLeft(0);
                             }
@@ -337,15 +363,19 @@ public class ProductionApiController {
                                 process="충진2";
                                 workOrderStatusDto.setProcess("충진2");
                                 Integer timeInSeconds = 4 * 36;
-                                if (seconds / timeInSeconds < 1) {
-                                    workOrderStatusDto.setQuantityLeft(workOrder.getWorkAmount() - workOrder.getWorkAmount() * (seconds / timeInSeconds));
+                                double ratio = (double) seconds / timeInSeconds;
+                                if(ratio<1){
+                                    double quantityLeft = workOrder.getWorkAmount() - workOrder.getWorkAmount() * ratio;
+                                    workOrderStatusDto.setQuantityLeft((int) quantityLeft);
                                 } else {
                                     workOrderStatusDto.setQuantityLeft(0);
                                 }
                             }else {
                                 Integer timeInSeconds = 1 * 36;
-                                if(seconds/timeInSeconds<1){
-                                    workOrderStatusDto.setQuantityLeft(workOrder.getWorkAmount()-workOrder.getWorkAmount()*(seconds/timeInSeconds));
+                                double ratio = (double) seconds / timeInSeconds;
+                                if(ratio<1){
+                                    double quantityLeft = workOrder.getWorkAmount() - workOrder.getWorkAmount() * ratio;
+                                    workOrderStatusDto.setQuantityLeft((int) quantityLeft);
                                 }else {
                                     workOrderStatusDto.setQuantityLeft(0);
                                 }
@@ -355,8 +385,10 @@ public class ProductionApiController {
                         } else if (workOrder.getProcess().equals("냉각")) {
 
                             Integer timeInSeconds = 8 * 36;
-                            if(seconds/timeInSeconds<1){
-                                workOrderStatusDto.setQuantityLeft(workOrder.getWorkAmount()-workOrder.getWorkAmount()*(seconds/timeInSeconds));
+                            double ratio = (double) seconds / timeInSeconds;
+                            if(ratio<1){
+                                double quantityLeft = workOrder.getWorkAmount() - workOrder.getWorkAmount() * ratio;
+                                workOrderStatusDto.setQuantityLeft((int) quantityLeft);
                             }else {
                                 workOrderStatusDto.setQuantityLeft(0);
                             }
@@ -365,15 +397,19 @@ public class ProductionApiController {
 
                             if(workOrder.getProductName().equals("석류젤리스틱")||workOrder.getProductName().equals("매실젤리스틱")) {
                                 Integer timeInSeconds = 1 * 36;
-                                if(seconds/timeInSeconds<1){
-                                    workOrderStatusDto.setQuantityLeft(workOrder.getWorkAmount()-workOrder.getWorkAmount()*(seconds/timeInSeconds));
+                                double ratio = (double) seconds / timeInSeconds;
+                                if(ratio<1){
+                                    double quantityLeft = workOrder.getWorkAmount() - workOrder.getWorkAmount() * ratio;
+                                    workOrderStatusDto.setQuantityLeft((int) quantityLeft);
                                 }else {
                                     workOrderStatusDto.setQuantityLeft(0);
                                 }
                             }else {
                                 Integer timeInSeconds = 2 * 36;
-                                if(seconds/timeInSeconds<1){
-                                    workOrderStatusDto.setQuantityLeft(workOrder.getWorkAmount()-workOrder.getWorkAmount()*(seconds/timeInSeconds));
+                                double ratio = (double) seconds / timeInSeconds;
+                                if(ratio<1){
+                                    double quantityLeft = workOrder.getWorkAmount() - workOrder.getWorkAmount() * ratio;
+                                    workOrderStatusDto.setQuantityLeft((int) quantityLeft);
                                 }else {
                                     workOrderStatusDto.setQuantityLeft(0);
                                 }
@@ -383,15 +419,19 @@ public class ProductionApiController {
 
                             if(workOrder.getProductName().equals("석류젤리스틱")||workOrder.getProductName().equals("매실젤리스틱")) {
                                 Integer timeInSeconds = 1 * 36;
-                                if(seconds/timeInSeconds<1){
-                                    workOrderStatusDto.setQuantityLeft(workOrder.getWorkAmount()-workOrder.getWorkAmount()*(seconds/timeInSeconds));
+                                double ratio = (double) seconds / timeInSeconds;
+                                if(ratio<1){
+                                    double quantityLeft = workOrder.getWorkAmount() - workOrder.getWorkAmount() * ratio;
+                                    workOrderStatusDto.setQuantityLeft((int) quantityLeft);
                                 }else {
                                     workOrderStatusDto.setQuantityLeft(0);
                                 }
                             }else {
                                 Integer timeInSeconds = 2 * 36;
-                                if(seconds/timeInSeconds<1){
-                                    workOrderStatusDto.setQuantityLeft(workOrder.getWorkAmount()-workOrder.getWorkAmount()*(seconds/timeInSeconds));
+                                double ratio = (double) seconds / timeInSeconds;
+                                if(ratio<1){
+                                    double quantityLeft = workOrder.getWorkAmount() - workOrder.getWorkAmount() * ratio;
+                                    workOrderStatusDto.setQuantityLeft((int) quantityLeft);
                                 }else {
                                     workOrderStatusDto.setQuantityLeft(0);
                                 }
