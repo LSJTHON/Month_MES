@@ -131,6 +131,7 @@
                     if (juiceProcess) {
                         juiceWorkAmount = juiceProcess.workAmount;
                         juiceQuantityLeft = juiceProcess.quantityLeft;
+                        console.log(juiceQuantityLeft);
                     } else {
                         console.log('착즙 process를 찾을 수 없습니다.');
                     }
@@ -237,8 +238,6 @@
                     var achievementData = data.map(item => item.achievement);
                     // 각 설비의 목표치 데이터
                     var targetData = data.map(item => item.target);
-                    // 평균 달성도 계산
-                    var averageAchievement = achievementData.reduce((a, b) => a + b, 0) / achievementData.length;
 
                     // Mixed Chart 생성 (막대 차트 + 선형 차트)
                     var mixedChart = new Chart(ctx, {
@@ -252,13 +251,6 @@
                                 backgroundColor: 'rgba(0, 123, 255, 0.6)', // 막대 배경색
                                 borderColor: 'rgba(0, 123, 255, 1)', // 막대 테두리색
                                 borderWidth: 1 // 막대 테두리 두께
-                            }, {
-                                type: 'line', // 데이터 유형: 선형 차트
-                                label: '평균 달성도', // 데이터 레이블
-                                data: new Array(labels.length).fill(averageAchievement), // 평균 달성도 데이터
-                                borderColor: 'rgba(255, 193, 7, 0.6)', // 선 색상
-                                borderWidth: 2, // 선 두께
-                                fill: false // 선 아래 영역 채우지 않음
                             }, {
                                 type: 'line', // 데이터 유형: 선형 차트
                                 label: '목표치', // 데이터 레이블
