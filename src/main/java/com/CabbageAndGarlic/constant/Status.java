@@ -7,4 +7,5 @@ public enum Status {
     COMPLETED, //출하 가능
     SHIPPED, //배송 완료
     PendingShipment,  //배송중
+    PurChased //발주완료
 }

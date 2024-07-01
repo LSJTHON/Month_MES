@@ -81,7 +81,10 @@
                     url: 'http://localhost:8080/api/materials',
                     type: 'GET',
                     dataSrc: function (json) {
-                        materialCodes = json.data.map(material => material.materialCode);
+                        materialCodes = json.data.map(material => ({
+                            code: material.materialCode,
+                            name: material.materialName
+                        }));
                         return json.data;
                     }
                 },
@@ -115,8 +118,15 @@
                 return;
             }
 
-            if (materialCodes.includes(materialCode)) {
+            // 자재코드 중복 확인
+            if (materialCodes.some(material => material.code === materialCode)) {
                 alert('이미 존재하는 자재코드입니다.');
+                return;
+            }
+
+            // 자재명 중복 확인
+            if (materialCodes.some(material => material.name === materialName)) {
+                alert('이미 존재하는 자재명입니다.');
                 return;
             }
 
@@ -191,11 +201,11 @@
             <div class="modal-content">
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label for="materialCode" class="form-label">품목코드</label>
+                        <label for="materialCode" class="form-label">자재코드</label>
                         <input type="text" class="form-control" id="materialCode" name="materialCode">
                     </div>
                     <div class="mb-3">
-                        <label for="materialName" class="form-label">품목명</label>
+                        <label for="materialName" class="form-label">자재명</label>
                         <input type="text" class="form-control" id="materialName" name="materialName">
                     </div>
                 </div>

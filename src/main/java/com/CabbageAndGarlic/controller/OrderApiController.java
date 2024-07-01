@@ -4,7 +4,9 @@ package com.CabbageAndGarlic.controller;
 import com.CabbageAndGarlic.dto.OrderDto;
 import com.CabbageAndGarlic.entity.Order;
 import com.CabbageAndGarlic.entity.OrderItem;
+import com.CabbageAndGarlic.service.OrderItemService;
 import com.CabbageAndGarlic.service.OrderService;
+import com.CabbageAndGarlic.service.ProductionPlanService;
 import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.*;
 import org.springframework.http.HttpStatus;
@@ -22,6 +24,7 @@ import java.util.*;
 public class OrderApiController {
 
     private final OrderService orderService;
+    private final ProductionPlanService productionPlanService;
 
     //수주정보 전부 가져오기
     @GetMapping("/orders")
@@ -46,6 +49,7 @@ public class OrderApiController {
     @PostMapping("/createOrder")
     public String saveOrder(@RequestBody OrderDto orderDto) {
         orderService.saveOrder(orderDto);
+        productionPlanService.savePlan(orderDto);
         return "수주를 정상적으로 등록했습니다.";
     }
 

@@ -1,25 +1,21 @@
 package com.CabbageAndGarlic.dto;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
-
 import java.time.LocalDateTime;
 
-@Getter @Setter
+@Builder
+@Getter
+@Setter
 public class InOutBoundDto {
-
-    private long purchaseNumber; //발주번호
-
-    private String materialName; //자재명
-
+    private String materialCode; // 자재 코드
+    private String productCode;  // 제품 코드
+    private String materialName; // 자재명
+    private String productName;  // 제품명
     private LocalDateTime transactionDate; // 입출고일
-
     private String transactionType; // 입출고 타입 (IN, OUT)
-
     private int quantity;  // 수량
-
-    private String supplierName;  // 발주처
-
-    private String manager;  // 담당자 : 고정?
+    private String manager;  // 담당자
 }

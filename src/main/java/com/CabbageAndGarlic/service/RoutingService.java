@@ -26,7 +26,7 @@ public class RoutingService {
         return routingRepository.findAll();
     }
 
-    public List<Routing> findAllDistinctByProductName() {
+    public List<Routing> findAllDistinctByProductName() { // 원하는 정보 값 가져오는 로직
         return routingRepository.findAll().stream()
                 .filter(routing -> routing.getRoutingProductName() != null)
                 .collect(Collectors.collectingAndThen(
@@ -41,8 +41,6 @@ public class RoutingService {
 
     public List<RoutingListViewResponse> findRoutingItemsByProductName(String product) {
 
-
-
         List<Routing> routings = routingRepository.findByProductName(product);
         return routings.stream()
                 .map(RoutingListViewResponse::new)
@@ -51,7 +49,6 @@ public class RoutingService {
 
 
     public void saveRouting(AddRoutingRequest routingDto) {
-        int allCycleTime = 0; // 필요에 따라 전체 공정 시간을 계산하는 로직 추가
         String productName = routingDto.getRoutingProductName();
         List<String> listRouting = routingDto.getProcessName();
 
@@ -66,12 +63,11 @@ public class RoutingService {
         }
         for (ProcessManagement processManagement : processManagementList) {
 
+            int allCycleTime = 0; // 필요에 따라 전체 공정 시간을 계산하는 로직 추가
+
 
             for (ProcessManagement processManagement2 : processManagementList) {
-                System.out.println(processManagement2.getCycleHour()+"이게 뭐가 들어오지");
                 allCycleTime += processManagement2.getCycleHour();
-                System.out.println(allCycleTime+"이게 사이클 타임이다 이말이야");
-
             }
 
 
@@ -80,11 +76,11 @@ public class RoutingService {
                     .routingProductName(product)
                     .allCycleTime(allCycleTime)
                     .build();
-            routingRepository.save(routing);
+            routingRepository.save(routing);// 최종 세이브 라우팅 정보 저장 로직
         }
     }
 
-    public void deleteRouting(int number) {
-        routingRepository.deleteById(number);
+    public void deleteRouting(String productName) {
+        routingRepository.deleteByRoutingNumberProductName(productName);
     }
 }

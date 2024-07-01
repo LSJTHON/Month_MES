@@ -1,10 +1,7 @@
 package com.CabbageAndGarlic.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Getter
@@ -12,6 +9,7 @@ import lombok.Setter;
 @Builder
 @Table(name = "supplier_manage") //발주처랑 자재 연결
 @AllArgsConstructor
+@NoArgsConstructor
 public class SupplierManage {
 
     @Id
@@ -35,7 +33,6 @@ public class SupplierManage {
     @Column(name = "unit_price", nullable = false)
     private int unitPrice;  //단가
 
-    public SupplierManage() {
 
-    }
+
 }

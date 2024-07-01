@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout1}">
+
+<!-- CSS files for DataTables -->
+<link rel="stylesheet" type="text/css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/css/bootstrap.css"/>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/2.0.8/css/dataTables.bootstrap5.min.css"/>
+<link rel="stylesheet" type="text/css"
+      href="https://cdn.datatables.net/autofill/2.7.0/css/autoFill.bootstrap5.min.css"/>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/3.0.2/css/buttons.bootstrap5.min.css"/>
+
+<th:block layout:fragment="style">
+    <style>
+        .dt-search {
+            display: flex;
+            margin-top: 10px;
+        }
+
+        .h2-header {
+            margin-top: 50px;
+        }
+
+        .align-items-center .form-group label {
+            margin-right: 10px;
+        }
+
+        .input-with-info small {
+            position: absolute;
+            left: 0;
+            top: 100%;
+            white-space: nowrap;
+        }
+
+        .modal-custom {
+            max-width: 50%;
+        }
+
+        .modal-body-scrollable {
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .product-field-row .col {
+            margin-right: 10px;
+            top: 10px;
+        }
+
+        .product-field-row .col-auto {
+            display: flex;
+            align-items: center;
+            margin-left: auto;
+            position: relative;
+            top: 10px;
+        }
+
+        .modal-body {
+            padding: 15px;
+        }
+
+        .delivery-date-group input {
+            margin-right: 10px;
+        }
+
+        .delivery-date-group button {
+            white-space: nowrap;
+        }
+
+        .order-search-table th, .order-search-table td {
+            padding: 5px;
+            text-align: center;
+            vertical-align: middle;
+            width: 10%;
+        }
+
+        .order-search-table input {
+            width: 50%;
+            box-sizing: border-box;
+        }
+    </style>
+</th:block>
+
+<th:block layout:fragment="script">
+    <!--    <script src="https://code.jquery.com/jquery-3.7.0.js"></script>-->
+    <!--    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>-->
+    <!--    <script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>-->
+    <!--    <script src="https://cdn.datatables.net/2.0.8/js/dataTables.bootstrap5.min.js"></script>-->
+    <!--    <script src="https://cdn.datatables.net/autofill/2.7.0/js/autoFill.bootstrap5.min.js"></script>-->
+    <!--    <script src="https://cdn.datatables.net/autofill/2.7.0/js/dataTables.autoFill.min.js"></script>-->
+    <!--    <script src="https://cdn.datatables.net/buttons/3.0.2/js/dataTables.buttons.min.js"></script>-->
+    <!--    <script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.bootstrap5.min.js"></script>-->
+    <!--    <script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.colVis.min.js"></script>-->
+    <!--    <script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.print.min.js"></script>-->
+    <!--    <script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.html5.min.js"></script>-->
+    <!--    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>-->
+    <!--    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>-->
+    <!--    <script src="https://cdn.datatables.net/select/2.0.3/js/dataTables.select.js"></script>-->
+    <!--    <script src="https://cdn.datatables.net/select/2.0.3/js/select.dataTables.js"></script>-->
+
+    <script>
+        $(document).ready(function () {
+            loadInOutBoundData();
+
+            $('#addInboundForm').on('submit', function (event) {
+                event.preventDefault();
+                addInOutBound('IN');
+            });
+
+            $('#addOutboundForm').on('submit', function (event) {
+                event.preventDefault();
+                addInOutBound('OUT');
+            });
+
+            $('#categoryInbound').on('change', function () {
+                loadTypeOptions($(this).val(), '#nameSelectInbound');
+            });
+
+            $('#categoryOutbound').on('change', function () {
+                loadTypeOptions($(this).val(), '#nameSelectOutbound');
+            });
+
+            $('#addInboundModal').on('show.bs.modal', function () {
+                setDefaultSelection('#categoryInbound', '#nameSelectInbound');
+            });
+
+            $('#addOutboundModal').on('show.bs.modal', function () {
+                setDefaultSelection('#categoryOutbound', '#nameSelectOutbound');
+            });
+
+            $('#inOutBoundTable').DataTable({
+                dom: 'Bfrtip',
+                buttons: [
+                    'copy', 'excel', 'pdf'
+                ],
+                responsive: true,
+                destroy: true,
+                select: true,
+                ordering: true,
+                scrollX: true,
+                info: true,
+                paging: true,
+                language: {
+                    search: "검색:"
+                }
+            });
+        });
+
+
+        function formatDate(dateString) {
+            var options = {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            };
+            return new Date(dateString).toLocaleDateString('ko-KR', options).replace(/\./g, '-').replace(' ', 'T');
+        }
+
+        function loadInOutBoundData() {
+            $.ajax({
+                url: '/api/inoutbound/all',
+                method: 'GET',
+                success: function (data) {
+                    var table = $('#inOutBoundTable').DataTable();
+                    table.clear();
+                    data.forEach(function (item) {
+                        table.row.add([
+                            formatDate(item.transactionDate),
+                            item.materialCode || item.productCode,
+                            item.materialName || item.productName,
+                            item.transactionType,
+                            item.quantity,
+                            item.manager
+                        ]).draw();
+                    });
+                },
+                error: function (error) {
+                    console.error('Error fetching data:', error);
+                }
+            });
+        }
+
+        function loadTypeOptions(type, selectId) {
+            var url = type === 'product' ? '/api/products' : '/api/materials';
+            $.ajax({
+                url: url,
+                method: 'GET',
+                success: function (data) {
+                    var select = $(selectId);
+                    select.empty();
+                    data.data.forEach(function (item) {
+                        var option = '<option value="' + (type === 'product' ? item.productCode : item.materialCode) + '">' + (type === 'product' ? item.productName : item.materialName) + '</option>';
+                        select.append(option);
+                    });
+                    // 첫 번째 옵션을 선택
+                    if (select.children('option').length > 0) {
+                        select.val(select.children('option').first().val()).trigger('change');
+                    }
+                },
+                error: function (error) {
+                    console.error('Error fetching options:', error);
+                }
+            });
+        }
+
+        function setDefaultSelection(categorySelector, nameSelectSelector) {
+            var categorySelect = $(categorySelector);
+            if (categorySelect.children('option').length > 0) {
+                var firstOptionValue = categorySelect.children('option').first().val();
+                categorySelect.val(firstOptionValue).trigger('change');
+                loadTypeOptions(firstOptionValue, nameSelectSelector);
+            }
+        }
+
+        function addInOutBound(transactionType) {
+            var formId = transactionType === 'IN' ? '#addInboundForm' : '#addOutboundForm';
+            var categoryValue = $(formId + ' select[id^="category"]').val();
+            var nameSelectValue = $(formId + ' select[id^="nameSelect"]').val();
+
+            // LocalDateTime을 년월일시간으로 변경
+            var date = new Date();
+            var year = date.getFullYear();
+            var month = ('0' + (date.getMonth() + 1)).slice(-2);
+            var day = ('0' + date.getDate()).slice(-2);
+            var hours = ('0' + date.getHours()).slice(-2);
+            var minutes = ('0' + date.getMinutes()).slice(-2);
+            console.log(year+'-'+month+'-'+day+'-'+hours+'-'+minutes);
+
+            var inOutBound = {
+                materialCode: categoryValue === 'material' ? nameSelectValue : null,
+                productCode: categoryValue === 'product' ? nameSelectValue : null,
+                // transactionDate: $(formId + ' input[id^="transactionDate"]').val(),
+                transactionDate: new Date(),
+                quantity: $(formId + ' input[id^="quantity"]').val(),
+                manager: $(formId + ' input[id^="manager"]').val(),
+                transactionType: transactionType
+            };
+
+
+            $.ajax({
+                url: '/api/inoutbound/' + (transactionType === 'IN' ? 'inbound' : 'outbound'),
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(inOutBound),
+                success: function () {
+                    $('#' + (transactionType === 'IN' ? 'addInboundModal' : 'addOutboundModal')).modal('hide');
+                    $('body').removeClass('modal-open');
+                    $('.modal-backdrop').remove();
+                    loadInOutBoundData();
+                },
+                error: function (error) {
+                    console.error('Error adding in/out bound:', error);
+                }
+            });
+        }
+    </script>
+
+
+</th:block>
+
+<div layout:fragment="content">
+    <div class="main-panel">
+        <div class="container-fluid">
+            <h1 class="h2-header">입출고 관리</h1>
+            <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addInboundModal">입고 추가</button>
+            <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addOutboundModal">출고 추가</button>
+            <table class="table table-bordered" id="inOutBoundTable">
+                <thead>
+                <tr>
+                    <th>입출고 날짜</th>
+                    <th>자재/품목 코드</th>
+                    <th>자재/품목 이름</th>
+                    <th>입고/출고</th>
+                    <th>수량</th>
+                    <th>담당자</th>
+                </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Add Inbound Modal -->
+        <div class="modal fade" id="addInboundModal" tabindex="-1" role="dialog" aria-labelledby="addInboundModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addInboundModalLabel">입고 추가</h5>
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="addInboundForm">
+                            <div class="form-group">
+                                <label for="categoryInbound">카테고리</label>
+                                <select class="form-control" id="categoryInbound" required>
+                                    <option value="product">Product</option>
+                                    <option value="material">Material</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="nameSelectInbound">이름</label>
+                                <select class="form-control" id="nameSelectInbound" required></select>
+                            </div>
+                            <!--                            <div class="form-group">-->
+                            <!--                                <label for="transactionDateIN">거래 날짜</label>-->
+                            <!--                                <input type="datetime-local" class="form-control" id="transactionDateIN" required>-->
+                            <!--                            </div>-->
+                            <div class="form-group">
+                                <label for="quantityIN">수량</label>
+                                <input type="number" class="form-control" id="quantityIN" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="managerIN">담당자</label>
+                                <input type="text" class="form-control" id="managerIN" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">등록</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Outbound Modal -->
+        <div class="modal fade" id="addOutboundModal" tabindex="-1" role="dialog" aria-labelledby="addOutboundModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addOutboundModalLabel">출고 추가</h5>
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="addOutboundForm">
+                            <div class="form-group">
+                                <label for="categoryOutbound">카테고리</label>
+                                <select class="form-control" id="categoryOutbound" required>
+                                    <option value="product">Product</option>
+                                    <option value="material">Material</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="nameSelectOutbound">이름</label>
+                                <select class="form-control" id="nameSelectOutbound" required></select>
+                            </div>
+                            <!--                            <div class="form-group">-->
+                            <!--                                <label for="transactionDateOUT">거래 날짜</label>-->
+                            <!--                                <input type="datetime-local" class="form-control" id="transactionDateOUT" required>-->
+                            <!--                            </div>-->
+                            <div class="form-group">
+                                <label for="quantityOUT">수량</label>
+                                <input type="number" class="form-control" id="quantityOUT" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="managerOUT">담당자</label>
+                                <input type="text" class="form-control" id="managerOUT" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">등록</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</html>

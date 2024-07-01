@@ -92,6 +92,7 @@
 </head>
 <th:block layout:fragment="script">
     <script>
+        var workdata;
         $(document).ready(function (ChartDataLabels) {
             // 임시 데이터 설정
             // 'equipment': 설비 이름, 'date': 날짜, 'achievement': 달성도, 'target': 목표치
@@ -111,9 +112,10 @@
                 {equipment: '스틱포장기1', date: '2023-06-01', achievement: 95, target: 100},
                 {equipment: '스틱포장기2', date: '2023-06-01', achievement: 65, target: 100},
                 {equipment: '여과기', date: '2023-06-01', achievement: 55, target: 100},
-                {equipment: 'BOX 포장기', date: '2023-06-01', achievement: 45, target: 100},
-                {equipment: '금속검출기', date: '2023-06-01', achievement: 85, target: 100}
+                {equipment: '금속검출기', date: '2023-06-01', achievement: 85, target: 100},
+                {equipment: 'BOX 포장기', date: '2023-06-01', achievement: 45, target: 100}
             ];
+
 
             // 막대 차트와 도넛 차트를 표시할 캔버스 요소 가져오기
             var ctx = document.getElementById('mixedChart').getContext('2d');
@@ -223,6 +225,22 @@
             // 중앙 텍스트 업데이트
             document.querySelector('.center-text').textContent = percentage + '%';
         });
+
+        function todaystatus() {
+            $.ajax({
+                url: '/production/workOrder/today',
+                type: 'GET',
+                //이 데이터는 json 형식의 정보를 datatables의 형식에 맞게 필터링 해주는거 이거 안해주면 데이터 못받음
+                dataFilter: function (res) {
+                    var json = $.parseJSON(res);
+                    workdata = {
+                        'data': json.data,
+                    };
+                    console.log(workdata);
+                    return JSON.stringify(data);
+                }
+            });
+        }
     </script>
 </th:block>
 
