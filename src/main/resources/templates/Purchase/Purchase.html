@@ -277,7 +277,7 @@
                     var materialName = $(this).find('td').eq(0).text();
                     var totalAmount = parseFloat($(this).find('td').eq(1).text());
 
-                    materialRequirements.push({ materialName: materialName, totalAmount: totalAmount });
+                    materialRequirements.push({ materialCode: materialName, totalAmount: totalAmount });
                 });
 
                 var selectedOrderNumbers = [];
