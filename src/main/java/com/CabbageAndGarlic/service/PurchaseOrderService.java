@@ -2,18 +2,15 @@ package com.CabbageAndGarlic.service;
 
 import com.CabbageAndGarlic.dto.ProductTotalDto;
 import com.CabbageAndGarlic.dto.PurchaseOrderDto;
-import com.CabbageAndGarlic.entity.Order;
-import com.CabbageAndGarlic.entity.OrderItem;
-import com.CabbageAndGarlic.entity.PurchaseOrder;
-import com.CabbageAndGarlic.repository.OrderItemRepository;
-import com.CabbageAndGarlic.repository.OrderRepository;
-import com.CabbageAndGarlic.repository.PurchaseOrderRepository;
+import com.CabbageAndGarlic.entity.*;
+import com.CabbageAndGarlic.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -23,6 +20,13 @@ public class PurchaseOrderService {
     private final PurchaseOrderRepository purchaseOrderRepository;
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
+    private final MaterialRepository materialRepository;
+    private final SupplierManageRepository supplierManageRepository;
+
+    //발주정보 전부 가져오기
+    public List<PurchaseOrder> getAllPurchaseOrders() {
+        return purchaseOrderRepository.findAll();
+    }
 
     // 발주 내역에 포함되지 않은 모든 주문을 조회합니다.
     public List<Order> findOrdersNotInPurchaseOrder() {

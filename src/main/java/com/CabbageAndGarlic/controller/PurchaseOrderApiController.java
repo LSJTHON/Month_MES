@@ -1,17 +1,24 @@
 package com.CabbageAndGarlic.controller;
 
+import com.CabbageAndGarlic.constant.Status;
 import com.CabbageAndGarlic.dto.ProductTotalDto;
 import com.CabbageAndGarlic.dto.PurchaseOrderRequest;
 import com.CabbageAndGarlic.dto.PurchaseOrderDto;
-import com.CabbageAndGarlic.entity.Order;
-import com.CabbageAndGarlic.entity.OrderItem;
+import com.CabbageAndGarlic.entity.*;
+import com.CabbageAndGarlic.repository.MaterialRepository;
+import com.CabbageAndGarlic.repository.OrderRepository;
+import com.CabbageAndGarlic.repository.PurchaseOrderRepository;
+import com.CabbageAndGarlic.service.OrderService;
 import com.CabbageAndGarlic.service.PurchaseOrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/purchase-order")
@@ -19,6 +26,10 @@ import java.util.List;
 public class PurchaseOrderApiController {
 
     private final PurchaseOrderService purchaseOrderService;
+
+    private final PurchaseOrderRepository purchaseOrderRepository;
+
+    private final OrderRepository orderRepository;
 
     // 발주 내역에 포함되지 않은 주문들을 조회합니다.
     @GetMapping("/orders-not-in-purchase")
@@ -50,7 +61,6 @@ public class PurchaseOrderApiController {
         return purchaseOrderService.calculateTotals(orderNumbers);
     }
 
-
     @PostMapping("/create")
     public ResponseEntity<String> createPurchaseOrder(@RequestBody PurchaseOrderRequest request) {
         // 요청 데이터 검증
@@ -61,21 +71,43 @@ public class PurchaseOrderApiController {
             return new ResponseEntity<>("Order numbers are missing", HttpStatus.BAD_REQUEST);
         }
 
-        // 요청 데이터 처리 (예: 데이터베이스 저장 등)
-        // 여기에서는 단순히 요청 데이터를 로그로 출력하는 것으로 처리
-        System.out.println("Received material requirements:");
+
         for (PurchaseOrderRequest.MaterialRequirement mr : request.getMaterialRequirements()) {
             System.out.println("Material: " + mr.getMaterialCode() + ", Total Amount: " + mr.getTotalAmount());
+
+            // PurchaseOrder 엔티티 생성 및 저장
+            PurchaseOrder purchaseOrder = PurchaseOrder.builder()
+                    .purchaseStatus(Status.PurChased)
+                    .materialName(mr.getMaterialCode() )
+                    .amount((int) Math.ceil(mr.getTotalAmount()))
+                    .receiptDate(LocalDateTime.now().plusDays(2))
+                    .purchaseDate(LocalDateTime.now())
+                    .manager("류치호") // 실제 담당자명을 입력해야 함
+                    .supplierManage(null) // supplierManage를 null로 설정
+                    // .order(null) // order를 null로 설정
+                    .build();
+
+            purchaseOrderRepository.save(purchaseOrder);
         }
-        System.out.println("Received order numbers: " + request.getOrderNumbers());
+
+
+        // 수주 상태 업데이트
+        for (Long orderNumber : request.getOrderNumbers()) {
+            Order order = orderRepository.findById(orderNumber)
+                    .orElseThrow(() -> new RuntimeException("Order not found: " + orderNumber));
+            order.setStatus(Status.PurChased);
+            orderRepository.save(order);
+        }
+
 
         return new ResponseEntity<>("Purchase order created successfully", HttpStatus.OK);
     }
 
-
-    // 발주 내역을 조회합니다.
     @GetMapping("/history")
-    public List<PurchaseOrderDto> getPurchaseOrderHistory() {
-        return purchaseOrderService.getPurchaseOrderHistory();
+    public Map<String, Object> getAllOrders() {
+        Map<String, Object> getAllOrders = new HashMap<>();
+        getAllOrders.put("data", purchaseOrderService.getAllPurchaseOrders());
+        return getAllOrders;
     }
+
 }

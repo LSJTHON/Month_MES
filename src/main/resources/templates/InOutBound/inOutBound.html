@@ -82,21 +82,21 @@
 </th:block>
 
 <th:block layout:fragment="script">
-<!--    <script src="https://code.jquery.com/jquery-3.7.0.js"></script>-->
-<!--    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>-->
-<!--    <script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>-->
-<!--    <script src="https://cdn.datatables.net/2.0.8/js/dataTables.bootstrap5.min.js"></script>-->
-<!--    <script src="https://cdn.datatables.net/autofill/2.7.0/js/autoFill.bootstrap5.min.js"></script>-->
-<!--    <script src="https://cdn.datatables.net/autofill/2.7.0/js/dataTables.autoFill.min.js"></script>-->
-<!--    <script src="https://cdn.datatables.net/buttons/3.0.2/js/dataTables.buttons.min.js"></script>-->
-<!--    <script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.bootstrap5.min.js"></script>-->
-<!--    <script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.colVis.min.js"></script>-->
-<!--    <script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.print.min.js"></script>-->
-<!--    <script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.html5.min.js"></script>-->
-<!--    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>-->
-<!--    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>-->
-<!--    <script src="https://cdn.datatables.net/select/2.0.3/js/dataTables.select.js"></script>-->
-<!--    <script src="https://cdn.datatables.net/select/2.0.3/js/select.dataTables.js"></script>-->
+    <!--    <script src="https://code.jquery.com/jquery-3.7.0.js"></script>-->
+    <!--    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>-->
+    <!--    <script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>-->
+    <!--    <script src="https://cdn.datatables.net/2.0.8/js/dataTables.bootstrap5.min.js"></script>-->
+    <!--    <script src="https://cdn.datatables.net/autofill/2.7.0/js/autoFill.bootstrap5.min.js"></script>-->
+    <!--    <script src="https://cdn.datatables.net/autofill/2.7.0/js/dataTables.autoFill.min.js"></script>-->
+    <!--    <script src="https://cdn.datatables.net/buttons/3.0.2/js/dataTables.buttons.min.js"></script>-->
+    <!--    <script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.bootstrap5.min.js"></script>-->
+    <!--    <script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.colVis.min.js"></script>-->
+    <!--    <script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.print.min.js"></script>-->
+    <!--    <script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.html5.min.js"></script>-->
+    <!--    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>-->
+    <!--    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>-->
+    <!--    <script src="https://cdn.datatables.net/select/2.0.3/js/dataTables.select.js"></script>-->
+    <!--    <script src="https://cdn.datatables.net/select/2.0.3/js/select.dataTables.js"></script>-->
 
     <script>
         $(document).ready(function () {
@@ -270,12 +270,12 @@
             <table class="table table-bordered" id="inOutBoundTable">
                 <thead>
                 <tr>
-                    <th>TRANSACTION DATE</th>
-                    <th>MATERIAL/PRODUCT CODE</th>
-                    <th>MATERIAL/PRODUCT NAME</th>
-                    <th>TRANSACTION TYPE</th>
-                    <th>QUANTITY</th>
-                    <th>MANAGER</th>
+                    <th>입출고 날짜</th>
+                    <th>자재/품목 코드</th>
+                    <th>자재/품목 이름</th>
+                    <th>입고/출고</th>
+                    <th>수량</th>
+                    <th>담당자</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -307,10 +307,10 @@
                                 <label for="nameSelectInbound">이름</label>
                                 <select class="form-control" id="nameSelectInbound" required></select>
                             </div>
-<!--                            <div class="form-group">-->
-<!--                                <label for="transactionDateIN">거래 날짜</label>-->
-<!--                                <input type="datetime-local" class="form-control" id="transactionDateIN" required>-->
-<!--                            </div>-->
+                            <!--                            <div class="form-group">-->
+                            <!--                                <label for="transactionDateIN">거래 날짜</label>-->
+                            <!--                                <input type="datetime-local" class="form-control" id="transactionDateIN" required>-->
+                            <!--                            </div>-->
                             <div class="form-group">
                                 <label for="quantityIN">수량</label>
                                 <input type="number" class="form-control" id="quantityIN" required>
@@ -351,10 +351,10 @@
                                 <label for="nameSelectOutbound">이름</label>
                                 <select class="form-control" id="nameSelectOutbound" required></select>
                             </div>
-<!--                            <div class="form-group">-->
-<!--                                <label for="transactionDateOUT">거래 날짜</label>-->
-<!--                                <input type="datetime-local" class="form-control" id="transactionDateOUT" required>-->
-<!--                            </div>-->
+                            <!--                            <div class="form-group">-->
+                            <!--                                <label for="transactionDateOUT">거래 날짜</label>-->
+                            <!--                                <input type="datetime-local" class="form-control" id="transactionDateOUT" required>-->
+                            <!--                            </div>-->
                             <div class="form-group">
                                 <label for="quantityOUT">수량</label>
                                 <input type="number" class="form-control" id="quantityOUT" required>

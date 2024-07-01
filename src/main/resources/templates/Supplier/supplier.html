@@ -224,18 +224,18 @@
 <div layout:fragment="content">
     <div class="main-panel">
         <div class="container-fluid">
-            <h1 class="h2-header">Supplier Management</h1>
-            <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addSupplierModal">Add Supplier</button>
+            <h1 class="h2-header">발주처 관리</h1>
+            <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addSupplierModal">발주처 추가</button>
             <table class="table table-bordered" id="supplierManageTable">
                 <thead>
                 <tr>
-                    <th>Supplier Code</th>
-                    <th>Supplier Name</th>
-                    <th>Material Code</th>
-                    <th>Material Name</th>
-                    <th>Min Amount</th>
-                    <th>Max Amount</th>
-                    <th>Unit Price</th>
+                    <th>발주처 코드</th>
+                    <th>발주처</th>
+                    <th>자재 코드</th>
+                    <th>자재 이름</th>
+                    <th>최소 수량</th>
+                    <th>최대 수량</th>
+                    <th>단가</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -249,7 +249,7 @@
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="addSupplierModalLabel">Add Supplier</h5>
+                        <h5 class="modal-title" id="addSupplierModalLabel">발주처 추가</h5>
                         <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -257,31 +257,31 @@
                     <div class="modal-body">
                         <form id="addSupplierForm">
                             <div class="form-group">
-                                <label for="supplierName">Supplier Name</label>
+                                <label for="supplierName">발주처 이름</label>
                                 <select class="form-control" id="supplierName" required></select>
                             </div>
                             <div class="form-group">
-                                <label for="supplierCode">Supplier Code</label>
+                                <label for="supplierCode">발주처 코드</label>
                                 <input type="text" class="form-control" id="supplierCode" readonly>
                             </div>
                             <div class="form-group">
-                                <label for="materialName">Material Name</label>
+                                <label for="materialName">자재 이름</label>
                                 <select class="form-control" id="materialName" required></select>
                             </div>
                             <div class="form-group">
-                                <label for="minAmount">Min Amount</label>
+                                <label for="minAmount">최소 수량</label>
                                 <input type="number" class="form-control" id="minAmount" required>
                             </div>
                             <div class="form-group">
-                                <label for="maxAmount">Max Amount</label>
+                                <label for="maxAmount">최대 수량</label>
                                 <input type="number" class="form-control" id="maxAmount" required>
                             </div>
                             <div class="form-group">
-                                <label for="unitPrice">Unit Price</label>
+                                <label for="unitPrice">단가</label>
                                 <input type="number" class="form-control" id="unitPrice" required>
                             </div>
-                            <button type="submit" class="btn btn-primary">Register</button>
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary">등록</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
                         </form>
                     </div>
                 </div>

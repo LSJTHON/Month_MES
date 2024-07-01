@@ -212,7 +212,8 @@
                                     data === 'CANCELED' ? '취소' :
                                         data === 'COMPLETED' ? '출하 가능' :
                                             data === 'SHIPPED' ? '배송 완료' :
-                                                data === 'PendingShipment' ? '배송중' : data;
+                                                data === 'PurChased' ? '발주 완료' :
+                                                    data === 'PendingShipment' ? '배송중' : data;
                         }
                     },
                     {title: "담당자", data: 'manager'},

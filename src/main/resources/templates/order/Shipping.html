@@ -140,7 +140,7 @@
                             <option value="은지물류">은지물류</option>
                             <option value="이우운송">이우운송</option>
                             </select>`
-                                ;
+                               ;
                         }
                     }
                 ],
@@ -253,12 +253,14 @@
                     }
                 });
             });
+            //품목 정보 모달창 기능 끝나는 부분
 
             // 전체 선택/해제 체크박스 기능
             $('#select-all').on('click', function () {
                 var rows = table2.rows({'search': 'applied'}).nodes(); // 검색된 모든 행
                 $('input[type="checkbox"]', rows).prop('checked', this.checked); // 체크박스 선택/해제
             });
+
 
             // 상태 업데이트 버튼 클릭 이벤트
             function shippingUpdateComplete() {
@@ -351,5 +353,6 @@
             </div>
         </div>
     </div>
+    <!--품목 정보 모달 끝나는 부분-->
 </div>
 </html>

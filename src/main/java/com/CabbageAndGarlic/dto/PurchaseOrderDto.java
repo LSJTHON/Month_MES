@@ -18,4 +18,5 @@ public class PurchaseOrderDto {
     private LocalDateTime receiptDate; // 입고일
     private String purchaseOrderStatus; // 발주상태
     private String manager; // 담당자
+
 }

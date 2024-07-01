@@ -44,6 +44,9 @@ public class PurchaseOrder extends BaseTimeEntity {
     @Column(name = "manager", nullable = false)
     private String manager; // 담당자
 
+    @Column(name = "material_name", nullable = false)
+    private String materialName;
+
     public enum PuchaseOrderStateType {
         InProgress,
         Completed
