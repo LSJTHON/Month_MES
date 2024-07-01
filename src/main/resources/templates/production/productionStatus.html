@@ -281,8 +281,8 @@
                     });
 
                     // 도넛 차트 생성
-                    var totalAchievement = achievementData.reduce((a, b) => a + b, 0); // 총 달성도 계산
-                    var totalTarget = targetData.reduce((a, b) => a + b, 0); // 총 목표치 계산
+                    var totalAchievement = packagingWorkAmount-packagingQuantityLeft; // 총 달성도 계산
+                    var totalTarget = packagingWorkAmount; // 총 목표치 계산
                     var percentage = ((totalAchievement / totalTarget) * 100).toFixed(2); // 퍼센트 계산
 
                     var donutChart = new Chart(ctxDonut, {

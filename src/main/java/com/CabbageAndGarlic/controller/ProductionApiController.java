@@ -47,6 +47,7 @@ public class ProductionApiController {
             ProductionPlan productionPlan = productionPlanService.findProductionPlan(date);
 
             List<OrderProductionPlan> orderProductionPlans = orderProductionPlanRepository.findByProductionPlan(productionPlan);
+
             for (OrderProductionPlan orderProductionPlan : orderProductionPlans) {
                 Order order = orderProductionPlan.getOrderNumber();
                 List<OrderItem> orderItems = orderItemRepository.findByOrderNumber(order);
@@ -84,8 +85,11 @@ public class ProductionApiController {
             return ResponseEntity.ok(response);
 
         } catch (EntityNotFoundException e) {
-            response.put("error", e.getMessage());
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+            response.put("draw", 1);
+            response.put("recordsTotal", 0);
+            response.put("recordsFiltered", 0);
+            response.put("data", new ArrayList<>());
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
             response.put("error", "An error occurred while processing the request.");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
@@ -138,8 +142,11 @@ public class ProductionApiController {
             return ResponseEntity.ok(response);
 
         } catch (EntityNotFoundException e) {
-            response.put("error", e.getMessage());
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+            response.put("draw", 1);
+            response.put("recordsTotal", 0);
+            response.put("recordsFiltered", 0);
+            response.put("data", new ArrayList<>());
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
             response.put("error", "An error occurred while processing the request.");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
