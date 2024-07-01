@@ -32,4 +32,7 @@ public class SupplierManage {
 
     @Column(name = "unit_price", nullable = false)
     private int unitPrice;  //단가
+
+
+
 }

@@ -4,7 +4,9 @@ import com.CabbageAndGarlic.constant.Status;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Getter
@@ -15,14 +17,10 @@ public class ProductionPlan {
     @Column(name = "production_plan_number")
     private Long productionPlanNumber;  // 생산계획번호
 
-    @ManyToOne
-    @JoinColumn(name = "order_number", nullable = false)
-    private Order orderNumber;  // 수주번호
-
     @Column(name = "production_plan_status", nullable = false)
     @Enumerated(EnumType.STRING)
     private Status productionPlanStatus;  // 상태
 
     @Column(name = "plan_date", nullable = false)
-    private LocalDateTime planDate;
+    private LocalDate planDate;
 }

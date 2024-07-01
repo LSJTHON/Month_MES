@@ -37,4 +37,7 @@ public class Order extends BaseTimeEntity {
 //    @Column(name = "capa")
 //    private String capa;  // CAPA
 
+    //    @Column(name = "cancel_reason")
+    //    private String cancelReason;  // 취소사유
+
 }

@@ -1,11 +1,11 @@
 package com.CabbageAndGarlic.service;
 
-
 import com.CabbageAndGarlic.constant.Status;
 import com.CabbageAndGarlic.dto.OrderDto;
 import com.CabbageAndGarlic.dto.OrderItemDto;
 import com.CabbageAndGarlic.entity.Order;
 import com.CabbageAndGarlic.entity.OrderItem;
+import com.CabbageAndGarlic.entity.ProductionPlan;
 import com.CabbageAndGarlic.repository.OrderItemRepository;
 import com.CabbageAndGarlic.repository.OrderRepository;
 import com.CabbageAndGarlic.repository.PurchaseOrderRepository;
@@ -45,6 +45,7 @@ public class OrderService {
             orderItem.setProductName(itemDto.getProductName());
             orderItem.setAmount(itemDto.getAmount());
             orderItem.setOrderNumber(order);
+            orderItem.setStatus(Status.WAITING);  //생산계획의 상태때문에 추가함
 
             orderItemRepository.save(orderItem);
         }

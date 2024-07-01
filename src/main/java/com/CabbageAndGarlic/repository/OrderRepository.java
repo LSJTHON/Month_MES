@@ -11,6 +11,8 @@ import java.util.List;
 
 public interface OrderRepository extends JpaRepository<Order, Long> {
 
+    Order findByOrderNumber(Long orderNumber);
+
     @Modifying
     @Transactional
     @Query(value = "UPDATE order_table SET order_status = 'COMPLETED' WHERE order_number = :orderNumber", nativeQuery = true)
