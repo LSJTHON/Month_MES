@@ -32,7 +32,7 @@ public class ProductionPlanService {
 
     public void savePlan(OrderDto orderDto) {
         LocalDate orderDay = orderDto.getDeliveryDate();
-        LocalDate planday = orderDay.minusDays(3);
+        LocalDate planday = orderDay.minusDays(2);
         if(productionPlanRepository.findByPlanDate(planday)==null){
             ProductionPlan plan = new ProductionPlan();
             plan.setPlanDate(planday);
