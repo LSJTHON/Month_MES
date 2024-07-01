@@ -76,7 +76,7 @@
                 //scrollX: true, // 가로 스크롤 활성화
                 info: false, // 테이블 정보 비활성화
                 ajax: { // AJAX 설정
-                    url: 'http://localhost:8080/Shipping/orders', // 데이터 요청 URL
+                    url: '/Shipping/orders', // 데이터 요청 URL
                     type: 'GET', // HTTP 요청 타입
                     dataFilter: function (res) { // 데이터 필터링
                         var json = $.parseJSON(res); // JSON 파싱
@@ -182,7 +182,7 @@
                 //scrollX: true, // 가로 스크롤 활성화
                 info: false, // 테이블 정보 비활성화
                 ajax: { // AJAX 설정
-                    url: 'http://localhost:8080/Shipping/shippingStatus', // 데이터 요청 URL
+                    url: '/Shipping/shippingStatus', // 데이터 요청 URL
                     type: 'GET', // HTTP 요청 타입
                     dataFilter: function (res) { // 데이터 필터링
                         var json = $.parseJSON(res); // JSON 파싱
@@ -234,7 +234,7 @@
             $('#table2 tbody, #table3 tbody').on('click', '.item-info-btn', function () {
                 var orderNumber = $(this).data('order-number');
                 $.ajax({
-                    url: 'http://localhost:8080/Shipping/orderItems/' + orderNumber,
+                    url: '/Shipping/orderItems/' + orderNumber,
                     type: 'GET',
                     success: function (data) {
                         var itemsHtml = data.map(item => `
@@ -291,7 +291,7 @@
 
             // AJAX 요청으로 상태 업데이트 및 출하 생성
             $.ajax({
-                url: 'http://localhost:8080/Shipping/updateAndCreate', // 요청 URL
+                url: '/Shipping/updateAndCreate', // 요청 URL
                 type: 'POST', // HTTP 요청 타입
                 contentType: 'application/json', // 콘텐츠 타입
                 data: JSON.stringify(data), // 데이터 JSON 문자열로 변환

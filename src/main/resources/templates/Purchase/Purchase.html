@@ -102,7 +102,7 @@
             var orderTable = $('#orderTable').DataTable({
                 dom: 'Bfrtip',
                 buttons: [
-                    'copy', 'csv', 'excel', 'pdf', 'print'
+                    'copy', 'excel', 'pdf', 'print'
                 ],
                 select: {
                     style: 'multi',
@@ -112,7 +112,7 @@
                     url: '/api/purchase-order/orders-not-in-purchase',
                     dataSrc: function (json) {
                         // "PurChased" 상태가 아닌 수주만 필터링
-                        return json.filter(order => order.status !== 'PurChased');
+                        return json.filter(order => order.status === 'WAITING');
                     }
                 },
                 columns: [

@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'com.CabbageAndGarlic'
-version = '0.0.1-SNAPSHOT'
+version = 'cabbageKing'
 
 java {
 	toolchain {

@@ -9,12 +9,6 @@
             margin-top: 10px;
             display: flex;
         }
-        .material-search-table th{
-            padding: 5px;
-            text-align: center;
-            vertical-align: middle;
-            width: 5%;
-        }
         .material-search-table td {
             padding: 5px;
             text-align: center;
@@ -78,7 +72,7 @@
                 scrollX: true,
                 info: false,
                 ajax: {
-                    url: 'http://localhost:8080/api/materials',
+                    url: '/api/materials',
                     type: 'GET',
                     dataSrc: function (json) {
                         materialCodes = json.data.map(material => ({
@@ -92,12 +86,12 @@
                     { title: "자재코드", data: 'materialCode' },
                     { title: "자재명", data: 'materialName' ,render:function(data,type,row){
                             return materialName2=data }},
-                    { title: "자재양", data: 'materialAmount',render:function(data,type,row){
-                        if(materialName2 == "포장지" || materialName2 == "Box"  || materialName2 == "박스" || materialName2 == "BOX"){
-                            return data+"EA";
-                        }else
-                        return data+"KG";
-                        }}
+                    // { title: "자재양", data: 'materialAmount',render:function(data,type,row){
+                    //     if(materialName2 == "포장지" || materialName2 == "Box"  || materialName2 == "박스" || materialName2 == "BOX"){
+                    //         return data+"EA";
+                    //     }else
+                    //     return data+"KG";
+                    //     }}
                 ],
                 language: {
                     search: "검색:"

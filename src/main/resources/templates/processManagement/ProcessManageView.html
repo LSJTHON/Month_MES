@@ -9,12 +9,7 @@
             margin-top: 10px;
             display: flex;
         }
-        .process-search-table th{
-            padding: 5px;
 
-            vertical-align: middle;
-            width: 5%;
-        }
         .process-search-table td {
             padding: 5px;
             vertical-align: middle;
@@ -77,7 +72,7 @@
                 scrollX: true,
                 info: false,
                 ajax: {
-                    url: 'http://localhost:8080/api/process',
+                    url: '/api/process',
                     type: 'GET',
                     dataSrc: function (json) {
                         processNumbers = json.data.map(process => ({
@@ -92,13 +87,21 @@
                     { title: "공정명", data: 'processName' ,render:function(data,type,row){
                             return processName2=data }},
                     { title: "생산 가능량", data: 'productionCapacity' ,render:function(data,type,row){
-                            if(processName2 == "충진" || processName2 == "검사" || processName2 == "포장" || processName2 == "냉각" ){
-                                return data+"EA/Hour";
-                            }else
+                            if(processName2 == "충진" || processName2 == "검사" || processName2 == "포장" || processName2 == "냉각" || processName2 == "충진(젤리)" || processName2 == "검사(젤리)" || processName2 == "포장(젤리)"){
+                                return data+"EA/1Hour";
+                            }else if(processName2 == "전처리" || processName2 == "칭량"|| processName2 == "칭량(젤리)"){
+                                return data+"KG/2Hour";
+                            }else if(processName2 == "냉각(젤리)" ){
+                                return data + "KG/8Hour"
+                            }
+                            else
                                 return data+"KG";
                         }},
                     { title: "생산 준비 시간", data: 'productionSetupTime' , render: function (data, type, row) {
-                            return data + 'H';
+                            if (processName2 == "검사"||processName2 == "검사(젤리)"||processName2 == "충진"||processName2 == "충진(젤리)" ||processName2 == "포장"||processName2 == "포장(젤리)"  ){
+                                return data + "분";
+                            }else
+                                return data + '시간';
                         }},
                     { title: "사이클 시간", data: 'cycleHour' , render: function (data, type, row) {
                             return data + 'H';

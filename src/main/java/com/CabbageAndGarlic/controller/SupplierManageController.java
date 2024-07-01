@@ -11,7 +11,7 @@ public class SupplierManageController {
 
     @GetMapping
     public String getSupplierManagementPage(Model model) {
-        return "/Supplier/supplier";
+        return "Supplier/supplier";
     }
 }
 

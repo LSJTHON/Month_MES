@@ -11,6 +11,6 @@ public class PurchaseOrderController {
 
     @GetMapping
     public String getPurchaseOrderPage(Model model) {
-        return "/Purchase/Purchase";
+        return "Purchase/Purchase";
     }
 }

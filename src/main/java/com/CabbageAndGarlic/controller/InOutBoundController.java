@@ -11,6 +11,6 @@ public class InOutBoundController {
 
     @GetMapping
     public String getInOutBoundPage(Model model) {
-        return "/InOutBound/inOutBound";
+        return "InOutBound/inOutBound";
     }
 }

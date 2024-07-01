@@ -273,7 +273,15 @@
                     },
                     {title: "작업량", data: 'workAmount'},
                     {title: "작업자", data: 'worker'},
-                    {title: "상태", data: 'workStatus'},
+                    {title: "상태", data: 'workStatus', render: function (data, type, row) {
+                            return data === 'WAITING' ? '작업대기' :
+                                data === 'IN_PROGRESS' ? '진행중' :
+                                    data === 'CANCELED' ? '취소' :
+                                        data === 'COMPLETED' ? '출하 가능' :
+                                            data === 'SHIPPED' ? '배송 완료' :
+                                                data === 'PurChased' ? '발주 완료' :
+                                                    data === 'PendingShipment' ? '배송중' : data;
+                        }},
                 ],
                 language: {
                     search: "검색:",
@@ -331,6 +339,41 @@
             var calendar = new FullCalendar.Calendar(calendarEl, {
 
                 initialView: 'dayGridMonth',
+
+
+                events: function (fetchInfo, successCallback, failureCallback) {
+                    $.ajax({
+                        url: '/api/orderCalendar',
+                        type: 'GET',
+                        success: function (data) {
+                            var events = data.map(function (order) {
+                                var endDate = new Date(order.deliveryDate);
+                                var startDate = new Date(order.deliveryDate);
+                                startDate.setDate(startDate.getDate() - 2); // 3일 전부터 시작 숫자만 수정하면 1싸이클 수정 가능함
+
+                                // end날짜 포함 안되서 하루 추가해야함
+                                endDate.setDate(endDate.getDate() + 1);
+
+
+                                // 색깔 순서대로 들어가게 해주는놈
+                                var color = colors[colorIndex];
+                                colorIndex = (colorIndex + 1) % colors.length;
+
+                                return {
+                                    title: `수주번호: ${order.orderNumber}, 업체명: ${order.client}`,
+                                    start: startDate.toISOString().split('T')[0],    //최종적으로 달력에 시작날짜 가로바 생성
+                                    end: endDate.toISOString().split('T')[0],        //최종적으로 달력에 시작날짜 가로바 생성
+                                    backgroundColor: color // 이벤트의 리스트로 순서대로 생성함
+                                };
+                            });
+                            successCallback(events);
+                        },
+                        error: function (xhr, status, error) {
+                            console.error('Error fetching events:', error); // 에러 확인을 위해 로그 추가
+                            failureCallback();
+                        }
+                    });
+                },
 
                 datesSet: function(dateInfo) {
                     // 모든 날짜 셀에 대해 이벤트 리스너 추가

@@ -9,12 +9,6 @@
             margin-top: 10px;
             display: flex;
         }
-        .product-search-table th{
-            padding: 5px;
-            text-align: center;
-            vertical-align: middle;
-            width: 5%;
-        }
         .product-search-table td {
             padding: 5px;
             text-align: center;
@@ -79,7 +73,7 @@
                 scrollX: true,
                 info: false,
                 ajax: {
-                    url: 'http://localhost:8080/api/products',
+                    url: '/api/products',
                     type: 'GET',
                     dataSrc: function (json) {
                         productCodes = json.data.map(product => ({
@@ -94,9 +88,9 @@
                     { title: "품목명", data: 'productName' },
                     { title: "최소수량", data: 'minAmount' },
                     { title: "최대수량", data: 'maxAmount' },
-                    { title: "완제품양", data: 'productAmount',
-                        render:function(data,type,row){
-                            return data+"BOX"; }},
+                    // { title: "완제품양", data: 'productAmount',
+                    //     render:function(data,type,row){
+                    //         return data+"BOX"; }},
                     { title: "BOM", data: 'bom' },
                 ],
                 language: {
