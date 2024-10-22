@@ -13,4 +13,5 @@ public class InOutBoundController {
     public String getInOutBoundPage(Model model) {
         return "InOutBound/inOutBound";
     }
+    
 }
